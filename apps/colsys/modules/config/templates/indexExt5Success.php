@@ -3,13 +3,31 @@
     white-space: pre-line !important;
 }
 </style>
+<?
+$permisos = $sf_data->getRaw("permisos");
+//echo json_encode($permisos);
+
+//print_r($permisos);
+//echo $permisos;
+//exit;
+include_component("config", "gridDianServicios");
+include_component("config", "formNumerosRadicacion");
+include_component("config", "gridBodegas");
+
+?>
 <script>
-//Ext.Loader.setPath('Ext.ux', '../js/ext5/examples/ux/');
+
+var permisosC = Ext.decode('<?= json_encode($permisos) ?>');
 Ext.Loader.setConfig({
     enabled: true,    
     paths: {
         'Ext.ux': '../js/ext5/examples/ux/',
-        'Colsys':'/js/Colsys'
+        'Colsys':'/js/Colsys',
+        'Ext.grid.plugin.Exporter':'../js/ext6/classic/classic/src/grid/plugin/Exporter.js',
+        'Ext.grid.plugin':'../js/ext6/classic/classic/src/grid/plugin/',            
+        'Ext.exporter':'../js/ext6/classic/classic/src/exporter/',
+        'Ext.view.grid':'../js/ext6/classic/classic/src/view/grid/',
+        'Ext.overrides':'../js/ext6/classic/classic/src/overrides/', 
     }
 });
     
@@ -17,7 +35,6 @@ Ext.Loader.setConfig({
     'Ext.grid.*',
     'Ext.data.*',
     'Ext.form.field.Number',
-    //'Ext.form.field.Date',
     'Ext.tip.QuickTipManager',
     'Ext.form.field.File',
     'Ext.form.Panel',
@@ -26,13 +43,7 @@ Ext.Loader.setConfig({
     'Ext.ux.exporter.Exporter'
     ]);
 </script>
-<?
-$permisos = $sf_data->getRaw("permisos");
-include_component("config", "gridDianServicios");
-include_component("config", "formNumerosRadicacion");
-include_component("config", "gridBodegas");
 
-?>
 <table align="center" width="98%" cellspacing="0" border="0" cellpading="0"><tr><td>
 <div id="panel"></div>
 <div id="sub-panel"></div>
@@ -75,6 +86,7 @@ Ext.onReady(function() {
             region: 'west',
             title: 'Administraci&oacute;n',
             autoScroll:true,
+            collapsible: true,
             width: 220,
             items:[{
                 xtype:'treepanel',
@@ -113,16 +125,30 @@ Ext.onReady(function() {
                                 else if(record.data.id=="4")
                                 {
                                     obj=[
-                                        {
-                                                    xtype: 'Colsys.General.TreeClasificacion',
-                                                    id: 'id-clasificacion',
-                                                    name: 'id-clasificacion'                                                    
-                                                    //height: 330,
-                                                    //width: 800,
-                                                    //ino:false
-                                                },
-                                        
-                                    ];
+                                    {
+                                        xtype: 'Colsys.General.TreeClasificacion',
+                                        id: 'id-clasificacion',
+                                        name: 'id-clasificacion'
+                                    }];
+                                }else if(record.data.id=="5"){
+                                    console.log(permisosC);
+                                    obj = [
+                                    {
+                                        xtype: 'Colsys.General.PanelMaestraConceptos',
+                                        id: 'form-conceptos',
+                                        name: 'form-conceptos',
+                                        idgrid: record.data.id,
+                                        permisos: permisosC
+                                    }];
+                                }else if(record.data.id=="6"){
+                                    //console.log(permisosC);
+                                    obj = [
+                                    {
+                                        xtype: 'Colsys.Users.GridParamUsuarios',
+                                        title: "Parametros de Usuarios",
+                                        idgrid: record.data.id,
+                                        permisos: permisosC
+                                    }];
                                 }
                                 
                                 tabpanel.add(                                
@@ -131,8 +157,7 @@ Ext.onReady(function() {
                                         id:'tab'+record.data.id,
                                         itemId:'tab'+record.data.id,
                                         items: [
-                                        {
-                                            items:[
+                                        
                                                 Ext.create('Ext.panel.Panel', {
                                                 //title: 'Registro de Incidente',    
                                                     bodyPadding: 10,
@@ -142,8 +167,8 @@ Ext.onReady(function() {
                                                     items: obj
                                                 })
                                             ]
-                                        }
-                                    ]
+                                        
+                                    
                                 }                                
                                 ).show();
                             }
@@ -178,18 +203,10 @@ Ext.onReady(function() {
         },{
             region: 'center',
             xtype: 'tabpanel',
+            id:'tabpanel1',
+            name:'tabpanel1',
             activeTab: 0,
-            items: [/*{
-                title: 'Default Tab',
-                html:'Selecciona una opcion del menu'
-            }*/
-            
-
-            //Ext.create('ReportsPanel', {closable: true,title:"Maritimo",id:'tab1',idsserie:"2"}),
-            //Ext.create('ReportsPanel', {closable: true,title:"Aereo",id:'tab2',idsserie:"4"})
-
-                            
-            ]
+            items: []
         },
         {
             region: 'north',

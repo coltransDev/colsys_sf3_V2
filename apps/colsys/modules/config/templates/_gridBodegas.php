@@ -11,10 +11,10 @@
     //var grid = Ext.create('Ext.grid.Panel', {
     Ext.define('GridBodegas',{
         extend: 'Ext.grid.Panel',
-        bufferedRenderer: true,
-        selModel: {
+        //bufferedRenderer: true,
+        /*selModel: {
             pruneRemoved: false
-        },
+        },*/
         store: Ext.create('Ext.data.Store', {            
             fields: [
                 { name: 's_ca_idbodega'       },
@@ -47,9 +47,10 @@
             
             
         ],
-        plugins: [new Ext.grid.plugin.CellEditing({
-                    clicksToEdit: 1
-                })],
+        plugins: [{
+            ptype : 'cellediting',
+            clicksToEdit: 1
+        }],
         listeners:{
             render: function(ct, position){                
                 if(this.load==false || this.load=="undefined" || !this.load)
