@@ -169,7 +169,8 @@ Ext.define('Colsys.Crm.GridAgenteAduana', {
                                                                         idreferencia: me.idcliente,
                                                                         treeStore: 'agenteAduana',
                                                                         idcliente: me.idcliente,
-                                                                        habilitarToolbar: false
+                                                                        habilitarToolbar: false,
+                                                                        exacto:"true"
                                                                     }
                                                                 }, {
                                                                     padding: '5 5 10 5',
