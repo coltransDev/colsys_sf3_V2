@@ -471,9 +471,12 @@ class traficosActions extends sfActions {
       
       $repequipos = $reporte->getRepEquipos();
       $this->form->setNumEquipos(count($repequipos));
-      //echo "<br>478::".count($repequipos)."--".$this->form->getNumEquipos();
-      //exit;
-      //echo "<br>ssrrr::".$this->form->getNumEquipos();
+      if(count($repequipos) <= 0 && $reporte->getCaImpoexpo()== Constantes::EXPO){
+          $this->form->setNumEquipos(NuevoStatusForm::NUM_EQUIPOS_EXPO); // Ticket 87461
+      }
+//      echo "<br>478::".count($repequipos)."--".$this->form->getNumEquipos();
+//      exit;
+//      echo "<br>ssrrr::".$this->form->getNumEquipos();
       $this->form->configure();
       /*
        * Fin de la configuración
