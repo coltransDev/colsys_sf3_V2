@@ -2113,8 +2113,8 @@ class widgets5Actions extends sfActions {
             $pes = "-";
             
             //echo count($indicadores);
-            //echo "<pre>";print_r($indicadores);echo "</pre>";
-            //exit();
+//            echo "<pre>";print_r($indicadores);echo "</pre>";
+//            exit();
             foreach ($indicadores as $indicador) {
 
                 $proovedor = utf8_encode($indicador["ca_proveedores"]);
@@ -2189,7 +2189,8 @@ class widgets5Actions extends sfActions {
                 $idtrafico = $indicador["ca_idtrafico"];
                 $idorigen = $indicador["ca_idorigen"];
                 $iddestino = $indicador["ca_iddestino"];
-
+                $idtradestino = $indicador["ca_idtradestino"];
+                
 
                 $sql1 = "SELECT ca_idtrafico, ca_idciudad, ca_iddestino,  ca_tiempotransito conteo, ca_coord_embarque coordembarque "
                         . "FROM tb_entrega_antecedentes "
@@ -2220,101 +2221,82 @@ class widgets5Actions extends sfActions {
                     $t = $sqlCE2[0]["conteo"];
                     $r = "segunda opcion";
                 }
-
-
-
-                /* $idcliente = $indicador["ca_idcliente"];
-                  $idgTT = Doctrine::getTable("IdgClientes")
-                  ->createQuery("i")
-                  ->addWhere("i.ca_transporte like ?", $transporte)
-                  ->addWhere("i.ca_traorigen like ?", $idtrafico)
-                  ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                  ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                  ->addWhere("i.ca_idcliente like ?", $idcliente)
-                  ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                  ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
-                  ->fetchOne();
-                  if ($idgTT){
-                  $jsonTT = json_decode($idgTT->getCaIndicador());
-                  $metaTT = $jsonTT->tiempotransito;
-                  }
-                  else{
-                  $idgTT = Doctrine::getTable("IdgClientes")
-                  ->createQuery("i")
-                  ->addWhere("i.ca_transporte like ?", $transporte)
-                  ->addWhere("i.ca_traorigen like ?", $idtrafico)
-                  ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                  ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                  ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                  ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
-                  ->fetchOne();
-                  if ($idgTT){
-                  $jsonTT = json_decode($idgTT->getCaIndicador());
-                  $metaTT = $jsonTT->tiempotransito;
-                  }
-                  else{
-                  $metaTT  = "SIN META";
-                  }
-                  } */
-
+                
                 $idcliente = $indicador["ca_idcliente"];
+                
+                
+                
+                $columnas1 = array('ca_traorigen','ca_ciuorigen','ca_idcliente','ca_modalidad');
+                $opciones1 = array($idtrafico,$idorigen,$idcliente,$indicador["modalidad"]);
+                
                 $q = Doctrine::getTable("IdgClientes")
                         ->createQuery("i")
                         ->addWhere("i.ca_transporte like ?", $transporte)
-                        ->addWhere("i.ca_traorigen like ?", $idtrafico)
-                        //->addWhere("i.ca_ciuorigen like ?", $idorigen)
-                        ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                        //->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                        ->addWhere("i.ca_idcliente like ?", $idcliente)
-                        ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                        ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
-
-                //echo $q->getSqlQuery();
+                        ->addWhere("i.ca_tradestino like ?", $idtradestino)
+                        ->addWhere("i.ca_ciudestino like ?", $iddestino);                        
+                        
+                foreach($columnas1 as $key => $val){
+                    $q->addWhere("$val like ?", $opciones1[$key]);
+                }
                 $idgTT = $q->fetchOne();
-
-                //->fetchOne();
+                
                 if ($idgTT) {
                     $jsonTT = json_decode($idgTT->getCaIndicador());
                     $metaTT = $jsonTT->tiempotransito;
-                } else {
-                    $q1 = Doctrine::getTable("IdgClientes")
-                            ->createQuery("i")
-                            ->addWhere("i.ca_transporte like ?", $transporte)
-                            ->addWhere("i.ca_traorigen like ?", $idtrafico)
-//                        ->addWhere("i.ca_ciuorigen like ?", $idorigen)
-                            ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                            ->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                            ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                            ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
+                }else{
+                    $columnas = array('ca_traorigen','ca_ciuorigen','ca_transportista','ca_idcliente');
+                    $opciones = array($idtrafico,$idorigen,$indicador["idlinea"],$idcliente);
+                    
+                    foreach($columnas as $key => $val){
+                        $q->addWhere("$val like ?", $opciones[$key]);
+                    }
+                    $idgTT = $q->fetchOne();
 
-                    //echo $q1->getSqlQuery();
-                    $idgTT = $q1->fetchOne();
-                    //->fetchOne();
                     if ($idgTT) {
                         $jsonTT = json_decode($idgTT->getCaIndicador());
                         $metaTT = $jsonTT->tiempotransito;
-                    } else {
-                        $q2 = Doctrine::getTable("IdgClientes")
-                                ->createQuery("i")
-                                ->addWhere("i.ca_transporte like ?", $transporte)
-                                ->addWhere("i.ca_traorigen like ?", $idtrafico)
-//                        ->addWhere("i.ca_ciuorigen like ?", $idorigen)
-                                ->addWhere("i.ca_ciudestino like ?", $iddestino)
-                                //->addWhere("i.ca_transportista like ?", $indicador["idlinea"])
-                                ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                                ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"]);
+                    }else{
+                        $columnas = array('ca_traorigen','ca_ciuorigen','ca_idcliente');
+                        $opciones = array($idtrafico,$idorigen,$idcliente);
+                        
+                        foreach($columnas as $key => $val){
+                            $q->addWhere("$val like ?", $opciones[$key]);
+                        }
+                        $idgTT = $q->fetchOne();
 
-                        //echo $q1->getSqlQuery();
-                        $idgTT = $q2->fetchOne();
                         if ($idgTT) {
                             $jsonTT = json_decode($idgTT->getCaIndicador());
                             $metaTT = $jsonTT->tiempotransito;
-                        } else {
-                            $metaTT = "SIN META";
+                        }else{
+                            $columnas = array('ca_traorigen','ca_ciuorigen','ca_transportista');
+                            $opciones = array($idtrafico,$idorigen,$indicador["idlinea"]);
+                            
+                            foreach($columnas as $key => $val){
+                                $q->addWhere("$val like ?", $opciones[$key]);
+                            }
+                            $idgTT = $q->fetchOne();
+
+                            if ($idgTT) {
+                                $jsonTT = json_decode($idgTT->getCaIndicador());
+                                $metaTT = $jsonTT->tiempotransito;
+                            }else{
+                                
+                                foreach($columnas as $key => $val){
+                                    $q->addWhere("$val like ?", $opciones[$key]);
+                                }
+                                $idgTT = $q->fetchOne();
+
+                                if ($idgTT) {
+                                    $jsonTT = json_decode($idgTT->getCaIndicador());
+                                    $metaTT = $jsonTT->tiempotransito;
+                                }else{
+                                    $metaTT = "SIN META";
+                                }
+                            }
                         }
                     }
                 }
-
+                
                 if (!$datagtr[$mes]["porcentaje"]) {
                     $datagtr[$mes]["porcentaje"] = 0;
                 }
@@ -2326,7 +2308,6 @@ class widgets5Actions extends sfActions {
                     $indicador["t_transito"] = 0;
                 }
 
-//echo 'meta'.$metaTT.'indicadorTT'.$indicador["t_transito"]."---";
                 if ($metaTT != "SIN META") {
                     if ($indicador["t_transito"] <= $metaTT) {
                         $cumplett = 1;
@@ -2340,7 +2321,6 @@ class widgets5Actions extends sfActions {
                     $gridtransito[$mes]["nocumple"] += 1;
                     $cumplett = 0;
                 }
-//echo "cumplett".$cumplett;
 
                 $datagtr[$mes]["totall"] += 1;
 
@@ -3533,8 +3513,23 @@ class widgets5Actions extends sfActions {
         $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
         $data = array();
         foreach ($datomod as $dato) {
+            $tiposeg = json_decode($dato["ca_valor2"],1);
             $data[] = array("id" => $dato["ca_identificacion"],
-                "name" => utf8_encode($dato["ca_valor"]));
+                "name" => utf8_encode($dato["ca_valor"]), "seguimiento"=>$tiposeg["seguimientos"]);
+        }
+
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+
+    public function executeDatosResponsabilidades(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        $caso = "CU280";
+        $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
+        $data = array();
+        foreach ($datomod as $dato) {
+            $data[] = array("codigo" => $dato["ca_identificacion"],
+                "mostrar" => utf8_encode($dato["ca_valor"]));
         }
 
         $this->responseArray = array("success" => true, "root" => $data);
@@ -3567,7 +3562,8 @@ class widgets5Actions extends sfActions {
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $q = Doctrine::getTable("IdsTipoIdentificacion")
                 ->createQuery("i")
-                ->where("i.ca_nombre <> ?", "Consecutivo Colsys");
+                ->where("i.ca_nombre <> ?", "Consecutivo Colsys")
+                ->addOrderBy("i.ca_nombre");
         if ($request->getParameter("idtrafico")) {
             $q->addWhere('ca_idtrafico = ?', $request->getParameter("idtrafico"));
         }
