@@ -235,11 +235,27 @@ Ext.define('Colsys.General.GridMaestraConceptos', {
                     ext: 'xlsx'
                 },
                 handler: function(){
+                    var grid = this.up("grid");
                     var cfg = Ext.merge({
                         title: 'Maestra de conceptos',
                         fileName: 'Maestra de conceptos' + '.' + (this.cfg.ext || this.cfg.type)
                     }, this.cfg);
-                    this.addExporter(this.up("grid"), cfg, 10000);
+
+                    var myMask = new Ext.LoadMask({
+                        msg    : 'Generando archivo, por favor espere...',
+                        target : grid
+                    });
+                    myMask.show(); 
+
+                    Ext.syncRequire(['Ext.grid.plugin.Exporter','Ext.view.grid.ExporterController'], function() {
+
+                        myMask.hide();
+                        grid.addPlugin({
+                            ptype: 'gridexporter'
+                        });
+                        grid.saveDocumentAs(cfg);
+                        console.log(this);
+                    }, {prop: 'value'});                    
                 }
             },{
                 xtype: "textfield",
@@ -288,5 +304,20 @@ Ext.define('Colsys.General.GridMaestraConceptos', {
             Ext.getCmp('grid-detalle-conceptos').store.reload();   
             Ext.getCmp('grid-detalle-conceptos').idpadre = idconceptoMaestra;
         }
+    },   
+    addPlugin: function(p) {
+        //constructPlugin is private.
+        //it handles the various types of acceptable forms for
+        //a plugin
+        var plugin = this.constructPlugin(p);
+        this.plugins = Ext.Array.from(this.plugins);
+
+        this.plugins.push(plugin);
+        
+        //pluginInit could get called here but
+        //the less use of private methods the better
+        plugin.init(this);
+
+        return plugin;
     }
 });
