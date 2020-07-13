@@ -177,11 +177,27 @@ Ext.define('Colsys.General.GridDetalleConceptos', {
                         ext: 'xlsx'
                     },
                     handler: function(){
+                        var grid = this.up("grid");
                         var cfg = Ext.merge({
-                            title: 'Detalle de Conceptos',
-                            fileName: 'Detalle de Conceptos' + '.' + (this.cfg.ext || this.cfg.type)
+                            title: 'Detalle de conceptos',
+                            fileName: 'Detalle de conceptos' + '.' + (this.cfg.ext || this.cfg.type)
                         }, this.cfg);
-                        this.addExporter(this.up("grid"), cfg, 10000);
+
+                        var myMask = new Ext.LoadMask({
+                            msg    : 'Generando archivo, por favor espere...',
+                            target : grid
+                        });
+                        myMask.show(); 
+
+                        Ext.syncRequire(['Ext.grid.plugin.Exporter','Ext.view.grid.ExporterController'], function() {
+
+                            myMask.hide();
+                            grid.addPlugin({
+                                ptype: 'gridexporter'
+                            });
+                            grid.saveDocumentAs(cfg);
+                            console.log(this);
+                        }, {prop: 'value'});         
                     }
                 },{
                     xtype: "textfield",
@@ -261,5 +277,20 @@ Ext.define('Colsys.General.GridDetalleConceptos', {
             }
         }
         this.callParent();
+    },  
+    addPlugin: function(p) {
+        //constructPlugin is private.
+        //it handles the various types of acceptable forms for
+        //a plugin
+        var plugin = this.constructPlugin(p);
+        this.plugins = Ext.Array.from(this.plugins);
+
+        this.plugins.push(plugin);
+        
+        //pluginInit could get called here but
+        //the less use of private methods the better
+        plugin.init(this);
+
+        return plugin;
     }
 });
