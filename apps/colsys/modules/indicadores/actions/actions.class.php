@@ -247,7 +247,8 @@ class indicadoresActions extends sfActions{
                     "Transición SAP",
                     "Falla en sistema de facturación",
                     "Requisitos Cliente",
-                    "Cliente no creado en sistema contable"
+                    "Cliente no creado en sistema contable",
+                    "Rollover"
                 );
                 $filtroUsuario = "ca_usuenvio";
                 break;                
@@ -536,11 +537,11 @@ class indicadoresActions extends sfActions{
             $this->getRequest()->setParameter('usuario',$opts["usuario"]);
             $this->html = sfContext::getInstance()->getController()->getPresentationFor( 'indicadores', 'verHtmlResumen');
 
-            session_start();
-            $pdf = array("registros"=>$data, "summary"=>$summary, "html"=>$this->html, "datos"=>$datos);                
-            if($_SESSION[$indice])
-                unset($_SESSION[$indice]);
-            $_SESSION[$indice] = $pdf;
+//            session_start();
+//            $pdf = array("registros"=>$data, "summary"=>$summary, "html"=>$this->html, "datos"=>$datos);                
+//            if($_SESSION[$indice])
+//                unset($_SESSION[$indice]);
+//            $_SESSION[$indice] = $pdf;
 
 
             $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug"=> utf8_encode($debug), "summaryRoot"=>$summary);
@@ -564,7 +565,7 @@ class indicadoresActions extends sfActions{
         $this->setLayout("none");
     }
 
-    public function executeGenerarPdf(sfWebRequest $request){
+    /*public function executeGenerarPdf(sfWebRequest $request){
         
         $user = $this->getUser();
         $ano = $request->getParameter("ano");
@@ -727,12 +728,13 @@ class indicadoresActions extends sfActions{
         // -----------------------------------------------------------------------------
         $this->setTemplate("responseTemplate");
         
-    }
+    }*/
     
     public function executeGuardarRepositorio(sfWebRequest $request){
         
         $ano = $request->getParameter("ano");
         $mes = $request->getParameter("mes");
+        $data = $request->getParameter("data");
         
         $conn = Doctrine::getTable("IdgArchivo")->getConnection();
         $conn->beginTransaction();
@@ -765,11 +767,37 @@ class indicadoresActions extends sfActions{
             $archivo->save($conn);
 
             
-            $dirTemp = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR .'tmp';        
-            rename($dirTemp.DIRECTORY_SEPARATOR.$filenameTemp,   $directorio . DIRECTORY_SEPARATOR .utf8_encode($filename).'.pdf');            
+            //$dirTemp = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR .'tmp';        
+//            rename($dirTemp.DIRECTORY_SEPARATOR.$filenameTemp,   $directorio . DIRECTORY_SEPARATOR .utf8_encode($filename).'.pdf');            
             
-            $conn->commit();
-            $this->responseArray = array("success" => true, "mensaje"=> utf8_encode("Informe guardado correctamente"), "filenameTemp"=>$filenameTemp);
+            $decoded = base64_decode($data);
+            $file = $directorio . DIRECTORY_SEPARATOR .utf8_encode($filename).'.pdf';
+            file_put_contents($file, $decoded);
+            
+
+            if (file_exists($file)) {
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="'.basename($file).'"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . filesize($file));
+                
+
+                ob_start();
+                readfile($file);
+                $data = ob_get_clean();
+                //$archivo = readfile($file);
+                
+                
+                $conn->commit();
+                $this->responseArray = array("success" => true, "mensaje"=> utf8_encode("Informe guardado correctamente"), "filename"=>$filename, "directorio"=>$directorio);
+                
+            }else{
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode("No fue posible guardar el archivo. Favor cerrar la ventana e intentar nuevamente!"));
+            }
         }catch(Exception $e){
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode($e->getMessage()));
@@ -1096,6 +1124,67 @@ class indicadoresActions extends sfActions{
         }catch(Exception $e){
             $conn->rollback();
             echo utf8_encode($e->getMessage());
+        }
+        
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    public function executeCalculoManual(sfWebRequest $request){
+        
+        $con = Doctrine_Manager::getInstance()->connection();
+        $conn = Doctrine::getConnectionByTableName("InoIndicadores");
+        $conn->beginTransaction();
+
+        
+        try{
+            
+            $sql = "
+                SELECT m.ca_referencia, rp.ca_idreporte, rp.ca_consecutivo, eta.ca_fchenvio
+                FROM tb_brk_maestra m
+                    INNER JOIN tb_brk_expo ex ON ex.ca_referencia = m.ca_referencia
+                    INNER JOIN tb_reportes rp ON rp.ca_idreporte = ex.ca_idreporte
+                    RIGHT JOIN ( SELECT sf.ca_consecutivo,
+                        sta.ca_fchenvio AS ca_fchenvio
+                       FROM tb_repstatus sta
+                         RIGHT JOIN ( SELECT p.ca_consecutivo,
+                                min(sta_1.ca_idstatus) AS ca_idstatus
+                               FROM tb_repstatus sta_1
+                                 JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte
+                              WHERE sta_1.ca_idetapa = 'EFADU'
+                              GROUP BY p.ca_consecutivo) sf ON sta.ca_idstatus = sf.ca_idstatus) eta ON rp.ca_consecutivo::text = eta.ca_consecutivo::text	
+                WHERE m.ca_referencia in ('330.50.05.0004.20')";
+
+            $rs = $con->execute($sql);
+            $refs = $rs->fetchAll();
+            
+            $i=1;
+            foreach ($refs as $r){
+                //echo $r["ca_referencia"];
+                //exit;
+//                echo $i." ".$r["ca_referencia"]."-".$r["ca_consecutivo"]."<br/>";
+//                echo $r["ca_consecutivo"]."<br/>";
+                $refAduana = Doctrine::getTable("InoMaestraAdu")->find($r["ca_referencia"]);
+
+                if ($refAduana->getRequiereIdgAduana()) {
+                    
+                    list($year, $month, $day) = sscanf($r["ca_fchenvio"], "%d-%d-%d");                
+                    $fchini = date('Y-m-d', mktime(0,0,0, $month, $day, $year));                    
+
+                    $options["fecha"] = $fchini;
+                    $options["idexclusion"] = $request->getParameter("exclusiones_idg");
+                    $options["observaciones"] = "Indicador registrado manualmente Ticket 89541";
+                    
+                    $idg = $refAduana->generarIdg($options, $conn);                    
+                    echo "<pre>";print_r($idg);echo "</pre>";
+                }
+                $i++;
+
+            }
+            $conn->commit();
+        }catch(Exception $e){
+            $conn->rollback();
+            echo $e->getMessage();
         }
         
         $this->setTemplate("responseTemplate");

@@ -9,7 +9,10 @@ $traficos = json_encode($sf_data->getRaw("traficos"));
 ?>
 <link rel="stylesheet" type="text/css"  href="/js/ext6/build/packages/charts/classic/classic/resources/charts-all.css"/>
 <script type="text/javascript" src="/js/ext6/build/packages/charts/classic/charts.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB" crossorigin="anonymous"></script>
+
+<!--Libreria necesaria para convertir Html en formato para pasar a pdf con la librería pdfmake-->
+<script type="text/javascript" src="/js/Colsys/Functions/browser.js"></script>
+
 <table align="center" width="98%" cellspacing="0" border="0" cellpading="0">
     <tr><td><div id="panel1"></div></td></tr>
 </table>
@@ -24,8 +27,9 @@ $traficos = json_encode($sf_data->getRaw("traficos"));
 Ext.Loader.setConfig({
     enabled: true,
     paths: {
-        'Chart':'../js/ext5/src/',
-        'Colsys':'/js/Colsys',        
+        'Chart':'../js/ext5/src/',        
+        'Colsys':'/js/Colsys',    
+        'Ext.ux':'/js/ext5/examples/ux',
         'Ext':'../js/ext6/classic/classic/src/',
         'Ext.plugin':'../js/ext6/classic/classic/src/plugin/'
     }
