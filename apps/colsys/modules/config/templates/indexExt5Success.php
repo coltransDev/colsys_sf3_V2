@@ -45,7 +45,6 @@ Ext.Loader.setConfig({
 </script>
 
 <table align="center" width="98%" cellspacing="0" border="0" cellpading="0"><tr><td>
-<script type="text/javascript" src="/js/Colsys/Functions/ExportGridToExcel.js"></script>
             
 <div id="panel"></div>
 <div id="sub-panel"></div>
