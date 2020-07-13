@@ -75,11 +75,10 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
                         renderer: comboBoxRenderer(this),
                         listeners:{
                             select: function(combo, record, eOpts){
-                                var hoy = new Date();
+                                var hoy = new Date();                                
+                                hoy = Ext.util.Format.date(hoy, 'Y-m-d');
                                 
-                                hoy = Ext.util.Format.date(hoy, 'Y-m-d')
-                                console.log(combo.getValue());
-                                if(combo.getValue()==7){//Reasignado
+                                if(record.data.seguimiento != true){//Reasignado ó Comentarios Gerencia General
                                     Ext.getCmp("compromisos").setValue("N/A");
                                     Ext.getCmp("compromisos").setHidden(true);
                                     
@@ -88,6 +87,15 @@ Ext.define('Colsys.Crm.FormSeguimiento', {
                                     
                                     Ext.getCmp("seguimiento_antecesor").setValue(0);
                                     Ext.getCmp("seguimiento_antecesor").setHidden(true);
+                                }else{
+                                    Ext.getCmp("compromisos").setValue(null);
+                                    Ext.getCmp("compromisos").setHidden(false);
+                                    
+                                    Ext.getCmp("fecha").setValue(null);
+                                    Ext.getCmp("fecha").setHidden(false);
+                                    
+                                    Ext.getCmp("seguimiento_antecesor").setValue(null);
+                                    Ext.getCmp("seguimiento_antecesor").setHidden(false);
                                 }
                             }
                         }                        
