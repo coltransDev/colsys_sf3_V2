@@ -969,6 +969,9 @@ $folder = $reporte->getDirectorioBase();
                                     {
                                         $nequipos=count($repequipos);
                                     }
+                                    if(count($repequipos) == 0 && $reporte->getCaImpoexpo()== Constantes::EXPO){
+                                        $nequipos = NuevoStatusForm::NUM_EQUIPOS_EXPO; // Ticket 87461
+                                    }
                                     //echo "<br>972::".$nequipos;
                                     //exit;
                                     for ($i = 0; $i < $nequipos+2; $i++) {
