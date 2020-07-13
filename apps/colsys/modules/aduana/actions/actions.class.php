@@ -188,7 +188,7 @@ class aduanaActions extends sfActions {
         $conn->beginTransaction();
         try 
         {
-            $idmaster = $request->getParameter("idmaster");
+            $idmaster = $request->getParameter("idmaster");            
             $referencia = $request->getParameter("referencia");
             $this->forward404Unless($referencia);
             $error = "";
@@ -201,22 +201,24 @@ class aduanaActions extends sfActions {
                 $idreporte = $request->getParameter("idreporte");
                 $this->forward404Unless($idreporte);
             }else{
+                $inoExpoAdu = Doctrine::getTable("InoExpoAdu")->find($referencia);
                 $idreporte = $inoExpoAdu->getCaIdreporte();
             }
 
-            $reporte = Doctrine::getTable("Reporte")->find($idreporte);
-            if($reporte->getRepAduana()){                
-                $reporteEnAduana = $reporte->getReferenciaExpoAdu();        
+                $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+                if($reporte->getRepAduana()){                
+                    $reporteEnAduana = $reporte->getReferenciaExpoAdu();        
 
-		if(is_object($reporteEnAduana) && ($reporteEnAduana->getCaReferencia() !== $referencia))                
-                    $error = "El reporte de negocios ".$reporte->getCaConsecutivo()." ya está siendo usado en la referencia: ".$reporteEnAduana->getCaReferencia();            
-	    }else{
-                $error = "El reporte de negocios ".$reporte->getCaConsecutivo()." no tiene Aduana";
-            }
+                    if(is_object($reporteEnAduana) && ($reporteEnAduana->getCaReferencia() !== $referencia))                
+                        $error = "El reporte de negocios ".$reporte->getCaConsecutivo()." ya está siendo usado en la referencia: ".$reporteEnAduana->getCaReferencia();            
+                }else{
+                    $error = "El reporte de negocios ".$reporte->getCaConsecutivo()." no tiene Aduana";
+                }
             
             if ($error == "") {
                 $repexpo = $reporte->getRepexpo();
-                if(!$inoExpoAdu){                    
+                
+                if(!is_object($inoExpoAdu)){                                        
                     $inoExpoAdu = new InoExpoAdu();                    
                     $inoExpoAdu->setCaReferencia($referencia);
                 }
@@ -288,8 +290,8 @@ class aduanaActions extends sfActions {
                 }
                 
                 $data["idreporte"] = $ino->getInoExpoAdu()->getCaIdreporte();
-                echo $data["idreporte"];
-                exit;
+                //echo $data["idreporte"];
+                //exit;
                 
                 $reporte = Doctrine::getTable("Reporte")->find($data["idreporte"]);
                 $data["consecutivo"] = $reporte->getCaConsecutivo();
