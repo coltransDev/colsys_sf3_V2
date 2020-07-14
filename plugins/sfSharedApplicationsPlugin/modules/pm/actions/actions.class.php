@@ -771,6 +771,8 @@ class pmActions extends sfActions {
                     while($request->getParameter("iddestino".$j)!=""){
                         $tarifa["trayecto"]["destino"]["ciudad"][] = utf8_encode($request->getParameter("destino".$j));
                         $tarifa["trayecto"]["destino"]["transporte"][] = $request->getParameter("transdest".$j);
+                        $tarifa["trayecto"]["destino"]["ent"][] = $request->getParameter("ent".$j);
+                        $tarifa["trayecto"]["destino"]["entrega"][] = utf8_encode($request->getParameter("entrega".$j));
                         $j++;
                     }
 
@@ -823,14 +825,16 @@ class pmActions extends sfActions {
 
                     //LCL
                     if($request->getParameter("lcl-checkbox")=="on"){                    
-                        $tarifa["lcl"]["tipo"] = $request->getParameter("tarifalcl");
+                        $tipocarga = $request->getParameter("tipocarga");                        
+                        $tarifa["tipocarga"] = $tipocarga;
+                        $tarifa[$tipocarga]["tipo"] = "puntual";
                         $m=0;
                         while($request->getParameter("piezasLcl".$m)!=""){    
-                            $tarifa["lcl"]["piezas-lcl"][] = $request->getParameter("piezasLcl".$m);
-                            $tarifa["lcl"]["peso-lcl"][] = $request->getParameter("pesoLcl".$m);
-                            $tarifa["lcl"]["dimensiones-lcl"][] = $request->getParameter("dimensionesLcl".$m);
-                            $tarifa["lcl"]["unidades-lcl"][] = utf8_encode($request->getParameter("unidimensionLcl".$m));
-                            $tarifa["lcl"]["embalaje"][] = $request->getParameter("embalaje".$m);
+                            $tarifa[$tipocarga]["piezas-lcl"][] = $request->getParameter("piezasLcl".$m);
+                            $tarifa[$tipocarga]["peso-lcl"][] = $request->getParameter("pesoLcl".$m);
+                            $tarifa[$tipocarga]["dimensiones-lcl"][] = $request->getParameter("dimensionesLcl".$m);
+                            $tarifa[$tipocarga]["unidades-lcl"][] = utf8_encode($request->getParameter("unidimensionLcl".$m));
+                            $tarifa[$tipocarga]["embalaje"][] = $request->getParameter("embalaje".$m);
                             $m++;
                         }
                     }
@@ -840,6 +844,7 @@ class pmActions extends sfActions {
                     $tarifa["generales"]["fchembarque"] = $request->getParameter("fchembarque");
                     $tarifa["generales"]["patio"] = utf8_encode($request->getParameter("patio"));
                     $tarifa["generales"]["observaciones"] = nl2br(utf8_encode($request->getParameter("observaciones")));
+                    $tarifa["generales"]["tipocotizacion"] = utf8_encode($request->getParameter("tipocot"));
 
                     $tarifa["compania"]["tipo"] = $request->getParameter("cliente");
                     $tarifa["compania"]["id"] = $request->getParameter("idcliente");
@@ -2706,8 +2711,8 @@ class pmActions extends sfActions {
         $request->setParameter("tipo", "externo");                 
         $detalleTarifa = sfContext::getInstance()->getController()->getPresentationFor('pm','crearTarifasHtml'); 
                 
-        $email->setCaBody($mensaje ."<br/>". $usuario->getFirma());
-        $email->setCaBodyhtml(Utils::replace($mensaje) . $detalleTarifa. "<br/>". $usuario->getFirmaHTML());
+//        $email->setCaBody($mensaje ."<br/>". $usuario->getFirma());
+        $email->setCaBodyhtml($mensaje ."<br/>". $detalleTarifa. "<br/>". $usuario->getFirmaHTML());
         
         $attachments = $this->getRequestParameter("attachments");
         if ($attachments) {

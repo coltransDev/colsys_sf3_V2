@@ -79,7 +79,8 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
                     $exw = $solicitud["trayecto"]["origen"]["exw"][$m]?"<br/><br/> Dirección de Recogida: ".utf8_decode($solicitud["trayecto"]["origen"]["recogida"][$m]):"";
                     $traorigen = $solicitud["trayecto"]["origen"]["transporte"][$m]=="cy"?"Puerto (CY-Container Yard)".$exw:"Puerta (SD-Store Door)".$exw;
                     $destino = utf8_decode($solicitud["trayecto"]["destino"]["ciudad"][$m]);
-                    $tradestino = $solicitud["trayecto"]["destino"]["transporte"][$m]=="cy"?"Puerto (CY-Container Yard)":"Puerta (SD-Store Door)";
+                    $ent = $solicitud["trayecto"]["destino"]["ent"][$m]?"<br/><br/> Dirección de Entrega: ".utf8_decode($solicitud["trayecto"]["destino"]["entrega"][$m]):"";                    
+                    $tradestino = $solicitud["trayecto"]["destino"]["transporte"][$m]=="cy"?"Puerto (CY-Container Yard)":"Puerta (SD-Store Door)".$ent;                    
                     ?>
                     <tr>
                         <td colspan="2" style="width:10%; text-align: center;"><?=$m+1?></td>
@@ -150,6 +151,8 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
                     }
                 }
                 if($solicitud["checkbox"]["lcl-checkbox"]=="on"){
+                    $tipocarga = $solicitud["tipocarga"];
+//                    echo $tipocarga;
                     /*if($solicitud["checkbox"]["fcl-checkbox"]=="on"){
                         ?>
                         <tr>
@@ -157,7 +160,7 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
                     }*/
                     ?>
                     <tr <?=$background?>>
-                        <th colspan="1" rowspan="<?=$rowspan2?>" style="width:10%; text-align: center;">LCL</th>
+                        <th colspan="1" rowspan="<?=$rowspan2?>" style="width:10%; text-align: center;"><?=$tipocarga=="lcl"?"LCL":"BREAK BULK"?></th>
                         <th colspan="2" style="width:10%;" class="subtitulo">Tipo</th>
                         <th colspan="1" style="width:20%;" class="subtitulo">Piezas</th>
                         <th colspan="2" style="width:20%;" class="subtitulo">Peso</th>
@@ -165,19 +168,19 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
                         <th colspan="2" style="width:20%;" class="subtitulo">Embalaje</th>
                     </tr>
                     <?
-                    if($solicitud["lcl"]["tipo"]=="puntual"){
+                    //if($solicitud["lcl"]["tipo"]=="puntual"){
                         for($n=0; $n<$solicitud["npiezasLcl"]; $n++){
                             ?>
                             <tr>
-                                <td colspan="2" style="width:10%;"><?=$solicitud["lcl"]["tipo"]?></td>
-                                <td colspan="1" style="width:20%;"><?=$solicitud["lcl"]["piezas-lcl"][$n]?></td>
-                                <td colspan="2" style="width:20%;"><?=number_format($solicitud["lcl"]["peso-lcl"][$n],2,",",".")." Kg"?></td>
-                                <td colspan="2" style="width:20%;"><?=$solicitud["lcl"]["dimensiones-lcl"][$n]." ".utf8_decode($solicitud["lcl"]["unidades-lcl"][$n])?></td>
-                                <td colspan="2" style="width:20%;"><?=$solicitud["lcl"]["embalaje"][$n]?></td>
+                                <td colspan="2" style="width:10%;"><?=$solicitud[$tipocarga]["tipo"]?></td>
+                                <td colspan="1" style="width:20%;"><?=$solicitud[$tipocarga]["piezas-lcl"][$n]?></td>
+                                <td colspan="2" style="width:20%;"><?=number_format($solicitud[$tipocarga]["peso-lcl"][$n],2,",",".")." Kg"?></td>
+                                <td colspan="2" style="width:20%;"><?=$solicitud[$tipocarga]["dimensiones-lcl"][$n]." ".utf8_decode($solicitud[$tipocarga]["unidades-lcl"][$n])?></td>
+                                <td colspan="2" style="width:20%;"><?=$solicitud[$tipocarga]["embalaje"][$n]?></td>
                             </tr>
                             <?
                         }
-                    }else{
+                    /*}else{
                         ?>
                         <tr>
                             <td colspan="2" style="width:10%;"><?=$solicitud["lcl"]["tipo"]?></td>
@@ -187,9 +190,9 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
                             <td colspan="2" style="width:20%;">N/A</td>
                         </tr>
                         <?
+                    }*/
                     }
                 }
-            }
             ?>                                    
             <tr <?=$background?>>
                 <th colspan="10" style="width:100%; text-align: center;">ADICIONALES</th>
@@ -206,6 +209,10 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
             </tr>
             <?
             if ($tipo=="interno"){?>
+                <tr>
+                    <th colspan="1" style="width:20%; text-align: center;">TIPO DE COTIZACI&Oacute;N</th>
+                    <td colspan="9" style="width:80%;"><?= $solicitud["generales"]["tipocot"]=="velocidad"?"La mas rápida que se obtenga (velocidad)":"La mejor tarifa (después de recibir por lo menos dos opciones de naviera y/o coloader)"?></td>
+                </tr>
                 <tr>
                     <th colspan="1" style="width:20%; text-align: center;">OBSERVACIONES</th>
                     <td colspan="9" style="width:80%;"><?= utf8_decode($solicitud["generales"]["observaciones"])?></td>

@@ -6,7 +6,7 @@ use_helper( "MimeType");
     <div id="emailForm"  >
             <form name="form1" id="form1" method="post" action="<?=url_for("pm/enviarSolicitudEmail?id=".$ticket->getCaIdticket())?>">
             <?					 
-            include_component("email", "formEmail", array("subject"=>$asunto,"message"=>"","contacts"=>""));
+            include_component("email", "formEmail", array("subject"=>$asunto,"messageHtml"=>"Estimado proveedor:","contacts"=>""));
             ?>
             <br />            
             <?
@@ -34,5 +34,5 @@ use_helper( "MimeType");
             <div align="center"><input type="submit" name="commit" value="Enviar" class="button" /></div><br /><br />
         </form>
     </div>
-    <iframe src="<?=url_for("pm/generarTarifasPDF?idticket=".$ticket->getCaIdticket()."&tipo=externo")?>" width="700" height="500"></iframe>
+    <iframe src="<?=url_for("pm/generarTarifasPDF?idticket=".$ticket->getCaIdticket()."&tipo=externo")?>" width="800" height="400"></iframe>
 </div>

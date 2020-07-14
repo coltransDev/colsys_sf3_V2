@@ -309,7 +309,7 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
 
         var w = new Ext.IframeWindow({
             id:'win-proveedor-'+idticket,
-            width:780,
+            width:870,
             height:480,
             closeAction: 'destroy',            
             title:"Pricing: Solicitud de tarifas a proveedor",

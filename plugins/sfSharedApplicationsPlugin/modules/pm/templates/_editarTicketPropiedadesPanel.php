@@ -246,6 +246,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                         Ext.getCmp("fchembarque").setDisabled(true);
                         Ext.getCmp("compania").setDisabled(true);                        
                         Ext.getCmp("patio").setDisabled(true);
+                        Ext.getCmp("rtipocotizacion").setDisabled(true);
                     }
                 },
                 afterrender: function(t) {
@@ -780,7 +781,43 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                             items: [
                                                 {boxLabel: 'Puerto (CY-Container Yard)', name: 'transdest0', 'inputValue':'cy', checked: true},
                                                 {boxLabel: 'Puerta (SD-Store Door)', name: 'transdest0', 'inputValue':'sd'}
-                                            ]
+                                            ],
+                                            listeners: {
+                                                change: function(radiogroup, radio) {                                                                                            
+                                                    if(radio.inputValue==='sd'){
+                                                        Ext.getCmp("ent0").show();                                        
+                                                    }else{
+                                                        Ext.getCmp("ent0").hide();                                        
+                                                    }
+                                                }
+                                            }
+                                        },{
+                                        xtype: 'checkbox',                                        
+                                        id: 'ent0',
+                                        name: 'ent0',
+                                        boxLabel: 'Dirección de Entrega',
+                                        hidden: true,
+                                        listeners:{
+                                            check: function(t, checked){
+                                                if(checked){
+                                                    Ext.getCmp("entrega0").show();
+                                                    Ext.getCmp("entrega0").allowBlank = false;
+                                                }else{
+                                                    Ext.getCmp("entrega0").hide();
+                                                    Ext.getCmp("entrega0").allowBlank = true;
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        xtype: 'textfield',
+//                                        fieldLabel: 'Digite la dirección',
+                                        //emptyText: '',    
+                                        hidden: true,
+                                        name: 'entrega0',
+                                        id: 'entrega0',  
+                                        allowBlank: true,
+                                        width: 200
                                         }]
                                 }]
                             }]
@@ -1177,11 +1214,20 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                         border:false,                                
                         items:[{
                             xtype:'fieldset',
-                            title:'LCL',
+                            title:'LCL/BREAKBULK',
                             id: "lcl",                            
                             checkboxToggle:true,
                             collapsed: true,                                                        
                             items:[{                                        
+                                xtype: 'radiogroup',
+                                itemCls: 'x-check-group-alt',
+                                id: 'rtipocarga',                                                                        
+                                fieldLabel: 'Tipo de Carga',                                
+                                items: [                                    
+                                    {boxLabel: 'LCL', name: 'tipocarga', 'inputValue':'lcl'},
+                                    {boxLabel: 'BREAK BULK', name: 'tipocarga', 'inputValue':'breakbulk'}
+                                ]
+                            },/*{                                        
                                 xtype: 'radiogroup',
                                 itemCls: 'x-check-group-alt',
                                 id: 'rlcl',                                                                        
@@ -1189,7 +1235,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                 items: [                                    
                                     {boxLabel: 'Tarifa Puntual', name: 'tarifalcl', 'inputValue':'puntual', checked: true}
                                 ]
-                            },{
+                            },*/{
                                 xtype:'button',
                                 text:"Agregar Piezas",
                                 id: "buttonLcl",
@@ -1283,6 +1329,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                 
                                     Ext.getCmp("buttonLcl").show();
                                     Ext.getCmp("panel-lcl0").show();
+                                    Ext.getCmp('rtipocarga').allowBlank = false;
                                     Ext.getCmp('piezasLcl0').allowBlank = false;
                                     Ext.getCmp('pesoLcl0').allowBlank = false;                                                    
                                     Ext.getCmp('dimensionesLcl0').allowBlank = false;
@@ -1295,6 +1342,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                     
                                     Ext.getCmp("buttonLcl").hide();
                                     Ext.getCmp("panel-lcl0").hide();
+                                    Ext.getCmp('rtipocarga').allowBlank = true;
                                     Ext.getCmp('piezasLcl0').allowBlank = true;
                                     Ext.getCmp('pesoLcl0').allowBlank = true;                                                    
                                     Ext.getCmp('dimensionesLcl0').allowBlank = true;
@@ -1397,7 +1445,8 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                     ],
                                     listeners: {
                                         change: function(radiogroup, radio) {                                            
-                                            if(radio.inputValue==='nuevo'){
+                                            if(radio.inputValue==='nuevo'){                                                                                                
+                                                
                                                 Ext.getCmp("ccompania1").hide();
                                                 Ext.getCmp('compania').allowBlank = true;
                                                 Ext.getCmp("ccompania2").show();
@@ -1409,7 +1458,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                                 Ext.getCmp('compania2').allowBlank = true;
                                             }
                                         },                                    
-                                        afterrender: function(t) {                                        
+                                        afterrender: function(t) {                                            
                                             if(t.getValue().inputValue=="antiguo"){
                                                 Ext.getCmp("ccompania1").show();
                                                 Ext.getCmp('compania').allowBlank = false;
@@ -1454,6 +1503,34 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                         allowBlank: true,
                                         width: 400
                                 }]
+                            }]
+                        }]
+                    },//Tipo de cotización
+                    {
+                        columnWidth:1,                                
+                        border:false,                                
+                        items:[{
+                            xtype:'fieldset',
+                            title: '?Como quiere recibir su cotización?',
+                            border:true,                                
+                            autoHeight:true,                            
+                            layout:'column',                            
+                            columns : 1,
+                            defaults:{                                    
+                                xtype:'fieldset',                                    
+                                layout:'form',
+                                labelAlign: 'top',
+                                border:false    
+                            },                                
+                            items:[{                                        
+                                xtype: 'radiogroup',
+                                itemCls: 'x-check-group-alt',
+                                id: 'rtipocotizacion',                                                                                                        
+                                allowBlank: false,
+                                items: [                                    
+                                    {boxLabel: 'La mas rápida que se obtenga (velocidad)', name: 'tipocot', 'inputValue':'velocidad'},
+                                    {boxLabel: 'La mejor tarifa (después de recibir por lo menos dos opciones de naviera y/o coloader)', name: 'tipocot', 'inputValue':'calidad'}
+                                ]
                             }]
                         }]
                     },//    Observaciones
@@ -1659,6 +1736,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                         Ext.getCmp("origen0").setDisabled(true);
                         Ext.getCmp("destino0").setDisabled(true);
                         Ext.getCmp("tarifareq").setDisabled(true);
+                        Ext.getCmp("rtipocotizacion").setDisabled(true);
                         Ext.getCmp("fchembarque").setDisabled(true);
                         Ext.getCmp("compania").setDisabled(true);                        
                         Ext.getCmp("patio").setDisabled(true);
@@ -2228,7 +2306,41 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                             items: [
                                 {boxLabel: 'Puerto (CY-Container Yard)', name: 'transdest'+k, 'inputValue':'cy', checked: true},
                                 {boxLabel: 'Puerta (SD-Store Door)', name: 'transdest'+k, 'inputValue':'sd'}
-                            ]
+                            ],
+                            listeners: {
+                                change: function(radiogroup, radio) {                                                                                            
+                                    if(radio.inputValue==='sd'){
+                                        Ext.getCmp("ent"+k).show();                                        
+                                    }else{
+                                        Ext.getCmp("ent"+k).hide();                                        
+                                    }
+                                }
+                            }                            
+                        },{
+                            xtype: 'checkbox',                                        
+                            id: 'ent'+k,
+                            name: 'ent'+k,
+                            boxLabel: 'Dirección de Entrega',
+                            hidden: true,
+                            listeners:{
+                                check: function(t, checked){
+                                    if(checked){
+                                        Ext.getCmp("entrega"+k).show();
+                                        Ext.getCmp("entrega"+k).allowBlank = false;
+                                    }else{
+                                        Ext.getCmp("entrega"+k).hide();
+                                        Ext.getCmp("entrega"+k).allowBlank = true;
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'textfield',
+                            hidden: true,
+                            name: 'entrega'+k,
+                            id: 'entrega'+k,  
+                            allowBlank: true,
+                            width: 200
                         }]
                 }]
             });
