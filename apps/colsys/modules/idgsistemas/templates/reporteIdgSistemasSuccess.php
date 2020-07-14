@@ -77,6 +77,7 @@ if (!$idgsistemas) {
                 <th scope="col" style=" text-align: center"><b>Ciu. Destino</b></th>
                 <th scope="col" style=" text-align: center"><b>Fcl</b></th>
                 <th scope="col" style=" text-align: center"><b>Lcl</b></th>
+                <th scope="col" style=" text-align: center"><b>BreakBulk</b></th>
                 <th scope="col" style=" text-align: center"><b>Gastos EXW</b></th>
             <?}?>
         </tr>
@@ -244,6 +245,7 @@ if (!$idgsistemas) {
                         <td><?= $idgsistema["ca_ciudestino"] ?></td>
                         <td><?= $idgsistema["fcl"] ?></td>
                         <td><?= $idgsistema["lcl"] ?></td>
+                        <td><?= $idgsistema["breakbulk"] ?></td>
                         <td><?= $idgsistema["exw"] ?></td>                    
                     <?}?>
                 <? } ?>

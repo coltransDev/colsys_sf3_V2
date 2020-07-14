@@ -254,7 +254,7 @@ class idgsistemasActions extends sfActions {
                     $select = $innerJoin = $leftJoin = "";
                     if(in_array(25, $this->narea)){ // Transporte Terrestre Internacional
                         $select = " ,pricing.ca_traorigen,pricing.ca_ciuorigen,pricing.ca_tradestino,pricing.ca_ciudestino,pricing.fcl,
-                            pricing.lcl, pricing.tipodestino, pricing.exw";
+                            pricing.lcl, pricing.breakbulk, pricing.tipodestino, pricing.exw";
                         
                         $innerJoin = "
                             INNER JOIN helpdesk.vi_tkpricing as pricing on pricing.ca_idticket = tk.ca_idticket";
