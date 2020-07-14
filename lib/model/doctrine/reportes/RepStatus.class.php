@@ -443,26 +443,16 @@ class RepStatus extends BaseRepStatus {
                 $perfiles = array();
                 $perfiles1 = array();
                 if (($reporte->getCaTransporte() == constantes::MARITIMO && $reporte->getCaImpoexpo() == constantes::IMPO)) {
-                    if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
-                    {
-                        $perfiles = array("Jefe de Aduanas Puerto", "Coordinador Control Riesgo Aduana");                        
-                    }
-                    else
-                    {
-                        $perfiles = $etapa->getPerfilxTipo('ADUANA-PUERTO');
-                        $perfiles1 = $etapa->getPerfilxTipo('ADUANA-PUERTO-CR');
-                    }
+                    if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)                    
+                        $perfiles = array("Jefe Dpto. Aduana");
+                        
+                    $perfiles1 = $etapa->getPerfilxTipo('ADUANA-PUERTO-CR');                    
                 }
                 else if (($reporte->getCaTransporte() == constantes::AEREO && $reporte->getCaImpoexpo() == constantes::IMPO)) {
-                    if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)
-                    {
-                        $perfiles = array("Jefe Dpto. Aduana", "Coordinador Control Riesgo Aduana");                        
-                    }
-                    else
-                    {
-                        $perfiles = $etapa->getPerfilxTipo('ADUANA-AEREO');
-                        $perfiles1 = $etapa->getPerfilxTipo('ADUANA-AEREO-CR');
-                    }                
+                    if ($reporte->getCaDeclaracionant() == "true" || $reporte->getCaDeclaracionant() == "TRUE" || $reporte->getCaDeclaracionant() == "1" || $reporte->getCaDeclaracionant() == 1)                    
+                        $perfiles = array("Jefe Dpto. Aduana");                        
+                        
+                    $perfiles1 = $etapa->getPerfilxTipo('ADUANA-AEREO-CR');                                    
                 }
 
                 if (count($perfiles) > 0) {
