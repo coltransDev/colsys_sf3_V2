@@ -151,7 +151,7 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
                     }
                 }
                 if($solicitud["checkbox"]["lcl-checkbox"]=="on"){
-                    $tipocarga = $solicitud["tipocarga"];
+                    $tipocarga = $solicitud["tipocarga"]?$solicitud["tipocarga"]:"lcl";
 //                    echo $tipocarga;
                     /*if($solicitud["checkbox"]["fcl-checkbox"]=="on"){
                         ?>
