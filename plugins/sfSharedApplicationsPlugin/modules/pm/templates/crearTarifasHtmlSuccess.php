@@ -210,8 +210,8 @@ $background = $tipo==="interno"?null:'style="background-color:#E3E3E3;"';
             <?
             if ($tipo=="interno"){?>
                 <tr>
-                    <th colspan="1" style="width:20%; text-align: center;">TIPO DE COTIZACI&Oacute;N</th>
-                    <td colspan="9" style="width:80%;"><?= $solicitud["generales"]["tipocot"]=="velocidad"?"La mas rápida que se obtenga (velocidad)":"La mejor tarifa (después de recibir por lo menos dos opciones de naviera y/o coloader)"?></td>
+                    <th colspan="1" style="width:20%; text-align: center;">TIPO DE COTIZACI&Oacute;N</th>                    
+                    <td colspan="9" style="width:80%;"><?= Constantes::getTipoCotPricing($solicitud["generales"]["tipocotizacion"])?></td>
                 </tr>
                 <tr>
                     <th colspan="1" style="width:20%; text-align: center;">OBSERVACIONES</th>

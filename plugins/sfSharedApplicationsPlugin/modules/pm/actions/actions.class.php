@@ -2642,13 +2642,13 @@ class pmActions extends sfActions {
             mkdir($directorio, 0777, true);
         }
 
-        if($tipo == "interno"){
-            $filename = "Solicitud de Tarifas Ticket # ".$ticket->getCaIdticket();
-            $pdf->Output($directorio . DIRECTORY_SEPARATOR .$filename.'.pdf', 'F');
-        }else{
+        if($tipo != "interno"){
+          //  $filename = "Solicitud de Tarifas Ticket # ".$ticket->getCaIdticket();
+            //$pdf->Output($directorio . DIRECTORY_SEPARATOR .$filename.'.pdf', 'F');
+        //}else{
             $filename = "Solicitud Cotizacion Proveedor Ticket # ".$ticket->getCaIdticket().".pdf";
             $pdf->Output($filename, 'I'); // Lo muestra en el navegador
-            $pdf->Output($directorio . DIRECTORY_SEPARATOR .$filename, 'F');
+            //$pdf->Output($directorio . DIRECTORY_SEPARATOR .$filename, 'F');
         }
 
         $this->setTemplate("responseTemplate");   
@@ -2906,10 +2906,10 @@ class pmActions extends sfActions {
         $solicitud = $datos["solicitud"];
         $trayecto = $datos["solicitud"]["trayecto"];
         
-        if(!$trayecto["ruta"][$idtrayecto]){
+        $nuevo = false;
+        if(!$trayecto["ruta"][$idtrayecto] || $idtrayecto == ""){
             $solicitud["norigen"]++;            
-            $ruta[] = $trayecto["ruta"];
-            $ruta["idtrayecto"] = $idtrayecto;
+            $nuevo = true;
         }else{
             $ruta = $trayecto["ruta"][$idtrayecto];
         }
@@ -2927,9 +2927,15 @@ class pmActions extends sfActions {
         $ruta["vigenciaIni"] = $request->getParameter("vigenciaIni");
         $ruta["vigenciaEnd"] = $request->getParameter("vigenciaEnd");
         
-        $trayecto["ruta"][$idtrayecto] = $ruta;
-        $trayecto["origen"]["ciudad"][$idtrayecto] = utf8_encode($request->getParameter("origen"));
-        $trayecto["destino"]["ciudad"][$idtrayecto] = utf8_encode($request->getParameter("destino"));
+        $ntrayectos = count($trayecto["ruta"]);
+        if($nuevo){            
+            $ruta["idtrayecto"] = count($ntrayectos)+1;
+            array_push($trayecto["ruta"], $ruta);
+            array_push($trayecto["origen"]["ciudad"], utf8_encode($request->getParameter("origen")));
+            array_push($trayecto["destino"]["ciudad"], utf8_encode($request->getParameter("destino")));
+        }else{
+            $trayecto["ruta"][$idtrayecto] = $ruta;
+        }
         $solicitud["trayecto"] = $trayecto;        
         $datos["solicitud"] = $solicitud;
         

@@ -1528,8 +1528,8 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                                 id: 'rtipocotizacion',                                                                                                        
                                 allowBlank: false,
                                 items: [                                    
-                                    {boxLabel: 'La mas rápida que se obtenga (velocidad)', name: 'tipocot', 'inputValue':'velocidad'},
-                                    {boxLabel: 'La mejor tarifa (después de recibir por lo menos dos opciones de naviera y/o coloader)', name: 'tipocot', 'inputValue':'calidad'}
+                                    {boxLabel: '<?= Constantes::getTipoCotPricing("velocidad")?>', name: 'tipocot', 'inputValue':'velocidad'},
+                                    {boxLabel: '<?= Constantes::getTipoCotPricing("calidad")?>', name: 'tipocot', 'inputValue':'calidad'}
                                 ]
                             }]
                         }]
