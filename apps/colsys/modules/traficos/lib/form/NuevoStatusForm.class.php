@@ -2,6 +2,7 @@
 class NuevoStatusForm extends BaseForm {
     const NUM_CC = 7;
     const NUM_EQUIPOS = 3;
+    const NUM_EQUIPOS_EXPO = 8;
 
     private $queryIdEtapa = null;
     private $queryUsuario = null;
@@ -161,13 +162,13 @@ class NuevoStatusForm extends BaseForm {
             $choices[$v->getCaIdentificacion()] = $v->getCaValor();
         }
         
-        $nequipos = self::NUM_EQUIPOS;
+        $nequipos = self::NUM_EQUIPOS;        
         if( $this->num_equipos > $nequipos )
         {
             $nequipos=$this->num_equipos;
         }
-        //echo "<br>169::".$nequipos;
-        //exit;
+//        echo "<br>169::".$nequipos;
+//        exit;
         for ($i = 0; $i < $nequipos+2; $i++) {
             $widgets["equipos_tipo_" . $i] = new sfWidgetFormDoctrineChoice(array(
                         'model' => 'Concepto',
@@ -632,11 +633,11 @@ class NuevoStatusForm extends BaseForm {
     
     
     public function setNumEquipos($nequipos) {
-        $this->num_equipos=$nequipos;
+        $this->num_equipos=$nequipos;        
     }
     
     public function getNumEquipos() {
         return $this->num_equipos;
-    }
+    }    
 }
 ?>
