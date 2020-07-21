@@ -57,5 +57,30 @@ class Constantes{
     const CARGA_AEREA = "Carga Aérea";
     const MARITIMA_LCL = "Carga Marítima LCL";
     const MARITIMA_FCL = "Carga Marítima FCL";
+
+    const IDCOLMAS = 1;
+    const IDCOLTRANS = 2;
+    const IDCOLTRANSUSA = 3;
+    const IDCONSOLCARGO = 4;
+    const IDFONEMCOL = 5;
+    const IDHBINGENIERIA = 6;
+    const IDTPLOGISTICS = 7;
+    const IDCOLOTM = 8;
+    const IDTOMS = 9;
+    const IDDATECSA = 10;
+    const IDCOLDEPLOG = 11;
+    const IDCOLDEPBN = 12;
+    
+    private static $grupocoltrans = [self::IDCOLMAS, self::IDCOLTRANS, self::IDCOLTRANSUSA, self::IDFONEMCOL, self::IDHBINGENIERIA, self::IDCOLOTM, self::IDCOLDEPLOG, self::IDCOLDEPBN];
+    
+    public static function getGrupoColtrans() {
+        return self::$grupocoltrans;
+    }
+    
+    private static $tipocotizacion = ["velocidad"=>"La más rápida que se obtenga", "calidad"=>"Tarifa analizada por Pricing (después de recibir por lo menos dos opciones de naviera y/o coloader)"];
+    
+    public static function getTipoCotPricing($tipo) {
+        return self::$tipocotizacion[$tipo];
+    }
 }
 ?>
