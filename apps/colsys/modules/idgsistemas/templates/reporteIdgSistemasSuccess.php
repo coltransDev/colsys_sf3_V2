@@ -16,7 +16,7 @@ $festivos = TimeUtils::getFestivos();
 $narea = $sf_data->getRaw("narea");
 $colspan = 16;
 if (in_array(25, $narea)) {     
-    $colspan+=8;
+    $colspan+=9;
 }
 if($checkboxStatus== "on"){
     $colspan+=3;
@@ -79,6 +79,7 @@ if (!$idgsistemas) {
                 <th scope="col" style=" text-align: center"><b>Lcl</b></th>
                 <th scope="col" style=" text-align: center"><b>BreakBulk</b></th>
                 <th scope="col" style=" text-align: center"><b>Gastos EXW</b></th>
+                <th scope="col" style=" text-align: center"><b>Tipo de Cotización</b></th>
             <?}?>
         </tr>
         <?
@@ -247,6 +248,7 @@ if (!$idgsistemas) {
                         <td><?= $idgsistema["lcl"] ?></td>
                         <td><?= $idgsistema["breakbulk"] ?></td>
                         <td><?= $idgsistema["exw"] ?></td>                    
+                        <td><?= Constantes::getTipoCotPricing($idgsistema["ca_tipocotizacion"]) ?></td>
                     <?}?>
                 <? } ?>
                 
