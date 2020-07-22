@@ -70,34 +70,37 @@ $permisos = $sf_data->getRaw("permisos");
                     buttons: Ext.Msg.OKCANCEL,
                     multiline: true,
                     fn: function(btn, text)
-                    {
+                    {                        
                         if( text.trim()==""){
                             alert("Debe colocar una observacion");
                         }else{
-                            grid.setLoading(true);
-                            Ext.Ajax.request(
-                            {
-                                waitMsg: 'Enviando...',
-                                url: '/contabilidad/anularComprobantes',
-                                params :	{
-                                    "observaciones": text.trim(),
-                                    "id": str
-                                },
-                                failure:function(response,options){
-                                    alert( response.toSource()  );
-                                    
-                                    success = false;
-                                    alert("Surgio un problema al tratar de anular la referencia");
-                                    grid.setLoading(false);
-                                },
-                                success:function(response,options){
-                                    var res = Ext.util.JSON.decode( response.responseText );
-                                    
-                                    Ext.MessageBox.alert("Mensaje ","Factura anulada No. "+ res.resul);
-                                    store.reload();
-                                    grid.setLoading(false);
-                                }
-                            });
+                            console.log(btn);
+                            if(btn == "ok"){
+                                grid.setLoading(true);
+                                Ext.Ajax.request(
+                                {
+                                    waitMsg: 'Enviando...',
+                                    url: '/contabilidad/anularComprobantes',
+                                    params :	{
+                                        "observaciones": text.trim(),
+                                        "id": str
+                                    },
+                                    failure:function(response,options){
+                                        alert( response.toSource()  );
+
+                                        success = false;
+                                        alert("Surgio un problema al tratar de anular la referencia");
+                                        grid.setLoading(false);
+                                    },
+                                    success:function(response,options){
+                                        var res = Ext.util.JSON.decode( response.responseText );
+
+                                        Ext.MessageBox.alert("Mensaje ","Factura anulada No. "+ res.resul);
+                                        store.reload();
+                                        grid.setLoading(false);
+                                    }
+                                });
+                            }
                         }
                     },
                     animateTarget: 'addAddressBtn',
@@ -199,6 +202,7 @@ $permisos = $sf_data->getRaw("permisos");
                             { name: 'ca_modalidad'+this.idgrid,     mapping: 'ca_modalidad'     },
                             { name: 'ca_origen'+this.idgrid,        mapping: 'ca_ciuorigen'     },
                             { name: 'ca_destino'+this.idgrid,       mapping: 'ca_ciudestino'    },
+                            { name: 'ca_succliente'+this.idgrid,    mapping: 'ca_succliente'    },
                             { name: 'ca_idcliente'+this.idgrid,     mapping: 'ca_idcliente'     },
                             { name: 'ca_doctransporte'+this.idgrid, mapping: 'ca_doctransporte' },
                             { name: 'ca_idreporte'+this.idgrid,     mapping: 'ca_noreporte'     },
@@ -253,11 +257,12 @@ $permisos = $sf_data->getRaw("permisos");
                         {text: "Id Cliente",    dataIndex: 'ca_idfacturado'+this.idgrid,                            sortable: true},
                         {text: "Cliente",       dataIndex: 'ca_nomfacturado'+this.idgrid,                           sortable: true, width:200},            
                         {text: "Doc.Trans",     dataIndex: 'ca_doctransporte'+this.idgrid,                          sortable: true, width:150},
+                        {text: "Suc.Cliente",   dataIndex: 'ca_succliente'+this.idgrid,                             sortable: true},
                         {text: "Reporte",       dataIndex: 'ca_idreporte'+this.idgrid,                              sortable: true},
                         {text: "Tercero",       dataIndex: 'ca_idtercero'+this.idgrid,                              sortable: true},
                         {text: "Id",            dataIndex: 'ca_id'+this.idgrid,                                     sortable: true},
                         {text: "Fecha Comp",    dataIndex: 'ca_fchcomprobante'+this.idgrid,                         sortable: true},
-                        {text: "Fecha LLegada",    dataIndex: 'ca_fchllegada'+this.idgrid,                         sortable: true},
+                        {text: "Fecha LLegada", dataIndex: 'ca_fchllegada'+this.idgrid,                         sortable: true},
                         
                     ]
                 )
