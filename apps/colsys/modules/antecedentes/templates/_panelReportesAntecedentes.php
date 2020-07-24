@@ -67,7 +67,7 @@ include_component("gestDocumental", "widgetUploadButton");
             autoLoad : true,
             url: '<?= url_for("antecedentes/datosPanelReportesAntecedentes") ?>',
             baseParams : {
-                numRef: this.numRef
+                idmaster: this.idmaster
             },
             reader: new Ext.data.JsonReader(
             {
@@ -272,7 +272,7 @@ include_component("gestDocumental", "widgetUploadButton");
                             scope:this,
                             handler: function(){
                                 if( confirm("Esta seguro?") ){
-                                    if( this.ctxRecord.data.idreporte  && this.numRef){
+                                    if( this.ctxRecord.data.idreporte  && this.idmaster){
                                        // alert(this.ctxRecord.data.idreporte+"-"+ this.numRef);
                                        var id=this.ctxRecord.id;
                                         Ext.Ajax.request(
@@ -280,7 +280,7 @@ include_component("gestDocumental", "widgetUploadButton");
                                             waitMsg: 'Guardando cambios...',
                                             url:'<?=url_for("antecedentes/eliminarReporte")?>',
                                             params : {
-                                                referencia: this.numRef,
+                                                idmaster: this.idmaster,
                                                 idreporte: this.ctxRecord.data.idreporte
                                             },
                                             failure:function(response,options){

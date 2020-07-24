@@ -9,11 +9,13 @@
 $i = 0;
 //echo $this->getRequestParameter("format");
 
-if ($this->getRequestParameter("ref")) {
-   $numref = str_replace("|", ".", $this->getRequestParameter("ref"));
+if ($this->getRequestParameter("idmaster")) {
+   //$numref = str_replace("|", ".", $this->getRequestParameter("ref"));
+   $idmaster= str_replace("|", ".", $this->getRequestParameter("idmaster"));
    //echo  $numref;
    //$master=new InoMaestraSea();
-   $master = Doctrine::getTable("InoMaestraSea")->find($numref);
+   
+   $master = Doctrine::getTable("InoMaster")->find($idmaster);
    $sucursal = $user->getIdSucursal();
 } else {
    $numref = "";
@@ -25,7 +27,7 @@ if ($action != "index") {
       $button[$i]["name"] = "Inicio ";
       $button[$i]["tooltip"] = "Pagina inicial del módulo";
       $button[$i]["image"] = "22x22/home.gif";
-      $button[$i]["link"] = "antecedentes/entregaOportuna";
+      $button[$i]["link"] = "antecedentes/entregaOportuna";      
    } else if ($this->getRequestParameter("format") != "maritimo") {
       $button[$i]["name"] = "Inicio ";
       $button[$i]["tooltip"] = "Pagina inicial del módulo";
@@ -36,6 +38,13 @@ if ($action != "index") {
       $button[$i]["tooltip"] = "Pagina inicial del módulo";
       $button[$i]["image"] = "22x22/home.gif";
       $button[$i]["link"] = "/colsys_php/inosea.php";
+      $i++;
+      
+      $button[$i]["name"] = "Estado RN";
+      $button[$i]["tooltip"] = "RN pendientes por antecedentes";
+      $button[$i]["image"] = "22x22/agt_update_critical.gif";
+      $button[$i]["link"] = "/reportesGer/reporteEnvioAntecedentes";
+      
    }
    $i++;
 }
@@ -52,11 +61,11 @@ switch ($action) {
       $i++;
       break;
    case "asignacionMaster":
-      if ($this->getRequestParameter("ref")) {
+      if ($this->getRequestParameter("idmsater")) {
          $button[$i]["name"] = "Ver Planilla";
          $button[$i]["tooltip"] = "Notifica al departamento marítimo ";
          $button[$i]["image"] = "22x22/txt.gif";
-         $button[$i]["link"] = "antecedentes/verPlanilla?ref=" . $this->getRequestParameter("ref");
+         $button[$i]["link"] = "antecedentes/verPlanilla?idmaster=" . $this->getRequestParameter("idmaster");
       }
       $i++;
       break;
@@ -66,7 +75,7 @@ switch ($action) {
          $button[$i]["name"] = "Editar ";
          $button[$i]["tooltip"] = "Edita esta referencia para agregar o quitar reportes";
          $button[$i]["image"] = "22x22/edit.gif";
-         $button[$i]["link"] = "antecedentes/asignacionMaster?ref=" . $this->getRequestParameter("ref");
+         $button[$i]["link"] = "antecedentes/asignacionMaster?idmaster=" . $this->getRequestParameter("idmaster");
          $i++;
 
          $button[$i]["name"] = "Email ";
@@ -91,11 +100,11 @@ switch ($action) {
            ->fetchOne();
           */
 
-         if ($master && $master->getCaProvisional() == true || $master->getCaProvisional() == "true" || $master->getCaProvisional() == "1") {
+         if ($master && $master->getCaReferencia() == "") {
             $button[$i]["name"] = "Desbloquear ";
             $button[$i]["tooltip"] = "Desbloquea una referencia y confirma la aceptacion";
             $button[$i]["image"] = "22x22/unlock.gif";
-            $button[$i]["link"] = "antecedentes/aceptarReferencia?ref=" . $this->getRequestParameter("ref");
+            $button[$i]["link"] = "antecedentes/aceptarReferencia?idmaster=" . $this->getRequestParameter("idmaster");
             $i++;
 
             $button[$i]["id"] = "rechazar";
@@ -105,19 +114,25 @@ switch ($action) {
             $button[$i]["onClick"] = "rechazarReferencia()";
             $i++;
          }
-         if ($master && $master->getCaUsumuisca() != "" && $user->getIdSucursal() == "BOG" && ($master->getCaCarpeta() == "0" or $master->getCaCarpeta() == false )) {
-            $button[$i]["id"] = "archivar-ref";
-            $button[$i]["name"] = "Archivar ";
-            $button[$i]["tooltip"] = "Crear la carpeta para archivar";
-            $button[$i]["image"] = "22x22/folder.png";
-            $button[$i]["link"] = "#";
-            $button[$i]["onClick"] = "archivar('" . $master->getCaReferencia() . "')";
-            $i++;
+         $masterSea=$master->getInoMasterSea();
+         if ($masterSea->count()  ) {
+             $datos=json_decode($masterSea->getCaDatos());
+             //$master->getCaUsumuisca() != "" && $user->getIdSucursal() == "BOG" && ($master->getCaCarpeta() == "0" or $master->getCaCarpeta() == false
+             if($datos->ca_usumuisca && $user->getIdSucursal() == "BOG" && ($masterSea->ca_carpeta() == "0" || $masterSea->ca_carpeta() == "false" ))
+             {
+                $button[$i]["id"] = "archivar-ref";
+                $button[$i]["name"] = "Archivar ";
+                $button[$i]["tooltip"] = "Crear la carpeta para archivar";
+                $button[$i]["image"] = "22x22/folder.png";
+                $button[$i]["link"] = "#";
+                $button[$i]["onClick"] = "archivar('" . $master->getCaReferencia() . "')";
+                $i++;
+             }
          }
       }
       break;
    case "emailComodato":
-      if ($this->getRequestParameter("ref")) {
+      if ($this->getRequestParameter("idmaster")) {
          $button[$i]["name"] = "Email ";
          $button[$i]["tooltip"] = "Enviar este reporte por e-mail";
          $button[$i]["image"] = "22x22/email.gif";
@@ -128,7 +143,7 @@ switch ($action) {
       $i++;
       break;
    case "emailAutorizacion":
-      if ($this->getRequestParameter("ref")) {
+      if ($this->getRequestParameter("idmaster")) {
          $button[$i]["name"] = "Email ";
          $button[$i]["tooltip"] = "Solicitar Autorizacion por e-mail";
          $button[$i]["image"] = "22x22/email.gif";
@@ -167,7 +182,7 @@ switch ($action) {
             alert("Debe colocar un motivo");
          }else{
             if(btn=="ok")
-               href='<?= url_for("antecedentes/rechazarReferencia?ref=" . $this->getRequestParameter("ref")) ?>';
+               href='<?= url_for("antecedentes/rechazarReferencia?idmaster=" . $this->getRequestParameter("idmaster")) ?>';
             Ext.MessageBox.wait('enviando Notificacion de rechazo', '');
             Ext.Ajax.request(
             {
@@ -183,12 +198,16 @@ switch ($action) {
                   alert("Surgio un problema al tratar de rechzar la referencia")
                },
                success:function(response,options){
-                  var res = Ext.util.JSON.decode( response.responseText );
-                  if( res.success ){
-                     alert("Se envio aviso al depto de traficos")
-                     location.href="/antecedentes/listadoReferencias/format/maritimo";
-                  }
-               }
+                    var res = Ext.util.JSON.decode( response.responseText );
+                    if( res.success ){
+                       alert("Se envio aviso al depto de traficos")
+                       location.href="/antecedentes/listadoReferencias/format/maritimo";
+                    }
+                    else
+                    {
+                      alert(res.errorInfo);
+                    }
+                }
             }
          );
          }
@@ -201,7 +220,7 @@ switch ($action) {
          if( text.trim()==""){
             alert("Debe colocar un motivo");
          }else{
-            href='<?= url_for("/antecedentes/anularReferencia?ref=" . $this->getRequestParameter("ref")) ?>';
+            href='<?= url_for("/antecedentes/anularReferencia?idmaster=" . $this->getRequestParameter("idmaster")) ?>';
 
             Ext.Ajax.request(
             {
@@ -245,7 +264,7 @@ switch ($action) {
       });
    }
     
-   var archivar = function(ref){    
+   var archivar = function(idmaster){    
       if(window.confirm("Ya creo la carpeta para archivar?"))
       {
          Ext.MessageBox.wait('Espere por favor', '');
@@ -254,7 +273,7 @@ switch ($action) {
             waitMsg: 'Guardando cambios...',
             url: '<?= url_for("antecedentes/archivarReferencia") ?>',
             params :	{
-               referencia: ref
+               "idmaster": idmaster
             },
             failure:function(response,options){
                //alert( response.responseText );

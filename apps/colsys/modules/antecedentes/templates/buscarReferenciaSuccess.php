@@ -39,7 +39,7 @@ $pagerLayout->display();*/
         ?>
         <tr>
             <td  >
-                <?=link_to($referencia->getCaReferencia(), "antecedentes/verPlanilla?ref=".str_replace(".","|",$referencia->getCaReferencia()))?>
+                <?=link_to($referencia->getCaReferencia(), "antecedentes/verPlanilla?idmaster=".$referencia->getCaIdmaster())?>
             </td>
             <td  >
                 <?=$referencia->getCaModalidad()?>
@@ -51,16 +51,16 @@ $pagerLayout->display();*/
                 <?=$referencia->getDestino()->getCaCiudad()?>
             </td>
             <td  >
-                <?=$referencia->getCaMbls()?>
+                <?=$referencia->getCaMaster()?>
             </td>
             <td  >
                 <?=$referencia->getCaMotonave()?>
             </td>
             <td  >
-                <?=$referencia->getCaFchembarque()?>
+                <?=$referencia->getCaFchsalida()?>
             </td>
             <td  >
-                <?=$referencia->getCaFcharribo()?>
+                <?=$referencia->getCaFchllegada()?>
             </td>
         </tr>
         <?

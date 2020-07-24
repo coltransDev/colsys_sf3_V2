@@ -57,6 +57,12 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,C
                         allowBlank: false
                     },
                     {
+                        xtype: "hidden",
+                        id: "idmaster",
+                        name: "idmaster",
+                        allowBlank: false
+                    },
+                    {
                         columnWidth:.5,
                         layout: 'form',
                         xtype: 'fieldset',
@@ -194,19 +200,19 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,C
         onRender: function(){
             PanelMasterAntecedentes.superclass.onRender.apply(this, arguments);
             this.getForm().waitMsgTarget = this.getEl();           
-            if(typeof(this.numRef)!="undefined" && this.numRef!="" )
+            if(typeof(this.idmaster)!="undefined" && this.idmasterf!="" )
             {
                 this.load({
                     url:'<?=url_for("antecedentes/datosReferencia")?>',
                     waitMsg:'Cargando...',
-                    params:{numRef:this.numRef},
+                    params:{idmaster:this.idmaster},
                     success:function(response,options){
                         res = Ext.util.JSON.decode( options.response.responseText );
                         Ext.getCmp("linea").setRawValue(res.data.linea);
                         Ext.getCmp("linea").hiddenField.value = res.data.idlinea;
-                        Ext.getCmp("origen").setReadOnly(true);
-                        Ext.getCmp("destino").setReadOnly(true);
-                        Ext.getCmp("modalidad").setReadOnly(true);
+                        //Ext.getCmp("origen").setReadOnly(true);
+                        //Ext.getCmp("destino").setReadOnly(true);
+                        //Ext.getCmp("modalidad").setReadOnly(true);
                         Ext.getCmp("tipo").setValue(res.data.ntipo);
                         $("#tipo").attr("value",res.data.tipo);
                         Ext.getCmp("emisionbl").setValue(res.data.idemisionbl);
@@ -218,8 +224,6 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,C
         guardar : function(){            
             var grid = Ext.getCmp("reportes-antecedentes");
             var form = this.getForm();
-
-
             var records = grid.getStore().getRange();
             var reportes = [];
             var imprimirorigen = [];
@@ -235,18 +239,21 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU049,CU119,C
                 return false;
             }
 
-            form.findField("reportes").setValue( reportes.join("|") );
-            form.findField("imprimirorigen").setValue( imprimirorigen.join("|") );
+            //form.findField("reportes").setValue( reportes.join("|") );
+            //form.findField("imprimirorigen").setValue( imprimirorigen.join("|") );
+            form.findField("reportes").setValue( JSON.stringify(reportes) );
+            form.findField("imprimirorigen").setValue( JSON.stringify(imprimirorigen) );
          
+            //var str = JSON.stringify(changes);
             if( form.isValid() ){
                 form.submit({
                     url: "<?=url_for("antecedentes/guardarPanelMasterAntecedentes")?>",                    
                     waitMsg:'Guardando...',
                     waitTitle:'Por favor espere...',
                     success:function(form,action){
-                        if(action.result.numref){
-                            var numref = action.result.numref;
-                            document.location = "<?=url_for("antecedentes/verPlanilla")?>?ref="+numref.split(".").join("|");
+                        if(action.result.idmaster){
+                            var idmaster = action.result.idmaster;
+                            document.location = "<?=url_for("antecedentes/verPlanilla")?>?idmaster="+idmaster;
                         }
                     },
                     failure:function(form,action){

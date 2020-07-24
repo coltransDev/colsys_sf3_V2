@@ -10,7 +10,7 @@
         <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarEmailColoader?ref=".str_replace(".","|",$ref->getCaReferencia()))?>" >
             <input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
 <?
-        $asunto  = "radicacion Coltrans ref: ".$ref->getCaReferencia()."-MBL:".$ref->getCaMbls()."-Mn:".$ref->getCaMotonave()."-ETA:".$ref->getCaFcharribo();
+        $asunto  = "radicacion Coltrans ref: ".$ref->getCaReferencia()."-MBL:".$ref->getCaMaster()."-Mn:".$ref->getCaMotonave()."-ETA:".$ref->getCaFchllegada();
         $mensaje = "";//"Señores ".$ref->getCaReferencia();
         include_component("email", "formEmail", array("subject"=>$asunto,"message"=>$mensaje, "contacts"=>$contactos));
 

@@ -10,7 +10,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
     <br />
     <table class="tableList" width="900px" border="1" id="mainTable">
         <tr>
-            <th width="70" scope="col">Referencia</th>
+            <th width="70" scope="col">Ver</th>
             <th width="70" scope="col">Modalidad</th>
             <th width="70" scope="col">Origen</th>
             <th width="70" scope="col">Destino</th>
@@ -29,7 +29,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
             
             $i++;
 
-            $url = "antecedentes/verPlanilla?ref=".str_replace(".","|",$referencia["ca_referencia"]);
+            $url = "antecedentes/verPlanilla?idmaster=".$referencia["ca_idmaster"];
 
             if( $format ){
                 $url.="&format=".$format;
@@ -38,7 +38,7 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
         ?>
         <tr>
             <td  >
-                <?=link_to($referencia["ca_referencia"], $url)?>
+                <?=link_to("Ver Detalles", $url)?>
             </td>
             <td  >
                 <?=$referencia["ca_modalidad"]?>
@@ -50,16 +50,16 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU010"));
                 <?=$referencia["ca_ciu_destino"]?>
             </td>
             <td  >
-                <?=$referencia["ca_mbls"]?>
+                <?=$referencia["ca_master"]?>
             </td>
             <td  >
                 <?=$referencia["ca_motonave"]?>
             </td>
             <td  >
-                <?=$referencia["ca_fchembarque"]?>
+                <?=$referencia["ca_fchsalida"]?>
             </td>
             <td  >
-                <?=$referencia["ca_fcharribo"]?>
+                <?=$referencia["ca_fchllegada"]?>
             </td>
             <td  >
                 <?=$referencia["ca_usucreado"]?>
@@ -88,7 +88,8 @@ if( $format=="" )
     <br />
     <table class="tableList" width="900px" border="1" id="mainTable">
         <tr>
-            <th width="70" scope="col">Referencia</th>
+            <th width="70" scope="col">ver</th>
+            <th width="70" scope="col">Master</th>
             <th width="70" scope="col">Modalidad</th>
             <th width="70" scope="col">Origen</th>
             <th width="70" scope="col">Destino</th>
@@ -103,7 +104,7 @@ if( $format=="" )
         foreach( $refRechazadas as $referencia ){            
             $i++;
 
-            $url = "antecedentes/verPlanilla?ref=".str_replace(".","|",$referencia["ca_referencia"]);
+            $url = "antecedentes/verPlanilla?idmaster=".$referencia["ca_idmaster"];
 
             if( $format ){
                 $url.="&format=".$format;
@@ -112,8 +113,12 @@ if( $format=="" )
         ?>
         <tr>
             <td  >
-                <?=link_to($referencia["ca_referencia"], $url)?>
+                <?=link_to("Ver Detalles", $url)?>
             </td>
+            <td  >
+                <?=$referencia["ca_master"]?>
+            </td>
+            
             <td  >
                 <?=$referencia["ca_modalidad"]?>
             </td>
@@ -127,10 +132,10 @@ if( $format=="" )
                 <?=$referencia["ca_motonave"]?>
             </td>
             <td  >
-                <?=$referencia["ca_fchembarque"]?>
+                <?=$referencia["ca_fchsalida"]?>
             </td>
             <td  >
-                <?=$referencia["ca_fcharribo"]?>
+                <?=$referencia["ca_fchllegada"]?>
             </td>
             <td  >
                 <?=$referencia["ca_usucreado"]?>
@@ -200,7 +205,7 @@ if($format!="")
                 waitMsg: 'Guardando cambios...',
                 url: '<?= url_for("antecedentes/radicarReferencia") ?>',
                 params :	{
-                    referencia: ref
+                    idmaster: ref
                 },
                 failure:function(response,options){
                     //alert( response.responseText );
@@ -231,7 +236,7 @@ if($format!="")
             <th width="70" scope="col">ETD</th>
             <th width="70" scope="col">ETA</th>
 <?
-    if($nivel==1)
+    //if($nivel==1)
     {
 ?>
             <th width="20" scope="col">&nbsp;</th>
@@ -255,7 +260,7 @@ if($format!="")
             //if($i==1)
             //print_r($arrRef);
         ?>
-        <tr class="tipo<?=(int)$arrRef[1]?>" id="id_<?=str_replace(".","",$referencia["ca_referencia"])?>">
+        <tr class="tipo<?=(int)$arrRef[1]?>" id="id_<?=str_replace(".","",$referencia["ca_idmaster"])?>">
             <td  >
                 <?=link_to($referencia["ca_referencia"], $url)?>
             </td>
@@ -278,11 +283,11 @@ if($format!="")
                 <?=$referencia["ca_fcharribo"]?>
             </td>
 <?
-    if($nivel==1)
+    //if($nivel==1)
     {
 ?>
             <td>
-                <img src="/images/16x16/edit.gif" style="cursor: pointer" onclick="radicar('<?=$referencia["ca_referencia"]?>','id_<?=str_replace(".","",$referencia["ca_referencia"])?>')" width="16" height="16"/>
+                <img src="/images/16x16/edit.gif" style="cursor: pointer" onclick="radicar('<?=$referencia["ca_idmaster"]?>','id_<?=$referencia["ca_idmaster"]?>')" width="16" height="16"/>
             </td>
 <?
     }
@@ -366,7 +371,7 @@ if($sucursal=="BOG" && 1==2)
             //if($i==1)
             //print_r($arrRef);
         ?>
-        <tr class="clase<?=(int)$arrRef[1]?>" id="id_<?=str_replace(".","",$referencia["ca_referencia"])?>">
+        <tr class="clase<?=(int)$arrRef[1]?>" id="id_<?=str_replace(".","",$referencia["ca_idmaster"])?>">
             <td  >
                 <?=link_to($referencia["ca_referencia"], $url)?>
             </td>
@@ -389,7 +394,7 @@ if($sucursal=="BOG" && 1==2)
                 <?=$referencia["ca_fcharribo"]?>
             </td>
             <td>
-                <img src="/images/16x16/edit.gif" style="cursor: pointer" onclick="archivar('<?=$referencia["ca_referencia"]?>','id_<?=str_replace(".","",$referencia["ca_referencia"])?>')" width="16" height="16"/>
+                <img src="/images/16x16/edit.gif" style="cursor: pointer" onclick="archivar('<?=$referencia["ca_referencia"]?>','id_<?=str_replace(".","",$referencia["ca_idmaster"])?>')" width="16" height="16"/>
             </td>
         </tr>
         <?
@@ -438,7 +443,7 @@ if($sucursal=="BOG" && 1==2)
     }
     
     
-    function radicar(ref,id)
+    function radicar(idmaster,id)
     {
         if(window.confirm("Ya creo la carpeta para archivar?"))
         {
@@ -448,7 +453,7 @@ if($sucursal=="BOG" && 1==2)
                 waitMsg: 'Guardando cambios...',
                 url: '<?= url_for("antecedentes/radicarReferencia") ?>',
                 params :	{
-                    referencia: ref
+                    "idmaster": idmaster
                 },
                 failure:function(response,options){
                     //alert( response.responseText );

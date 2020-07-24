@@ -22,14 +22,16 @@ include_component("antecedentes", "panelMasterAntecedentes");
         var panel = new PanelMasterAntecedentes({
             title: "Asignación de Master <?=($numRef)?$numRef:""?>",
             bodyStyle: "pading: 5px",
-            numRef: "<?=$numRef?>"
+            numRef: "<?=$numRef?>",
+            idmaster:"<?=$ref->getCaIdmaster()?>"
         });
         panel.render("main-panel");
        
         var subpanel = new PanelReportesAntecedentes({            
             bodyStyle: "pading: 5px",
             autoHeight: "auto",
-            numRef: "<?=$numRef?>"
+            numRef: "<?=$numRef?>",
+            idmaster:"<?=$ref->getCaIdmaster()?>"
         });
         subpanel.render("sub-panel");
         

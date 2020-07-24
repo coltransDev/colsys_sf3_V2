@@ -3,6 +3,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+//echo $ref->getInoMasterSea()->getCaDatos();
+$datos=$sf_data->getRaw("datos");
+$datos=json_decode(($datos),true);
+//print_r($datos);
+//exit;
 if( $format!="email" ){
 ?>
 <script language="javascript" type="text/javascript">
@@ -25,7 +30,7 @@ if( $format!="email" ){
         }
 </script>
 <?
-}
+} 
 ?>
 
 <div align="center">
@@ -38,11 +43,12 @@ if( $format!="email" ){
     ?>
     <div id="emailForm"  style="display:none" align="center">
 
-        <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarAntecedentes?ref=".str_replace(".","|",$ref->getCaReferencia()))?>" onsubmit="return validarForm();">
+        <form name="form1" id="form1" method="post" action="<?=url_for("antecedentes/enviarAntecedentes?idmaster=".$ref->getCaIdmaster())?>" onsubmit="return validarForm();">
             <input type="hidden" name="checkObservaciones" id="checkObservaciones" value="" />
         <?
-        if($user->getEmail()=="traficos1@coltrans.com.co" || $user->getEmail()=="traficos2@coltrans.com.co" ){			
-            $from = array('traficos1@coltrans.com.co'=>'traficos1@coltrans.com.co', 'traficos2@coltrans.com.co'=>'traficos2@coltrans.com.co');
+        if($user->getEmail()=="sercliente-mar1@coltrans.com.co" || $user->getEmail()=="sercliente-mar2@coltrans.com.co" || $user->getEmail()=="sercliente-mar3@coltrans.com.co" || $user->getEmail()=="sercliente-mar4@coltrans.com.co" || $user->getEmail()=="sercliente-mar5@coltrans.com.co" || $user->getEmail() == "maquinche@coltrans.com.co" ){
+            $from = array('sercliente-mar1@coltrans.com.co'=>'sercliente-mar1@coltrans.com.co', 'sercliente-mar2@coltrans.com.co'=>'sercliente-mar2@coltrans.com.co',
+                 'sercliente-mar3@coltrans.com.co'=>'sercliente-mar3@coltrans.com.co', 'sercliente-mar4@coltrans.com.co'=>'sercliente-mar4@coltrans.com.co' , 'sercliente-mar5@coltrans.com.co'=>'sercliente-mar5@coltrans.com.co');
         }else{
             $from=array();
         }
@@ -84,6 +90,7 @@ if( $format!="email" ){
     </div>
     <?
     }
+    
     //$master=$ref->getCaMbls();
     ?>
     <table class="tableList alignLeft" width="100%">
@@ -97,10 +104,10 @@ if( $format!="email" ){
                 <b>Referencia:</b> <?=$ref->getCaReferencia()?>
             </td>
             <td>
-                <b>Master:</b> <?=$ref->getCaMbls()?>
+                <b>Master:</b> <?=$ref->getCaMaster()?>
             </td>
             <td>
-                <b>Fecha Master:</b> <?=$ref->getCaFchmbls()?>
+                <b>Fecha Master:</b> <?=$ref->getCaFchmaster()?>
             </td>
         </tr>
 
@@ -112,7 +119,7 @@ if( $format!="email" ){
                 <b>Motonave:</b> <?=$ref->getCaMotonave()?>
             </td>
            <td>
-                <b>No Viaje:</b> <?=$ref->getCaCiclo()?>
+                <b>No Viaje:</b> <?=$datos["ca_ciclo"]?>
             </td>
         </tr>
         <tr>
@@ -123,8 +130,8 @@ if( $format!="email" ){
                 <b>Destino:</b> <?=$ref->getDestino()->getTrafico()->getCaNombre()." - ".$ref->getDestino()->getCaCiudad()?>
             </td>
             <td>
-            <?if($ref->getCaTipo()){
-                $parametros = ParametroTable::retrieveByCaso("CU119", null, null, $ref->getCaTipo());
+            <?if($datos["ca_tipo"]){
+                $parametros = ParametroTable::retrieveByCaso("CU119", null, null, $datos["ca_tipo"]);
                 foreach($parametros as $parametro){
             ?>  
                 <b>Tipo:</b> <?=$parametro->getCaValor()?>
@@ -136,15 +143,15 @@ if( $format!="email" ){
         </tr>
         <tr>
             <td>
-                <b>ETD: </b> <?=$ref->getCaFchembarque()?>
+                <b>ETD: </b> <?=$ref->getCaFchsalida()?>
             </td>
             <td>
-                <b>ETA</b> <?=$ref->getCaFcharribo()?>
+                <b>ETA</b> <?=$ref->getCaFchllegada()?>
             </td>
             <td>
             <?
-            if($ref->getCaEmisionbl()){
-                $parametros = ParametroTable::retrieveByCaso("CU223", null, null, $ref->getCaEmisionbl());
+            if($datos["ca_emisionbl"]){
+                $parametros = ParametroTable::retrieveByCaso("CU223", null, null, $datos["ca_emisionbl"]);
                 foreach($parametros as $parametro){
             ?>
                     <b>Emisión BL Master:</b> <?=$parametro->getCaValor()?>
@@ -158,6 +165,10 @@ if( $format!="email" ){
             </td>
         </tr>        
         <tr>
+            <td>
+                <b>Modalidad: </b><br />
+                <?=$ref->getCaModalidad()?>
+            </td>
             <td colspan="2">
                 <b>Observaciones: </b><br />
                 <?=$ref->getCaObservaciones()?>
@@ -167,6 +178,7 @@ if( $format!="email" ){
     </table>
 
     <?
+    
     
     if( $format!="email" )
     {
@@ -216,19 +228,21 @@ if( $format!="email" ){
         $tvolumen=0;
         $tpiezas=0;
         $fechaAnt="";
+        
         foreach( $hijas as $hija ){
             if($fechaAnt=="")
-                $fechaAnt=$hija->getCaFchantecedentes();
-                $tpeso+=$hija->getCaPeso();
-                $tvolumen+=$hija->getCaVolumen();
-                $tpiezas+=$hija->getCaNumpiezas();
+                $fechaAnt=$ref->getInoMasterSea()->getCaFchenvio();//$datos["ca_fchrecibido"];
+            $tpeso+=$hija->getCaPeso();
+            $tvolumen+=$hija->getCaVolumen();
+            $tpiezas+=$hija->getCaNumpiezas();
+            
         ?>
         <tr style="background-color: <?echo ($hija->getReporte()->getCaDeclaracionant()==true)?"#f94949":"white"?>">
             <td>
                 <?=$hija->getCliente()->getCaCompania()?>
             </td>
              <td>
-                <?=$hija->getCaHbls()?>
+                <?=$hija->getCaDoctransporte()?>
             </td>
             <td>
                 <?
@@ -255,10 +269,10 @@ if( $format!="email" ){
                 <?=$hija->getVendedor()->getCaNombre()?>
             </td>
             <td>
-                <?=($hija->getCaImprimirorigen()?"Sí":"No")?>
+                <?=($hija->getInoHouseSea()->getCaImprimirorigen()?"Sí":"No")?>
             </td>
         </tr>
-        <?
+        <?        
         }
         ?>
         <tr style="border: #000000 2px solid">
@@ -280,10 +294,10 @@ if( $format!="email" ){
         </tr>
         
     </table>    
-    <a href="/gestDocumental/formUploadExt4/ref1/<?=str_replace(".","|",$ref->getCaReferencia())?>/idsserie/2"><img src="/images/48x48/edit_add.png" title="Agregar Archivo"></a>
+    <a href="/gestDocumental/formUploadExt4/ref1/<?=$ref->getCaIdmaster()?>/idsserie/2"><img src="/images/48x48/edit_add.png" title="Agregar Archivo"></a>
     <?
     
-    include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email","ref1"=>$ref->getCaReferencia(),"ref2"=>"","ref3"=>"","eliminar"=>"1"));
+    include_component("gestDocumental", "returnFiles",array("idsserie"=>"2","view"=>"email","ref1"=>$ref->getCaIdmaster(),"ref2"=>"","ref3"=>"","eliminar"=>"1"));
     if( count($emails)>0 && $format!="email" ){
     ?>
     <br />
@@ -298,6 +312,7 @@ if( $format!="email" ){
             <th>Email</th>
         </tr>
     <?
+   
         foreach( $emails as $email ){
             ?>
             <tr >
@@ -318,7 +333,6 @@ if( $format!="email" ){
     <?
 }
 ?>
-
 <br />
 <?
     $usuario = $ref->getUsuCreado();
@@ -355,4 +369,3 @@ if( $format!="email" ){
             </tbody>
         </table>
 </div>
-

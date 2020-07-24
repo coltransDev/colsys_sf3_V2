@@ -222,7 +222,7 @@ include_component("widgets", "widgetCiudad");
             
             Ext.getCmp("reportes-antecedentes").store.removeAll();
             load=false;
-            if(Ext.getCmp("origen").getValue()!="" && Ext.getCmp("destino").getValue()!="")
+            if(Ext.getCmp("origen").getValue()!="" && Ext.getCmp("destino").getValue()!="" && Ext.getCmp("modalidad").getValue()!="")
             {
                 Ext.getCmp("reportes-antecedentes").store.setBaseParam("origen",Ext.getCmp("origen").getValue());
                 Ext.getCmp("reportes-antecedentes").store.setBaseParam("destino",Ext.getCmp("destino").getValue());

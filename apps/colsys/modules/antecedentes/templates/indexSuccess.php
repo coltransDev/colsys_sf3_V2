@@ -24,7 +24,7 @@
                         <option value="reporte" selected="selected">Reporte</option>
                         <option value="referencia">Referencia</option>
                         <option value="master">Master</option>
-                        <option value="hbl">hbl</option>
+                        <option value="doctransporte">hbl</option>
                         <option value="cliente">Cliente</option>
                         <option value="motonave">Motonave</option>
                     </select>
