@@ -22,6 +22,7 @@ class inoF2Actions extends sfActions {
     const RUTINA_COMISIONES = 214;
     const RUTINA_COLOTM = 216;
     const RUTINA_CRM = 211;
+    const RUTINA_SEGUROS = 214;
 
     public function executeIndexExt5(sfWebRequest $request) {
 
@@ -225,6 +226,10 @@ class inoF2Actions extends sfActions {
                     $q->addWhere("ca_idmaster IN (SELECT ic.ca_idmaster FROM InoCosto ic WHERE ca_factura like ?) " ,  "%".$request->getParameter("q")."%");
                 break;
             }
+        }
+        
+        if($request->getParameter("fchinicial")!=""){            
+            $q->addWhere("ca_fchllegada BETWEEN ? AND ? " ,  array("'".$request->getParameter("fchinicial")."'","'".$request->getParameter("fchfinal")."'"));
         }
 
         $debug = utf8_encode($q->getSqlQuery());
@@ -777,7 +782,7 @@ class inoF2Actions extends sfActions {
         $errors = array();
         $conn = Doctrine::getTable("InoMaster")->getConnection();        
         $conn->beginTransaction();
-        //try 
+        try 
         {
 
             $idmaster = $request->getParameter("idmaster");
@@ -853,7 +858,10 @@ class inoF2Actions extends sfActions {
                     $ino->setCaOrigen($idorigen);
                     $ino->setCaDestino($iddestino);
                 }
-                $ino->setCaModalidad($modalidad);
+                if($modalidad != null && $modalidad != '')
+                    $ino->setCaModalidad($modalidad);
+                else
+                    $ino->setCaModalidad(null);
 
                 if ($impoexpo == Constantes::EXPO) {
                     $datos = array("modalidad" => $request->getParameter("ca_modalidad"),
@@ -977,11 +985,11 @@ class inoF2Actions extends sfActions {
                 $this->responseArray = array("success" => false, "errorInfo" => $error);
                 $this->setTemplate("responseTemplate");
             }
-        } /*catch (Exception $e) {
-
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        } catch (Exception $e) {
+            
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
             $this->setTemplate("responseTemplate");
-        }*/
+        }
     }
 
     /**
@@ -3825,7 +3833,7 @@ class inoF2Actions extends sfActions {
             $liberable = true;
             if ($inoHouseSea) {
                 if ($inoHouseSea->getCaDatos()) {
-                    $data = json_decode(utf8_encode($inoHouseSea->getCaDatos()));                    
+                    $data = json_decode(utf8_encode($inoHouseSea->getCaDatos()));
                     $data->fchliberacion = $inoHouseSea->getCaFchliberacion();
                     if ($data->estado_liberacion == "Liberada") {
                         $liberable = false;
@@ -4914,7 +4922,8 @@ class inoF2Actions extends sfActions {
             $sel = false;
             $comentario = "";
             $incoterms = explode(" - ", $comprobante->getInoHouse()->getReporte()->getIncotermsStr());
-            $stdcircular = $comprobante->getInoHouse()->getCliente()->getCaStdcircular();
+            // $stdcircular = $comprobante->getInoHouse()->getCliente()->getCaStdcircular();
+            $stdcircular = $comprobante->getInoHouse()->getStdCircular();   // Trae el estado de la Circula a la Fecha de la Primera Factura del Caso
             $comisionable = false;
             $pagosRecibidos = array();
             
@@ -5034,7 +5043,8 @@ class inoF2Actions extends sfActions {
         $fch_con = new DateTime(date("Y-m-d", mktime(0, 0, 0, $month+1, 0, $year)));
         $fchs_ok = array();
         
-        $x = ($fch_con->format("m") == 12)?8:(($fch_con->format("m") == 6)?2:0); // Ventana de dias para Junio y Diciembre
+        // $x = ($fch_con->format("m") == 12)?8:(($fch_con->format("m") == 6)?2:0); // Ventana de dias para Junio y Diciembre
+        $x = ($fch_con->format("m") == 12)?8:0; // Ventana de dias para Diciembre
         while ($i < (9 + $x)) {
             if ($fch_con->format("d")!=31 && $fch_con->format("l")!='Saturday' && $fch_con->format("l")!='Sunday' && !in_array($fch_con->format("Y-m-d"), $festivos)) {
                 $i++;
@@ -5054,6 +5064,403 @@ class inoF2Actions extends sfActions {
         $this->responseArray = array("success" => true, "root" => $datos, "exclusiones" => $exclusiones, "habilitado" => $habilitado, "total" => count($datos));
         $this->setTemplate("responseTemplate");
     }
+
+       
+    public function executeSegurosExt5(sfWebRequest $request) {
+        $this->permisos = array();
+
+        $user = $this->getUser();
+        $permisosRutinas = $user->getControlAcceso(self::RUTINA_SEGUROS);
+        $tipopermisos = $user->getAccesoTotalRutina(self::RUTINA_SEGUROS);
+        foreach ($tipopermisos as $index => $tp) {
+            $this->permisos[$index] = in_array($tp, $permisosRutinas) ? true : false;
+        }
+    }
+
+    public function executeFiltrosSeguros(sfWebRequest $request) {
+        $annos = array();
+        for ($i = (int) date("Y"); $i >= (date("Y") - 5); $i--) {
+            $annos[] = $i;
+        }
+        
+        $meses = array();
+        $meses[] = array("idmes" => "01", "nommes" => "Enero");
+        $meses[] = array("idmes" => "02", "nommes" => "Febrero");
+        $meses[] = array("idmes" => "03", "nommes" => "Marzo");
+        $meses[] = array("idmes" => "04", "nommes" => "Abril");
+        $meses[] = array("idmes" => "05", "nommes" => "Mayo");
+        $meses[] = array("idmes" => "06", "nommes" => "Junio");
+        $meses[] = array("idmes" => "07", "nommes" => "Julio");
+        $meses[] = array("idmes" => "08", "nommes" => "Agosto");
+        $meses[] = array("idmes" => "09", "nommes" => "Septiembre");
+        $meses[] = array("idmes" => "10", "nommes" => "Octubre");
+        $meses[] = array("idmes" => "11", "nommes" => "Noviembre");
+        $meses[] = array("idmes" => "12", "nommes" => "Diciembre");
+        
+        $usuarios_rs = Doctrine::getTable("Usuario")
+           ->createQuery("u")
+           ->select("ca_login,ca_nombre")
+           ->innerJoin("u.Sucursal s")
+           ->addWhere("u.ca_departamento='Comercial' or u.ca_cargo='Representante de Ventas'")
+           ->orderBy("u.ca_login")
+           ->execute();
+        $vendedores[] = array("login" => "%", "vendedor" => "Todos los Vendedores");
+        $criterios = array();
+        $criterios[] = "Referencia";
+        $criterios[] = "Doc.Transporte";
+        $criterios[] = "Nro. Equipo";
+        $criterios[] = "Nro. Precinto";
+        $criterios[] = "Nro. P&oacute;liza";
+        $criterios[] = "Cliente";
+        
+        $datos = array("annos" => $annos, "meses" => $meses, "criterios" => $criterios);
+        
+        $this->responseArray = array("success" => true, "root" => $datos, "total" => count($datos));
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeDatosGridSeguros(sfWebRequest $request) {
+        $q = Doctrine_Manager::getInstance()->connection();
+        $anio = $request->getParameter("anio");
+        $mes = $request->getParameter("mes");
+        $criterio = $request->getParameter("criterio");
+        $cadena = $request->getParameter("cadena");
+        $seguros = array();
+        
+        $idhouses = $idequipos = $idaduanas = $idseguros = null;
+        if ($criterio != "Nro. Póliza") {
+            $referencia = array_fill(0, 5, '%');
+            if ($criterio == "Referencia"){
+                $q->addWhere("m.ca_referencia = ?", $cadena);
+            } else if ($anio || $mes) {
+                $referencia[2] = $mes?$mes:$referencia[2];
+                $referencia[4] = $anio?substr($anio,-2):$referencia[4];
+                $referencia = implode(".", $referencia);
+            }
+            
+            /* Seguros por Agenciamiento de Carga */
+            $sql = "select h.ca_idhouse from ino.tb_house h inner join ino.tb_master m on h.ca_idmaster = m.ca_idmaster "
+                    . " where m.ca_referencia LIKE '$referencia'";
+            if ($criterio == "Doc.Transporte"){
+                $sql.= " and h.ca_doctransporte like '%$cadena%'";
+            }
+            if ($criterio == "Cliente"){
+                $sql.= " and h.ca_idcliente in (select ca_idcliente from ids.tb_ids where LOWER(ca_nombre) like '%". strtolower($cadena) ."%')";
+            }
+            $stmt = $q->execute($sql);
+            $idhouses = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            
+            
+            /* Seguros por Contenedores */
+            $sql = "select e.ca_idequipo from ino.tb_equipos e inner join ino.tb_master m on e.ca_idmaster = m.ca_idmaster "
+                    . " where m.ca_referencia LIKE '$referencia'";
+            if ($criterio == "Nro. Equipo"){
+                $sql.= " and e.ca_serial like '%$cadena%'";
+            }
+            if ($criterio == "Nro. Precinto"){
+                $sql.= " and e.ca_numprecinto like '%$cadena%'";
+            }
+            $stmt = $q->execute($sql);
+            $idequipos = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            
+            
+            /* Seguros por Aduana */
+            $sql = "select b.ca_referencia from tb_brk_maestra b where b.ca_referencia LIKE '$referencia'";
+            $stmt = $q->execute($sql);
+            $idaduanas = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        } else {
+            $sql = "select h.ca_idseguro where m.ca_poliza LIKE '%$cadena%'";
+            $stmt = $q->execute($sql);
+            $idseguros = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        }
+        
+        $q = Doctrine::getTable("InoSeguro")
+           ->createQuery("s");
+        if ($idhouses) 
+           $q->whereIn("s.ca_idhouse", $idhouses);
+        if ($idequipos)
+           $q->orWhereIn("s.ca_idequipo", $idequipos);
+        if ($idaduanas)
+           $q->orWhereIn("s.ca_refaduana", $idaduanas);
+        if ($idseguros)
+           $q->orWhereIn("s.ca_idseguro", $idseguros);
+        
+        $q->orderby("s.ca_idseguro");
+        $seguros = $q->execute();
+
+        $datos = array();
+        foreach ($seguros as $seguro) {
+            $row["idseguro"] = $seguro->getCaIdseguro();
+            $row["idhouse"]= $seguro->getCaIdhouse();
+            $row["idequipo"]= $seguro->getCaIdequipo();
+            $row["refaduana"]= $seguro->getCaRefaduana();
+            if ($seguro->getCaIdhouse() or $seguro->getCaIdequipo()) {
+                if ($seguro->getCaIdhouse()) {
+                    $inoHouse = $seguro->getInoHouse();
+                    $row["doctransporte"] = utf8_encode($inoHouse->getCaDoctransporte());
+                    $row["numserial"] = null;
+                    $row["unidad_neg"] = "Agenciamiento de Carga";
+                } else if ($seguro->getCaIdequipo()) {
+                    $inoHouses = $seguro->getInoEquipo()->getInoMaster()->getInoHouse();
+                    foreach ($inoHouses as $inoHouse) {
+                        $inoHouseSea = $inoHouse->getInoHouseSea();
+                        $data = json_decode(utf8_encode($inoHouseSea->getCaDatos()));
+                        if ($data->equipos) {
+                            foreach ($data->equipos as $de) {
+                                if ($seguro->getCaIdequipo() == $de->idequipo) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    $row["doctransporte"] = null;
+                    $row["numserial"] = utf8_encode($seguro->getInoEquipo()->getCaSerial());
+                    $row["unidad_neg"] = "Contenedores";
+                }
+                $row["impoexpo"] = utf8_encode($inoHouse->getInoMaster()->getCaImpoexpo());
+                $row["transporte"] = utf8_encode($inoHouse->getInoMaster()->getCaTransporte());
+                $row["origen"] = utf8_encode($inoHouse->getInoMaster()->getOrigen()->getCaCiudad());
+                $row["destino"] = utf8_encode($inoHouse->getInoMaster()->getDestino()->getCaCiudad());
+                $row["referencia"] = $inoHouse->getInoMaster()->getCaReferencia();
+                $row["cliente"] = utf8_encode($inoHouse->getCliente()->getCaCompania());
+                $row["vendedor"] = utf8_encode($inoHouse->getCaVendedor());
+                if ($inoHouse->getReporte()) {
+                    $row["reporte"] = $inoHouse->getReporte()->getCaConsecutivo();
+                } else {
+                    $row["reporte"] = "-";
+                }
+            } else if ($seguro->getCaRefaduana()) {
+                $row["unidad_neg"] = "Agenciamiento de Aduana";
+                $row["impoexpo"] = "Aduana";
+                $row["transporte"] = "-";
+                $row["origen"] = utf8_encode($seguro->getInoMaestraAdu()->getOrigen()->getCaCiudad());
+                $row["destino"] = utf8_encode($seguro->getInoMaestraAdu()->getDestino()->getCaCiudad());
+                $row["referencia"] = $seguro->getInoMaestraAdu()->getCaReferencia();
+                $row["reporte"] = "-";
+                $row["cliente"] = utf8_encode($seguro->getInoMaestraAdu()->getCliente()->getCaCompania());
+                $row["vendedor"] = utf8_encode($seguro->getInoMaestraAdu()->getCaVendedor());
+                $row["doctransporte"] = null;
+                $row["numserial"] = null;
+            }
+            $row["sucursal"] = utf8_encode(Doctrine::getTable("Usuario")->find($row["vendedor"])->getSucursal()->getCaNombre());
+            $row["nropoliza"]= $seguro->getCaNropoliza();
+            $row["fchpoliza"]= $seguro->getCaFchpoliza();
+            $row["vlrasegurado"]= $seguro->getCaVlrasegurado();
+            $row["idmonedavlr"]= $seguro->getCaIdmonedaVlr();
+            $row["neto_porc"]= $seguro->getCaNetoPorc();
+            $row["neto_vlr"]= $seguro->getCaNetoVlr();
+            $row["neto_mnd"]= $seguro->getCaNetoMnd();
+            $row["venta_porc"]= $seguro->getCaVentaPorc();
+            $row["venta_vlr"]= $seguro->getCaVentaVlr();
+            $row["venta_mnd"]= $seguro->getCaVentaMnd();
+            $row["obtencion_vlr"]= $seguro->getCaObtencionVlr();
+            $row["obtencion_mnd"]= $seguro->getCaObtencionMnd();
+            $row["comision_vlr"]= $seguro->getCaComisionVlr();
+            $row["observaciones"]= utf8_encode($seguro->getCaObservaciones());
+            $row["tcambio"]= $seguro->getCaTcambio();
+            $row["fchliquidado"]= $seguro->getCaFchliquidado();
+            $row["usuliquidado"]= $seguro->getCaUsuliquidado();
+            $row["fchanulado"]= $seguro->getCaFchanulado();
+            $row["usuanulado"]= $seguro->getCaUsuanulado();
+            $datos[] = $row;
+        }
+
+        $this->responseArray = array("success" => true, "root" => $datos, "total" => count($datos));
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeCasosPorAsegurar(sfWebRequest $request) {
+        $q = Doctrine_Manager::getInstance()->connection();
+        $sql = "select im.ca_idmaster, ih.ca_idhouse, im.ca_referencia, ih.ca_doctransporte, im.ca_impoexpo, im.ca_transporte, rp.ca_consecutivo, ih.ca_usucreado, ih.ca_fchcreado from ino.tb_house ih "
+                . "left join ino.tb_master im on ih.ca_idmaster = im.ca_idmaster "
+                . "left join tb_reportes rp on ih.ca_idreporte = rp.ca_idreporte "
+                . "where rp.ca_seguro = 'Sí' and rp.ca_fchreporte > '2020-01-01' ";
+        $stmt = $q->execute($sql);
+        $casos = $stmt->fetchAll();
+        
+        $datos = array();
+        foreach ($casos as $caso) {
+            $row["impoexpo"] = utf8_encode($caso['ca_impoexpo']);
+            $row["transporte"] = utf8_encode($caso['ca_transporte']);
+            $row["referencia"] = $caso['ca_referencia'];
+            $row["doctransporte"] = utf8_encode($caso['ca_doctransporte']);
+            $row["numserial"] = null;
+            $row["unidad_neg"] = "Agenciamiento de Carga";
+            $row["reporte"] = $caso['ca_consecutivo'];
+        
+            $datos[] = $row;
+        }
+
+        $this->responseArray = array("success" => true, "root" => $datos, "total" => count($datos));
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGuardarNuevoSeguro(sfWebRequest $request) {
+        $datos = json_decode($request->getParameter("datos"));
+        
+        if ($datos->unidadNeg and $datos->referencia) {
+            $conn = Doctrine_Manager::getInstance()->connection();
+            $conn->beginTransaction();
+            try {
+                $seguro = new InoSeguro();
+                if ($datos->unidadNeg == "Agenciamiento Carga") {
+                    $house = Doctrine::getTable("InoHouse")->find($datos->obj_amparo);
+                    $seguro->setCaIdhouse($house->getCaIdhouse());
+                    
+                } else if ($datos->unidadNeg == "Contenedores") {
+                    $equipo = Doctrine::getTable("InoEquipo")->find($datos->obj_amparo);
+                    $seguro->setCaIdequipo($equipo->getCaIdequipo());
+                } else if ($datos->unidadNeg == "Agenciamiento Aduana") {
+                    $seguro->setCaRefaduana($datos->referencia);
+                }
+                $seguro->setCaObservaciones(utf8_decode($datos->observaciones));
+                $seguro->valoresPorDefecto();
+                $seguro->save();
+                        
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGuardarFormSeguros(sfWebRequest $request) {
+        $idseguro = $request->getParameter("idseguro");
+        $datos = $request->getParameter("datos");
+        $poliza = json_decode($datos);
+        
+        $seguro = Doctrine::getTable("InoSeguro")->find($idseguro);
+        if ($seguro) {
+            $conn = Doctrine_Manager::getInstance()->connection();
+            $conn->beginTransaction();
+            try {
+                $seguro->setCaNropoliza($poliza->nropoliza);
+                $seguro->setCaFchpoliza($poliza->fchpoliza);
+                $seguro->setCaVlrasegurado($poliza->vlrasegurado);
+                $seguro->setCaIdmonedaVlr($poliza->idmonedavlr);
+                $seguro->setCaNetoPorc($poliza->neto_porc);
+                $seguro->setCaNetoVlr($poliza->neto_vlr);
+                $seguro->setCaNetoMnd($poliza->neto_mnd);
+                $seguro->setCaVentaPorc($poliza->venta_porc);
+                $seguro->setCaVentaVlr($poliza->venta_vlr);
+                $seguro->setCaVentaMnd($poliza->venta_mnd);
+                $seguro->setCaObtencionVlr($poliza->obtencion_vlr);
+                $seguro->setCaObtencionMnd($poliza->obtencion_mnd);
+                $seguro->setCaComisionVlr($poliza->comision_vlr);
+                $seguro->setCaTcambio($poliza->tcambio);
+                $seguro->setCaObservaciones(utf8_decode($poliza->observaciones));
+                $seguro->save();
+                        
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeDatosUnidadesNegocio(sfWebRequest $request) {
+        $unidadNeg = $request->getParameter("unidadNeg");
+        $query = $request->getParameter("q");
+        $con = Doctrine_Manager::getInstance()->connection();
+
+        if ($unidadNeg == "Agenciamiento Carga" or $unidadNeg == "Contenedores") {
+            $sql = "select ca_idmaster, ca_referencia from ino.tb_master where ca_referencia like '%" . $query . "%' limit 20";
+        } else if ($unidadNeg == "Agenciamiento Aduana") {
+            $sql = "select ca_referencia from public.tb_brk_maestra where ca_referencia like '%" . $query . "%' limit 20";
+        }
+        
+        $rs = $con->execute($sql);
+        $referencias = $rs->fetchAll();
+
+        $data = array();
+        foreach ($referencias as $referencia) {
+            $data[] = array(
+                "referencia" => $referencia["ca_referencia"]
+            );
+        }
+        
+        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
+            
+        $this->setTemplate("responseTemplate");
+    }
+            
+    public function executeDatosObjetosAmparos(sfWebRequest $request) {
+        $unidadNeg  = $request->getParameter("unidadNeg");
+        $referencia = $request->getParameter("referencia");
+        
+        $data = array();
+        $master = Doctrine::getTable("InoMaster")->findOneBy("ca_referencia", $referencia);
+        if ($unidadNeg == "Agenciamiento Carga") {
+            $houses = $master->getInoHouse();
+            foreach ($houses as $house) {
+                $data[] = array(
+                    "idamparo" => $house["ca_idhouse"],
+                    "amparo" => $house["ca_doctransporte"]
+                );
+            }
+        } else if ($unidadNeg == "Contenedores") {
+            $equipos = $master->getInoEquipo();
+            foreach ($equipos as $equipo) {
+                $data[] = array(
+                    "idamparo" => $equipo["ca_idequipo"],
+                    "amparo" => $equipo["ca_serial"]
+                );
+            }
+        }
+
+        $this->responseArray = array("root" => $data, "total" => count($data), "success" => true);
+        
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeImportarSeguros(sfWebRequest $request) {
+        $idseguro = $request->getParameter("idseguro");
+        $seguro = Doctrine::getTable("InoSeguro")->find($idseguro);
+        
+        if ($seguro) {
+            $conn = Doctrine_Manager::getInstance()->connection();
+            $conn->beginTransaction();
+            try {
+                $seguro->valoresPorDefecto();
+                $seguro->save();
+                        
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeLiquidarSeguros(sfWebRequest $request) {
+        $idseguro = $request->getParameter("idseguro");
+        $seguro = Doctrine::getTable("InoSeguro")->find($idseguro);
+        
+        if ($seguro) {
+            $conn = Doctrine_Manager::getInstance()->connection();
+            $conn->beginTransaction();
+            try {
+                $seguro->setCaUsuliquidado($this->getUser()->getUserId());
+                $seguro->setCaFchliquidado(date("Y-m-d H:i:s"));
+                $seguro->save();
+                        
+                $conn->commit();
+                $this->responseArray = array("success" => true);
+            } catch (Exception $e) {
+                $conn->rollback();
+                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+            }
+        }
+        $this->setTemplate("responseTemplate");
+    }    
     
     public function executeGenerarNovedadesComision(sfWebRequest $request) {
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
@@ -5749,4 +6156,139 @@ class inoF2Actions extends sfActions {
         $this->setTemplate("responseTemplate");
         
     }
+
+    public function executeCalculoProrrateoReferencias(sfWebRequest $request) {
+
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/Shared/String.php';
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/Reader/Excel5.php';
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/Shared/OLERead.php';
+        //include sfConfig::get('app_sourceCode_lib').'vendor/phpexcel1.8/Classes/PHPExcel/Autoloader.php';
+        require_once sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel.php';
+        include sfConfig::get('app_sourceCode_lib') . 'vendor/phpexcel1.8/Classes/PHPExcel/IOFactory.php';
+
+        $param = array("file" => "/srv/www/listado referencias colsys.xlsx");
+
+        //echo PHPEXCEL_ROOT;
+        $objPHPExcel = PHPExcel_IOFactory::load($param["file"]);
+        //exit;
+        $hojas = array();
+        foreach ($objPHPExcel->getSheetNames() as $s) {
+            $hojas[] = array("name" => $s);
+        }
+
+        $ws = $objPHPExcel->getSheetByName("coltrans");
+
+        $array = $ws->toArray();
+        $refs  = array();
+
+        $begin = 0;
+        $end = count($array) - 1;
+        echo "cantidad:" . $end . "<br>";
+        
+        echo "<table border=1>";
+        $msj = null;
+        $msj .= "<tr>";
+        $msj .= "   <th>REFERENCIA</th>";
+        $msj .= "   <th>CLIENTE</th>";
+        $msj .= "   <th>RAZÓN SOCIAL</th>";
+        $msj .= "   <th>DIRECCION</th>";
+        $msj .= "   <th>CIUDAD</th>";
+        $msj .= "   <th>PAIS</th>";
+        $msj .= "   <th>DOC.TRANSPORTE</th>";
+        $msj .= "   <th>SUCURSAL</th>";
+        $msj .= "   <th>PESO/VOLUMEN</th>";
+        $msj .= "   <th>%</th>";
+        $msj .= "</tr>";
+        echo $msj;
+        $noencontrados = $encontrados = $noprocesado = 0;
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        for ($pos = $begin; $pos < $end; $pos++) {
+            $row = $array[$pos];
+
+            if ($pos < 2 || $row[0] == "Proyecto") {
+                continue;
+            }
+
+            $referencia = $row[0];
+            if (array_search($referencia, $refs, false)) {
+                continue;
+            }
+            
+            $refs[] = $referencia;
+            $caso = Doctrine::getTable("InoMaster")
+                    ->createQuery("m")
+                    ->where("m.ca_referencia = ?", $referencia)
+                    ->fetchOne();
+            if ($caso) {
+                $hijos = $caso->getInoHouse();
+                if (count($hijos)) {
+                    // $msj = $pos . "->" . $ids->getCaIdalterno() . " " . $ids->getCaNombre() . " -> " . $row[1] . " TipoId " . $row[3];
+                    $sum_pvs = 0;
+                    $registros = array();
+                    foreach ($hijos as $key => $hijo) {
+                        $registro["referencia"] = $caso->getCaReferencia();
+                        $registro["idcliente"] = $hijo->getCliente()->getCaIdalterno();
+                        $registro["razonsocial"] = $hijo->getCliente()->getIds()->getCaNombre();
+                        $registro["direccion"] = $hijo->getCliente()->getDireccion();
+                        $registro["ciudad"] = $hijo->getCliente()->getCiudad()->getCaCiudad();
+                        $registro["trafico"] = $hijo->getCliente()->getCiudad()->getTrafico()->getCaNombre();
+                        $registro["doctransporte"] = $hijo->getCaDoctransporte();
+                        $registro["sucursal"] = $hijo->getCliente()->getUsuario()->getSucursal()->getCaNombre();
+                        $registro["peso/volumen"] = $hijo->getCaPeso();
+                        $sum_pvs+= $hijo->getCaPeso();
+                        $registros[] = $registro;
+                    }
+                    $ind_alt = null;
+                    $mas_alt = 0;
+                    $sum_tot = 0;
+                    foreach ($registros as $key => $registro) {
+                        $participa = round($registro["peso/volumen"] / $sum_pvs * 100, 2);
+                        if ($registro["peso/volumen"] > $mas_alt) {
+                            $ind_alt = count($registros) - 1;
+                            $mas_alt = $registro["peso/volumen"];
+                        }
+                        $registros[$key]["participa"] = $participa;
+                        $sum_tot+= $participa; 
+                    }
+                    $dif = 100 - $sum_tot;
+                    if ($ind_alt and $dif != 0) {
+                        $registros[$ind_alt]["participa"]+= $dif;
+                    }
+                    $msj = null;
+                    foreach ($registros as $key => $registro) {
+                        $msj .= "<tr>";
+                        $msj .= "   <td>" . $registro["referencia"] . "</td>";
+                        $msj .= "   <td>" . $registro["idcliente"] . "</td>";
+                        $msj .= "   <td>" . $registro["razonsocial"] . "</td>";
+                        $msj .= "   <td>" . $registro["direccion"] . "</td>";
+                        $msj .= "   <td>" . $registro["ciudad"] . "</td>";
+                        $msj .= "   <td>" . $registro["trafico"] . "</td>";
+                        $msj .= "   <td>" . $registro["doctransporte"] . "</td>";
+                        $msj .= "   <td>" . $registro["sucursal"] . "</td>";
+                        $msj .= "   <td>" . $registro["peso/volumen"] . "</td>";
+                        $msj .= "   <td>" . $registro["participa"] . "</td>";
+                        $msj .= "</tr>";
+                    }
+                    $encontrados++;
+                    echo $msj;
+                } else {
+                    $msj = "<tr><td colspan='5'>No procesados : " . $pos . "->" . $caso->getCaReferencia() . " -> " . $row[0] . "</td></tr>";
+                    $noprocesado++;
+                    echo $msj;
+                }
+            } else {
+                $noencontrados++;
+                echo "No Importado: " . $row[0] . "<br>";
+            }
+        }
+        echo "</table>";
+        echo "--------------------------------------------------------<br><br>";
+        echo "NO ENCONTRADOS:" . $noencontrados . "<br>";
+        echo "ENCONTRADOS:" . $encontrados . "<br>";
+        echo "NO PROCESADOS:" . $noprocesado . "<br>";
+        echo "--------------------------------------------------------<br><br>";
+
+        //$array = $ws->toArray();
+        exit;
+    }    
 }
