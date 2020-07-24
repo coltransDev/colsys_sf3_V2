@@ -241,6 +241,7 @@ Ext.define('Colsys.Ino.PanelAuditoria', {
                                         text: 'Nuevo Hallazgo',
                                         tooltip: 'Crear nuevo hallazgo',
                                         iconCls: 'add', // reference to our css
+                                        disabled: disabled,                                        
                                         handler: function(){
                                             Ext.getCmp("panel-hallazgos-"+me.idmaster).ventanaHallazgo(null);
                                         }
@@ -248,6 +249,7 @@ Ext.define('Colsys.Ino.PanelAuditoria', {
                                     {
                                         text: 'Nuevo Evento',
                                         tooltip: 'Crear nuevo evento',
+                                        disabled: disabled,
                                         iconCls: 'add', // reference to our css                                        
                                         handler: function(){
                                             Ext.getCmp("panel-hallazgos-"+me.idmaster).ventanaEvento(null);
