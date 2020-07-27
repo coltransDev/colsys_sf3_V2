@@ -1124,11 +1124,12 @@ class inoF2Actions extends sfActions {
                     $data["factura_unica"] = $datos->facturaUnica;
 
                 $datos=json_decode($ino->getInoMasterSea()->getCaDatos());
+                $masterSea = $ino->getInoMasterSea();
                 
-                if($datos->ca_emisionbl){
+                if($masterSea->getDatosJson("ca_emisionbl")){
                     $emision=0;
-                    if($datos->ca_emisionbl==true)
-                        $emision=$datos->ca_emisionbl;
+                    if($masterSea->getDatosJson("ca_emisionbl")==true)
+                        $emision=$masterSea->getDatosJson("ca_emisionbl");
                     $parametrosEmision = ParametroTable::retrieveByCaso("CU223", null, null, $emision);
                     foreach ($parametrosEmision as $parametroEmision) {
                         $emisionbl = $parametroEmision->getCaValor();
@@ -6309,4 +6310,45 @@ class inoF2Actions extends sfActions {
         //$array = $ws->toArray();
         exit;
     }    
+    
+    public function executeGuardarDatosImpresion(sfWebRequest $request){
+        
+        $this->forward404Unless($request->getParameter("idmaster"));
+        $fchimpresion = $request->getParameter("fchimpresion");
+        $nroimpresion = $request->getParameter("nroimpresion");
+        
+        $conn = Doctrine::getTable("InoMasterSea")->getConnection();
+        $conn->beginTransaction();
+        try {            
+            $master = Doctrine::getTable("InoMaster")->find($request->getParameter("idmaster"));
+            $masterSea = $master->getInoMasterSea();
+
+            $masterSea->setDatosJson("fchimpresion",$fchimpresion);
+            $masterSea->setDatosJson("nroimpresion",$nroimpresion);
+            $masterSea->save($conn);
+            
+            $conn->commit();
+            
+            $this->responseArray = array("success" => true, "msg"=>"Los datos se han guardado correctamente");
+        }catch(Exception $e){
+            $this->responseArray = array("success" => true, "msg"=> utf8_encode($e->getMessage()));
+    }
+        
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    public function executeDatosFormImpresion(sfWebRequest $request){
+        
+        $this->forward404Unless($request->getParameter("idmaster"));
+        $masterSea = Doctrine::getTable("InoMasterSea")->find($request->getParameter("idmaster"));
+        $this->forward404Unless($masterSea);
+
+        $data = array();
+        $data["fchimpresion"] = $masterSea->getDatosJson("fchimpresion");
+        $data["nroimpresion"] = $masterSea->getDatosJson("nroimpresion");
+        
+        $this->responseArray = array("success" => true, "data" => $data);
+        $this->setTemplate("responseTemplate");
+    }
 }
