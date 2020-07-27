@@ -127,6 +127,7 @@ Ext.define('Colsys.Ino.GridHouse', {
                                                     store.data.items[row].set('tercero' + idmaster, record.data.ca_tercero);
                                                     store.data.items[row].set('idtercero' + idmaster, record.data.ca_idtercero);
                                                     store.data.items[row].set('continuacion' + idmaster, record.data.continuacion);
+                                                    store.data.items[row].set('imprimirorigen' + idmaster, record.data.ca_imprimirorigen);
                                                 }
                                             });
                                         } else {
@@ -145,6 +146,7 @@ Ext.define('Colsys.Ino.GridHouse', {
                                             store.data.items[row].set('tercero' + idmaster, record.data.ca_tercero);
                                             store.data.items[row].set('idtercero' + idmaster, record.data.ca_idtercero);
                                             store.data.items[row].set('continuacion' + idmaster, record.data.continuacion);
+                                            store.data.items[row].set('imprimirorigen' + idmaster, record.data.ca_imprimirorigen);
                                         }
                                     }
                                 }
@@ -300,6 +302,11 @@ Ext.define('Colsys.Ino.GridHouse', {
 
         if (this.idimpoexpo == "Importaci\u00F3n" && this.idtransporte == "Mar\u00EDtimo") {
             columnas.push({
+                xtype: "checkcolumn",
+                header: "Hbls Dest.",
+                dataIndex: 'imprimirorigen'+this.idmaster,
+                width: 90
+            },{
                 header: "Continuacion",
                 dataIndex: 'continuacion' + this.idmaster,
                 //width: 150,
@@ -461,7 +468,8 @@ Ext.define('Colsys.Ino.GridHouse', {
                         {name: 'volumen' + this.idmaster, type: 'float', mapping: 'volumen'},
                         {name: 'utilidad' + this.idmaster, type: 'float', mapping: 'utilidad'},
                         {name: 'numorden' + this.idmaster, type: 'string', mapping: 'numorden'},
-                        {name: 'color' + this.idmaster, type: 'string', mapping: 'color'}//,
+                        {name: 'color' + this.idmaster, type: 'string', mapping: 'color'},
+                        {name: 'imprimirorigen' + this.idmaster, type: 'boolean', mapping: 'imprimirorigen'}                        
                         //{name: 'equipos' + this.idmaster, type: 'string', mapping: 'equipos'}
                     ],
                     proxy: {
