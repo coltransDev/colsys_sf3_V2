@@ -6,6 +6,7 @@
  modalidad, origen, destino, proveedor, agente, peso,piezas,
  volumen, fecha praviso, fecha llegada, fecha salida.
  */
+winDatosImpresion = null;
 Ext.define('ComboIdg', {
     extend: 'Ext.form.field.ComboBox',
     alias: 'widget.combo-idg',
@@ -831,8 +832,11 @@ Ext.define('Colsys.Ino.FormMaster', {
                         Ext.getCmp("iddestino" + idmasterr).readOnly = res.data.destinonoeditable;
 
                         if(idtransporte == "Mar\u00EDtimo" && idimpoexpo == "Importaci\u00F3n"){
-                            Ext.getCmp("ca_master" + idmasterr).labelTextEl.dom.setAttribute('style', 'background-color: #ECECEC; color: #3487C3;'); 
-                            Ext.getCmp("ca_master" + idmasterr).setFieldLabel("Master ("+res.data.emisionbl+")");
+                            Ext.getCmp("ca_master" + idmasterr).labelTextEl.dom.setAttribute('style', 'color: #3487C3;'); 
+                            linkDatos = "";
+                            if(res.data.idemisionbl == "1" || res.data.idemisionbl == 1) // Emisión en Colombia
+                                linkDatos = '<a href="javascript:verDatosImpresion('+idmasterr+')"><img src="/images/16x16/report.gif" title="Ver Datos de impresión del documento" /></a>';                            
+                            Ext.getCmp("ca_master" + idmasterr).setFieldLabel('Master ('+res.data.emisionbl+') '+linkDatos);
                         }
 
                         Ext.getCmp("agente" + idmasterr).store.reload({
@@ -975,3 +979,89 @@ var anulacion = function (btn, text) {
         }
     }
 };
+
+function verDatosImpresion(idmaster) {        
+    
+    if (winDatosImpresion == null) {
+        winDatosImpresion = Ext.create('Ext.Window', {
+            title: 'Datos Impresi\u00f3n BL',
+            width: 230,
+            id: 'emisionmaster' + idmaster,                    
+            height: 180,
+            items: [
+                Ext.create('Ext.form.Panel', {                            
+                    bodyPadding: 5,
+                    url: '/inoF2/guardarDatosImpresion',
+                    layout: 'anchor',
+                    defaults: {
+                        anchor: '100%'
+                    },
+                    defaultType: 'textfield',
+                    id: 'form-impresion-'+idmaster,
+                    items: [{
+                        xtype: 'hidden',                                
+                        name: 'idmaster',
+                        value: idmaster
+                    },{
+                        xtype: 'datefield',
+                        anchor: '100%',
+                        format: 'Y-m-d',
+                        fieldLabel: 'Fecha de Impresi\u00f3n',
+                        name: 'fchimpresion',
+                        allowBlank: false,
+                        maxValue: new Date()  // limited to the current date or prior
+                    },{
+                        fieldLabel: 'Consecutivo',
+                        name: 'nroimpresion',
+                        allowBlank: false
+                    }],
+                    buttons: [{
+                        text: 'Borrar',
+                        handler: function() {
+                            this.up('form').getForm().reset();
+                        }
+                    }, {
+                        text: 'Guardar',
+                        formBind: true, //only enabled once the form is valid
+                        disabled: true,
+                        handler: function() {
+                            var form = this.up('form').getForm();
+                            if (form.isValid()) {
+                                form.submit({
+                                    success: function(form, action) {
+                                       Ext.getCmp('emisionmaster' + idmaster).close();
+                                       Ext.Msg.alert('Success', action.result.msg);
+                                       
+                                    },
+                                    failure: function(form, action) {                                        
+                                        Ext.Msg.alert('Failed', action.result.msg);
+                                    }
+                                });
+                            }
+                        }
+                    }]                            
+                })
+            ],
+            listeners: {
+                close: function (win, eOpts) {
+                    winDatosImpresion = null;
+                }
+            }
+        });
+    }
+    winDatosImpresion.show();    
+    formImpresion = Ext.getCmp('form-impresion-'+idmaster).getForm();
+
+    formImpresion.load({
+        url: '/inoF2/datosFormImpresion',
+        params: {
+            idmaster: idmaster
+        },
+        success: function (response, options) {
+            console.log("success");
+        },
+        failure: function (form, action) {
+            console.log("failure");
+        }
+    });
+}
