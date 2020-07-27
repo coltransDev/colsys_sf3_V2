@@ -1275,6 +1275,7 @@ class widgets5Actions extends sfActions {
                         $reportes[$key]["ca_piezas"] = $repstatus->getCaPiezas();
                         $reportes[$key]["ca_volumen"] = $repstatus->getCaVolumen();
                         $reportes[$key]["ca_doctransporte"] = $repstatus->getCaDoctransporte();
+                        $reportes[$key]["ca_imprimirorigen"] = $repstatus->getProperty("emisionhbl")?($repstatus->getProperty("emisionhbl")=="origen"?false:true):false;
                     }
                 }
 
