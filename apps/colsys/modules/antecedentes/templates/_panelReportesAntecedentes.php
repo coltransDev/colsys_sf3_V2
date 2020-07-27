@@ -198,6 +198,7 @@ include_component("gestDocumental", "widgetUploadButton");
                         rec.set( "idreporte",r.data.idreporte);
                         rec.set( "cliente",r.data.compania);
                         rec.set( "hbl",r.data.doctransporte);
+                        rec.set( "sel", r.data.emisionhbl);
 
                         return true;
                     }
@@ -240,6 +241,7 @@ include_component("gestDocumental", "widgetUploadButton");
                         rec.set( "idreporte",r.data.idreporte);
                         rec.set( "cliente",r.data.compania);
                         rec.set( "hbl",r.data.doctransporte);
+                        rec.set( "sel", r.data.emisionhbl);
 
                         return true;
                     }
@@ -371,7 +373,8 @@ include_component("gestDocumental", "widgetUploadButton");
                                 idreporte: res.reportes[i].ca_idreporte,
                                 consecutivo: res.reportes[i].ca_consecutivo,
                                 hbl: res.reportes[i].doctransporte,
-                                cliente: res.reportes[i].compania                                
+                                cliente: res.reportes[i].compania,
+                                sel: res.reportes[i].emisionhbl
                             });
                             storeReportes.addSorted(newRec);
                             storeReportes.sort("orden", "ASC");

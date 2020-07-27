@@ -34,16 +34,17 @@ WidgetReporteAntecedentes = function( config ){
             {name: 'idlinea', mapping: 'r_ca_idlinea'},
             {name: 'tra_origen', mapping: 'o_ca_idtrafico'},
             {name: 'tra_destino', mapping: 'd_ca_idtrafico'},
-			{name: 'origen', mapping: 'o_ca_ciudad'},
+            {name: 'origen', mapping: 'o_ca_ciudad'},
             {name: 'destino', mapping: 'd_ca_ciudad'},
             {name: 'idorigen', mapping: 'o_ca_idciudad'},
-			{name: 'iddestino', mapping: 'd_ca_idciudad'},
-			{name: 'idcontacto', mapping: 'con_ca_idcontacto'},
+            {name: 'iddestino', mapping: 'd_ca_idciudad'},
+            {name: 'idcontacto', mapping: 'con_ca_idcontacto'},
             {name: 'compania', mapping: 'cl_ca_compania'},
             {name: 'idcliente', mapping: 'cl_ca_idcliente'},
             {name: 'idetapa', mapping: 'r_ca_idetapa'},
             {name: 'referencia', mapping: 'ic_ca_referencia'},
-            {name: 'doctransporte', mapping: 's_ca_doctransporte'}
+            {name: 'doctransporte', mapping: 's_ca_doctransporte'},
+            {name: 'emisionhbl', mapping: 's_ca_emisionhbl'}
         ])
     });
 

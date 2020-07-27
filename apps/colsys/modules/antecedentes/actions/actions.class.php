@@ -1266,6 +1266,7 @@ class antecedentesActions extends sfActions {
                     $row["cl_ca_compania"] = utf8_encode($reporte->getCliente()->getCaCompania());
                     $row["ic_ca_referencia"] = utf8_encode($reporte->getInoHouse()->getFirst() ? $reporte->getInoHouse()->getFirst()->getInoMaster()->getCaReferencia() : null);
                     $row["s_ca_doctransporte"] = utf8_encode($status->getCaDoctransporte());
+                    $row["s_ca_emisionhbl"] = $status->getProperty("emisionhbl")?($status->getProperty("emisionhbl")=="origen"?false:true):false;
                     $result[] = $row;
                 }
                 $conse = $reporte->getCaConsecutivo();
@@ -1491,6 +1492,8 @@ class antecedentesActions extends sfActions {
                 $patron = '/(\d+)-(20\d\d)/';
                 if (preg_match($patron, $lines[$i])) {                    
                     $tmp = ReporteTable::retrieveByConsecutivo($lines[$i]);
+                    $ultStatus = $tmp->getUltimoStatus();
+                    $imprimirorigen = false;
                     if ($tmp!==null) {
                         //print_r($tmp->getInoHouse());
                         if ($tmp->getInoClientesSea() || $tmp->getInoHouse()===null) {
@@ -1509,8 +1512,13 @@ class antecedentesActions extends sfActions {
                             $resultado.="1.4-linea :" . ($i + 1) . "->" . $lines[$i] . " :destino es diferente<br>";
                             $valido = false;
                         }
+                        if($ultStatus){
+                            if($ultStatus->getProperty("emisionhbl")){ 
+                                $imprimirorigen = $ultStatus->getProperty("emisionhbl")=="origen"?false: true;                                
+                            }
+                        }
                         if ($valido)
-                            $reportes[] = array("ca_idreporte" => $tmp->getCaIdreporte(), "ca_consecutivo" => $lines[$i], "doctransporte" => $tmp->getUltimoStatus()->getCaDoctransporte(), "compania" => utf8_encode($tmp->getCliente()->getCaCompania()), "idcliente" => $tmp->getContacto()->getCaIdcliente(), "idcontacto" => $tmp->getCaIdconcliente());
+                            $reportes[] = array("ca_idreporte" => $tmp->getCaIdreporte(), "ca_consecutivo" => $lines[$i], "doctransporte" => $tmp->getUltimoStatus()->getCaDoctransporte(), "compania" => utf8_encode($tmp->getCliente()->getCaCompania()), "idcliente" => $tmp->getContacto()->getCaIdcliente(), "idcontacto" => $tmp->getCaIdconcliente(), "emisionhbl" => $imprimirorigen);
                     }
                     else {
                         $resultado.="1.5-linea :" . $i . "->" . $lines[$i] . " :Reporte no encontrado<br>";
@@ -1519,6 +1527,8 @@ class antecedentesActions extends sfActions {
                     $tmp = RepStatus::retrieveByHbl($lines[$i]);
                     if ( $tmp->count()>0) {
                         $reporte = $tmp[0]->getUltReporte();
+                        $ultStatus = $reporte->getUltimoStatus();
+                        $imprimirorigen = false;
 
                         if ( count($reporte->getInoClientesSea())<1 && count($reporte->getInoHouse()->count())<1) {
                             $resultado.="2.1-linea :" . ($i + 1) . "->" . $lines[$i] . " :El RN esta asociado ya a otra referencia<br>";
@@ -1536,6 +1546,11 @@ class antecedentesActions extends sfActions {
                             $resultado.="2.4-linea :" . ($i + 1) . "->" . $lines[$i] . " :destino es diferente<br>";
                             $valido = false;
                         }
+                        if($ultStatus){
+                            if($ultStatus->getProperty("emisionhbl")){ 
+                                $imprimirorigen = $ultStatus->getProperty("emisionhbl")=="origen"?false: true;                                
+                            }
+                        }
                         if ($valido)
                         {                             
                             $reportes[] = array("ca_idreporte" => $reporte->getCaIdreporte(), 
@@ -1543,7 +1558,8 @@ class antecedentesActions extends sfActions {
                                     "doctransporte" => $lines[$i], 
                                     "compania" => utf8_encode($reporte->getCliente()->getCaCompania()), 
                                     "idcliente" => $reporte->getContacto()->getCaIdcliente(), 
-                                    "idcontacto" => $reporte->getCaIdconcliente());
+                                    "idcontacto" => $reporte->getCaIdconcliente(),
+                                    "emisionhbl" => $imprimirorigen);
                         }
                     }
                     else {
