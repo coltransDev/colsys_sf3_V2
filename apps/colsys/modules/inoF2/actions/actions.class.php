@@ -2103,9 +2103,8 @@ class inoF2Actions extends sfActions {
                         $comprobante->setCaFchanulado(null);
                         $comprobante->setCaUsuanulado(null);
                         $comprobante->setCaEstado("5");
-                        $comprobante->setProperty("msgAnulado",$resul->Message);
-                        $datos->idanticipo=$idanticipo;                        
-                        $comprobante->setCaDatos(json_encode($datos));
+                        $comprobante->setProperty("msgAnulado",$resul->Message);                        
+                        $comprobante->setDatosJson("idanticipo", $idanticipo);                        
                         $comprobante->save();
                     }
                     else
