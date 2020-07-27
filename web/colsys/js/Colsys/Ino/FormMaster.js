@@ -808,6 +808,7 @@ Ext.define('Colsys.Ino.FormMaster', {
         render: function (ct, position) {
             var idmasterr = this.idmaster;
             var idtransporte = this.idtransporte;
+            var idimpoexpo = this.idimpoexpo;
 
             if (this.load1 == false || this.load1 == "undefined" || !this.load1)
             {
@@ -828,6 +829,11 @@ Ext.define('Colsys.Ino.FormMaster', {
                         Ext.getCmp("modalidad" + idmasterr).readOnly = res.data.modalidadnoeditable;
                         Ext.getCmp("idorigen" + idmasterr).readOnly = res.data.origennoeditable;
                         Ext.getCmp("iddestino" + idmasterr).readOnly = res.data.destinonoeditable;
+
+                        if(idtransporte == "Mar\u00EDtimo" && idimpoexpo == "Importaci\u00F3n"){
+                            Ext.getCmp("ca_master" + idmasterr).labelTextEl.dom.setAttribute('style', 'background-color: #ECECEC; color: #3487C3;'); 
+                            Ext.getCmp("ca_master" + idmasterr).setFieldLabel("Master ("+res.data.emisionbl+")");
+                        }
 
                         Ext.getCmp("agente" + idmasterr).store.reload({
                             params: {
