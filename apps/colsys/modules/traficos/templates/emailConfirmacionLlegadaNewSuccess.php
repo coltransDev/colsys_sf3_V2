@@ -77,7 +77,16 @@ $muelle = ParametroTable::retrieveByCaso("CU268", null, null,$master->getInoMast
             </tr>
             <tr>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>No. HBL:</b></td>
-                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" width="10%"><?= $house->getCaDoctransporte() ?></td>
+                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" width="10%">
+                    <?= $house->getCaDoctransporte() ?>
+                    <? if($status->getProperty("emisionhbl")){ ?>
+                        <br/>
+                        <?
+                        $emisionbl = ParametroTable::retrieveQueryByCaso("CU283", $status->getProperty("emisionhbl"))->fetchOne();
+                        echo "<b>BL Original => <b>".$emisionbl->getCaValor2();
+                    }
+                    ?>
+                </td>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Reg. Aduanero:</b></td>
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $datosMaster["registroadu"] ?></td>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b>Fch.Registro:</b></td>

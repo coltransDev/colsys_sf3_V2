@@ -115,7 +115,16 @@ $modo = $sf_data->getRaw("modo");
             </tr>
             <tr>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><b><?= ($reporte->getCaTransporte() == Constantes::MARITIMO || $reporte->getCaTransporte() == Constantes::TERRESTRE) ? "HBL:" : "HAWB:" ?></b></td>
-                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $status->getCaDoctransporte() ? $status->getCaDoctransporte() : "&nbsp;" ?></td>
+                <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">
+                    <?= $status->getCaDoctransporte() ? $status->getCaDoctransporte() : "&nbsp;" ?>
+                    <? if($status->getProperty("emisionhbl")){ ?>
+                        <br/>
+                        <?
+                        $emisionbl = ParametroTable::retrieveQueryByCaso("CU283", $status->getProperty("emisionhbl"))->fetchOne();
+                        echo "<b>BL Original => <b>".$emisionbl->getCaValor2();
+                    }
+                    ?>                
+                </td>
                 <td style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;"><?= $reporte->getCaModalidad() == "FCL" && $status->getCaDocmaster() ? "<b>Master:</b>" : "&nbsp;" ?></td>
                 <td style="padding: 2px; font-size: 11px;font-family: Arial,Helvetica,sans-serif;" ><?= $reporte->getCaModalidad() == "FCL" && $status->getCaDocmaster() ? $status->getCaDocmaster() : "&nbsp;" ?></td>
                 <? if ($reporte->getCaTransporte() == Constantes::AEREO && $status->getProperty("manifiesto")){?>

@@ -10,6 +10,7 @@ class NuevoStatusForm extends BaseForm {
     private $queryPeso = null;
     private $queryVolumen = null;
     private $queryMuelles = null;
+    private $queryEmisionHbl = null;
     private $queryExclusiones = null;
     private $queryJornadas = null;
     private $queryConcepto = null;
@@ -143,6 +144,14 @@ class NuevoStatusForm extends BaseForm {
                     'method' => "getCaNombre",
                     'key_method' => "getCaCodigo",
                     'query' => $this->queryMuelles
+                ));
+
+        $widgets['idemisionhbl'] = new sfWidgetFormDoctrineChoice(array(
+                    'model' => 'Parametro',
+                    'add_empty' => true,
+                    'method' => "getCaValor2",
+                    'key_method' => "getCaValor",
+                    'query' => $this->queryEmisionHbl
                 ));
 
         $widgets['fch_cargadisponible'] = new sfWidgetFormExtDate();
@@ -321,6 +330,8 @@ class NuevoStatusForm extends BaseForm {
                         array('required' => 'Por favor coloque la motonave o el vuelo'));
         $validator['idmuelle'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque el muelle'));
+        $validator['idemisionhbl'] = new sfValidatorString(array('required' => false),
+                        array('required' => 'Por favor coloque dónde se emitirá el HBL'));
         $validator['bodega_air'] = new sfValidatorString(array('required' => false),
                         array('required' => 'Por favor coloque la bodega del aeropuerto'));
         $validator['docmaster'] = new sfValidatorString(array('required' => false),
@@ -527,6 +538,10 @@ class NuevoStatusForm extends BaseForm {
     
     public function setQueryMuelles($c) {
         $this->queryMuelles = $c;
+    }
+    
+    public function setEmisionHbl($c) {
+        $this->queryEmisionHbl = $c;
     }
     
     public function setQueryExclusiones($c) {

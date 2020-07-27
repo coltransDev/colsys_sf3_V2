@@ -824,6 +824,17 @@ $folder = $reporte->getDirectorioBase();
                                         }
                                     }
                                     echo $form['doctransporte']->render();
+                                    if ($reporte->getCaTransporte() == Constantes::MARITIMO) { ?>
+                                        <br/>
+                                        <br/>                                        
+                                        <b>Emisión HBL</b>:<br />
+                                        <?
+                                        echo $form['idemisionhbl']->renderError();
+                                        if ($ultStatus) {
+                                            $form->setDefault('idemisionhbl', $ultStatus->getProperty("emisionhbl"));
+                                        }
+                                        echo $form['idemisionhbl']->render();
+                                    }
                                     ?>				
                                 </div></td>
                             <td><div align="left"><b><?= ($reporte->getCaTiporep() != "4") ? (($reporte->getCaTransporte() == Constantes::MARITIMO) ? "Motonave:" : "Vuelo:") : "Vehiculo" ?></b><br />					

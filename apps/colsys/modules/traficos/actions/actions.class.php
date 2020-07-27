@@ -439,6 +439,8 @@ class traficosActions extends sfActions {
       $this->form->setQueryPeso(ParametroTable::retrieveQueryByCaso("CU049"));
       $this->form->setQueryJornadas(ParametroTable::retrieveQueryByCaso("CU224"));
 
+      $this->form->setEmisionHbl(ParametroTable::retrieveQueryByCaso("CU283"));
+
       if ($reporte->getCaTransporte() == Constantes::AEREO) {
          $this->form->setQueryVolumen(ParametroTable::retrieveQueryByCaso("CU058"));         
       } else {
@@ -543,6 +545,8 @@ class traficosActions extends sfActions {
          $bindValues["volumen"] = $request->getParameter("volumen");
          $bindValues["un_volumen"] = $request->getParameter("un_volumen");
          $bindValues["doctransporte"] = $request->getParameter("doctransporte");
+         $bindValues["idemisionhbl"] = $request->getParameter("idemisionhbl");
+         $bindValues["idmuelle"] = $request->getParameter("idmuelle");
          $bindValues["idnave"] = $request->getParameter("idnave");
 
          $bindValues["asunto"] = $request->getParameter("asunto");
@@ -864,6 +868,9 @@ class traficosActions extends sfActions {
          }
          if ($request->getParameter("idmuelle")) {
             $status->setProperty("muelle", $request->getParameter("idmuelle"));
+         }
+         if ($request->getParameter("idemisionhbl")) {
+            $status->setProperty("emisionhbl", $request->getParameter("idemisionhbl"));
          }
          if ($request->getParameter("bodega_air")) {
             $status->setProperty("bodega_air", $request->getParameter("bodega_air"));
