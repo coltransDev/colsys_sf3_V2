@@ -367,6 +367,7 @@ class inoF2Actions extends sfActions {
             $datos = json_decode($datosSea, true);
             $datosMuisca = json_decode(utf8_encode($inoHouseSea->getCaDatosmuisca()), true);
 
+            $row["imprimirorigen"] = $inoHouseSea->getCaImprimirorigen();
             $row["continuacion"] = $inoHouseSea->getCaContinuacion();
             $row["destinofinal"] = ($inoHouseSea->getCaContinuacion()!="N/A")?$inoHouseSea->getCaContinuacionDest():"";
             $row["operador"] = null;
@@ -1121,6 +1122,22 @@ class inoF2Actions extends sfActions {
                 $data["tipovehiculo"] = $datos->tipovehiculo;
                 if ($datos->facturaUnica)
                     $data["factura_unica"] = $datos->facturaUnica;
+
+                $datos=json_decode($ino->getInoMasterSea()->getCaDatos());
+                
+                if($datos->ca_emisionbl){
+                    $emision=0;
+                    if($datos->ca_emisionbl==true)
+                        $emision=$datos->ca_emisionbl;
+                    $parametrosEmision = ParametroTable::retrieveByCaso("CU223", null, null, $emision);
+                    foreach ($parametrosEmision as $parametroEmision) {
+                        $emisionbl = $parametroEmision->getCaValor();
+                        $idemisionbl = $parametroEmision->getCaIdentificacion();
+                }
+                
+                $data["emisionbl"] = utf8_encode($emisionbl);
+                $data["idemisionbl"] = $idemisionbl;
+            }      
 
                 $this->responseArray = array("success" => true, "data" => $data);
             /*} catch (Exception $e) {
@@ -2300,6 +2317,7 @@ class inoF2Actions extends sfActions {
                     $datos->equipos = $c->equipos;
                     $houseSea->setCaDatos(json_encode($datos));
 
+                    $houseSea->setCaImprimirorigen($c->imprimirorigen);
                     $houseSea->setCaContinuacion($c->continuacion);
                     $houseSea->setCaContinuacionDest($c->destinofinal);
 
