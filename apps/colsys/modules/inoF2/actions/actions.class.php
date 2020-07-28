@@ -655,9 +655,8 @@ class inoF2Actions extends sfActions {
                     }
                 }
             }
-            
+            $comprobante = Doctrine::getTable("InoComprobante")->find($d["comp_ca_idcomprobante"]);
             if($d["comp_ca_estado"] == 5){
-                $comprobante = Doctrine::getTable("InoComprobante")->find($d["comp_ca_idcomprobante"]);
                 $idg = $comprobante->getResultadoIndicador();
                 
                 $idgestado = -1;
@@ -671,15 +670,6 @@ class inoF2Actions extends sfActions {
                     }
                     
                 }
-//                $idgestado = $datosJson->idg->OFC->estado;
-//                $idgvalor = $datosJson->idg->OFC->valor;                
-//                if($idgestado == 0){                    
-//                    $idexclusion = $datosJson->idg->OFC->idexclusion;
-//                    if($idexclusion && $idexclusion > 0){
-//                        $obs = ParametroTable::retrieveByCaso("CU275",null,null,$idexclusion)->getFirst();
-//                        $exclusion = utf8_encode($obs->getCaValor());
-//                    }
-//                }
             }
             
             if ($d["comp_ca_idcomprobante_cruce"] != "" && $d["comp_ca_idcomprobante_cruce"] != null) {
@@ -691,6 +681,8 @@ class inoF2Actions extends sfActions {
                 if ($tipocruce == "R" || $tipocruce == "A" || $tipocruce == "D" || $tipocruce == "P")
                     $rc .= "<table class='recibocaja' id='intermitente'  ><td>   <div id='foot' style='width:320px; font-weight: bold; text-align: center;'   >RC: #" . $compro->getCaConsecutivo() . "  " . $fecha ."</div> </td></table>";
             }
+            
+            $msgAnulado = substr($comprobante->getCaPropiedades(), strpos($comprobante->getCaPropiedades(), "msgAnulado=")+11, strlen($comprobante->getCaPropiedades()));
             
             if($idmaster!="")
                 $valor = ($d["comp_ca_valor"] != "") ? $d["comp_ca_valor"] : (($d["c_ca_valor3"] >= $d["c_ca_valor4"]) ? $d["c_ca_valor3"] : $d["c_ca_valor4"]);
@@ -726,7 +718,7 @@ class inoF2Actions extends sfActions {
                 "idagente"=> $comprobante?$comprobante->getInoHouse()->getInoMaster()->getIdsAgente()->getCaIdagente():null,
                 "idproveedor"=> $comprobante?$comprobante->getInoHouse()->getInoMaster()->getIdsProveedor()->getCaIdproveedor():null,
                 "plazo"=>$d["comp_ca_plazo"],
-                "tooltip" => "Generado:({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})",
+                "tooltip" => $d["comp_ca_estado"]== InoComprobante::TRANSFERIDO ?"Generado por:({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})":($d["comp_ca_estado"]== InoComprobante::ANULADO ? "Generado por:({$d["comp_ca_usugenero"]}-{$d["comp_ca_fchgenero"]})\nAnulado por:({$comprobante->getCaUsuanulado()}-{$comprobante->getCaFchanulado()}\nMotivo:{$msgAnulado})":""),
                 "do" => $datosJson->do
             );
         }
