@@ -15,10 +15,19 @@ Ext.define('Colsys.Status.FieldSetOtm', {
         }
     },
     hideMode : 'display',
+    /*scrollable: true,
+     defaults: {
+     bodyPadding: '10 10',
+     border: true,
+     frame: true
+     },*/
     listeners: {
         render: function (me, eOpts) {
+            //var data = Ext.getCmp('header-panel-' + this.idhouse).data;            
             var me = this;
             
+            //console.log(Ext.getCmp('header-panel-' + this.idhouse).data);
+            //console.log(this);            
             this.add(
                     {
                         xtype: 'Colsys.Widgets.WgTrackingEtapa',
@@ -28,6 +37,9 @@ Ext.define('Colsys.Status.FieldSetOtm', {
                         labelWidth: 100,
                         tipo: "Status",
                         departamento: 'OTM/DTA',
+                        //allowBlank: false,
+                        //transporte: 'Terrestre',
+                        //impoexpo: 'OTM-DTA',
                         listeners: {
                             select: function (combo, records, eOpts) {
                                 console.log(records.data);
@@ -65,6 +77,7 @@ Ext.define('Colsys.Status.FieldSetOtm', {
                                 
                             }
                         }
+
                     },            
                     {
                         xtype: 'datefield',
@@ -75,7 +88,8 @@ Ext.define('Colsys.Status.FieldSetOtm', {
                         altFormat: "Y-m-d",
                         maxValue: new Date(),
                         renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-                        submitFormat: 'Y-m-d'
+                        submitFormat: 'Y-m-d',
+                        //allowBlank: false
                     },
                     {
                         xtype: 'datefield',
@@ -86,7 +100,8 @@ Ext.define('Colsys.Status.FieldSetOtm', {
                         altFormat: "Y-m-d",
                         maxValue: new Date(),
                         renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-                        submitFormat: 'Y-m-d'
+                        submitFormat: 'Y-m-d',
+                        //allowBlank: false
                     },
                     {
                         xtype: 'datefield',
@@ -97,7 +112,8 @@ Ext.define('Colsys.Status.FieldSetOtm', {
                         altFormat: "Y-m-d",
                         maxValue: new Date(),
                         renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-                        submitFormat: 'Y-m-d'
+                        submitFormat: 'Y-m-d',
+                        //allowBlank: false
                     },
                     {
                         xtype: 'datefield',
@@ -120,14 +136,18 @@ Ext.define('Colsys.Status.FieldSetOtm', {
                         altFormat: "Y-m-d",
                         maxValue: new Date(),
                         renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-                        submitFormat: 'Y-m-d'
+                        submitFormat: 'Y-m-d',
+                        //allowBlank: false
                     },
                     Ext.create('Colsys.Widgets.WgBodega', {
                         xtype: 'Colsys.Widgets.WgBodega',
                         fieldLabel: 'Bodega',
                         id: 'bodega'+ this.idhouse,
                         name: 'bodega',
-                        hiddenName: 'idbodega'
+                        hiddenName: 'idbodega'/*,
+                        valueField: 'idbodega',
+                        displayField: 'nombre',*/
+                        //allowBlank: false
                     })
             );
         },
@@ -140,6 +160,7 @@ Ext.define('Colsys.Status.FieldSetOtm', {
         Ext.each(panel.getRefItems(), function (c) {
             if(c.getXType() === "datefield"){
                 c.setDisabled(true);
+                //c.allowBlank = true;
             }
         });
         data = Ext.getCmp('header-panel-' + panel.idhouse).data;        

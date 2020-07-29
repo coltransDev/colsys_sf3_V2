@@ -67,7 +67,7 @@ Ext.define('Colsys.Status.PanelHouse', {
                             border: true,
                             flex: 1,
                             margin: '0 0 0 0',
-                            title: 'Indicadores de Gesti\u00F3n',                            
+                            title: 'Indicadores de Gesti\u00F3n',
                             items: [{
                                 xtype: 'datefield',
                                 fieldLabel: 'Fecha Recibido Status:',
@@ -109,8 +109,8 @@ Ext.define('Colsys.Status.PanelHouse', {
                                 //allowBlank: false,
                                 impoexpo: 'Importación',
                                 transporte: 'Marítimo'
-                            }]
                         }]
+                    }]
                 },                    
                 Ext.create('Colsys.Status.GridFotos', {
                     id: 'grid-fotos-' + this.idhouse,

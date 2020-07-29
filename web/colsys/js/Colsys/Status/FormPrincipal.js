@@ -329,6 +329,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                 var horas = "";
                 var justificaciones = "";
                 var exclusiones = "";
+                var tipofactura = Ext.getCmp('combofactura_status-' + modulo + idmaster).getValue();
 
                 $.each(idhouses.split(","), function (key, idhouse) {                    
                     var panelHouse = Ext.getCmp("panel-house-" + idhouse);
@@ -384,7 +385,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                                 fchstatus = valuesForm.fchstatus;
                                 hourstatus = valuesForm.horastatus; 
                                 
-                                forms.push(row);
+                                forms.push(row);                                
                             }
                         } else {
                             var invalidFields = [];
@@ -396,7 +397,9 @@ Ext.define('Colsys.Status.FormPrincipal', {
                             Ext.resumeLayouts(true);                            
                             formInvalid.push(idhouse);
                         }
-                        //console.log(forms);
+//                        console.log(forms);
+//                        console.log(formHouse.isValid());
+//                        exit();
 
                         /*Fechas para Idg Comunicaciones Marítimas al cliente*/
                         if(fechas != "")
@@ -416,7 +419,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                         exclusiones+= valuesForm?(valuesForm.excstatus?'"'+valuesForm.excstatus+'"':null):null;
                         
                         // Validación de selección de contactos fijos
-                        cf = [];
+                        cf = [];                        
                         Ext.Array.each(storeContactos, function (name, index) {
                             row = new Object();
                             eval("var seleccion = name.data.sel" + idhouse + ";");
@@ -443,7 +446,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                                 eval("var seleccion = name.data.sel" + idhouse + ";");   
                                 console.log(name.data);
                                 if (modulo === "ffletes" || modulo === "fcontenedores" || modulo === "fotm") {
-                                    if ((name.data.iddocumental === 7 || name.data.iddocumental === 25 ) && name.data.idcomprobante !== null && seleccion === true ) { // Factura de fletes o Certificación de fletes
+                                    if (((name.data.iddocumental === 7 && name.data.idcomprobante !== null) || name.data.iddocumental === 25 )  && seleccion === true ) { // Factura de fletes o Certificación de fletes
                                         fc.push(true);
                                     }
                                 }
@@ -457,7 +460,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                                 }
                             });                            
                         }
-                        console.log(fc);
+                        //console.log(fc);
                         if (modulo === "ffletes" || modulo === "fcontenedores" || modulo === "fotm") {
                             if (Ext.Array.indexOf(fc, true, 0) < 0) {
                                 console.log("idcliente"+idcliente);
@@ -477,6 +480,9 @@ Ext.define('Colsys.Status.FormPrincipal', {
                         console.log(filecliente);
                     }
                 });
+                //console.log(files);
+//                        console.log(formInvalid.length);
+                //        exit();
                 //exit();
                 var mensaje = "";
                 if (panel.length < 1) {                    
@@ -495,7 +501,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                 }
 
                 if (filecliente.length > 0) {                    
-                    mensaje+="- Debe adjuntar la(s) factura(s) para el(los) Cliente(s) con identificaci\u00F3n # " + filecliente.join()+". La factura debe ser guardada a través del INO, opción guardar TRD.<br/>";
+                    mensaje+="- Debe adjuntar la(s) factura(s) para el(los) Cliente(s) con identificaci\u00F3n # " + filecliente.join()+". Verifique que la factura fue guardada a través del INO, opción guardar TRD.<br/>";
                     error++;
                 }
 
@@ -527,6 +533,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                             exclusiones: "["+exclusiones+"]",
                             datosArchivos: parametros.strFiles,
                             modo: modo,
+                            tipofactura: tipofactura,
                             fechallegada: Ext.Date.format(me.getForm().findField('fchconfirmacion').getValue(), 'Y-m-d'),                            
                             horallegada: Ext.Date.format(me.getForm().findField('horaconfirmacion').getValue(), 'H:i:s')
                         },
@@ -537,25 +544,28 @@ Ext.define('Colsys.Status.FormPrincipal', {
                         },
                         success: function (response, options) {
                             var res = Ext.util.JSON.decode(response.responseText);
-                            console.log(res);
-                            $.each(res.data, function (key, objIdg) {                                
-                                if (objIdg["cumplio"] == "No") {
-                                    mensaje+=objIdg["mensaje"];
-                                    if(!objIdg["exclusiones"]){
-                                        //mensaje+='- De acuerdo al IDG del Doc. Transporte #'+objIdg["doctransporte"]+' est\u00E1 fuera del tiempo de oportunidad, favor diligenciar la casilla de justificaci\u00F3n que se ha habilitado. <br/>';
-                                        
-                                        Ext.getCmp('juststatus' + objIdg["idhouse"]).enable();
-                                        Ext.getCmp('juststatus' + objIdg["idhouse"]).focus();
-                                    }else{
-                                        //mensaje+='- De acuerdo al IDG del Doc. Transporte #'+objIdg["doctransporte"]+' est\u00E1 fuera del tiempo de oportunidad, en caso de ser necesario, puede aplicar una exclusión. <br/>';
-                                        //mensaje+=objIdg["mensaje"]+"<br/>";
-                                        Ext.getCmp('juststatus' + objIdg["idhouse"]).enable();
-                                        Ext.getCmp('excstatus' + objIdg["idhouse"]).enable();
-                                        Ext.getCmp('excstatus' + objIdg["idhouse"]).focus();
-                                    }
-                                    error++;                                                                                                                       
-                                }                              
-                            });
+                            //var error = 0;
+                            //console.log(res);
+                            if(res.data != null){
+                                $.each(res.data, function (key, objIdg) {                                
+                                    if (objIdg["cumplio"] == "No") {
+                                        mensaje+=objIdg["mensaje"];
+                                        if(!objIdg["exclusiones"]){
+                                            //mensaje+='- De acuerdo al IDG del Doc. Transporte #'+objIdg["doctransporte"]+' est\u00E1 fuera del tiempo de oportunidad, favor diligenciar la casilla de justificaci\u00F3n que se ha habilitado. <br/>';
+
+                                            Ext.getCmp('juststatus' + objIdg["idhouse"]).enable();
+                                            Ext.getCmp('juststatus' + objIdg["idhouse"]).focus();
+                                        }else{
+                                            //mensaje+='- De acuerdo al IDG del Doc. Transporte #'+objIdg["doctransporte"]+' est\u00E1 fuera del tiempo de oportunidad, en caso de ser necesario, puede aplicar una exclusión. <br/>';
+                                            //mensaje+=objIdg["mensaje"]+"<br/>";
+                                            Ext.getCmp('juststatus' + objIdg["idhouse"]).enable();
+                                            Ext.getCmp('excstatus' + objIdg["idhouse"]).enable();
+                                            Ext.getCmp('excstatus' + objIdg["idhouse"]).focus();
+                                        }
+                                        error++;                                                                                                                       
+                                    }                              
+                                });
+                            }
                             
                             if (error === 0)
                                 me.enviarMensaje(parametros);
@@ -637,7 +647,8 @@ Ext.define('Colsys.Status.FormPrincipal', {
                     Ext.getCmp("mensaje_cliente"+idhouse).setValue(null);
             });
         }
-                
+        //console.log(strFiles);
+        //exit();
         var form = this.getForm();
         
         form.submit({

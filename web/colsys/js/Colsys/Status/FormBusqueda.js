@@ -82,12 +82,16 @@ Ext.define('Colsys.Status.FormBusqueda', {
                                     xtype: 'datefield',
                                     id: 'fchinicial',
                                     name: 'fchinicial',
+                                    renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+                                    format: 'Y-m-d',
                                     width: 90
                                 },
                                 {
                                     xtype: 'datefield',
                                     id: 'fchfinal',
                                     name: 'fchfinal',
+                                    renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+                                    format: 'Y-m-d',
                                     width: 90
                                 }]
                         },
@@ -191,6 +195,19 @@ Ext.define('Colsys.Status.FormBusqueda', {
             }
         }
         ),
+        {
+            title: "Enlaces",
+            region: 'south',
+            height:'10%',
+            id: 'enlaces-status',
+            autoScroll: true,
+            listeners:{
+                beforerender: function () {
+                    this.permisos = this.up('form').permisosC;                                        
+                    this.html='<div style:"padding:0px"><a href="javascript:findescargue()" >Finalizaci\u00f3n Descargue DIAN</a></div>';        
+                }
+            }
+        },
         {
             title: "Resultados de la busqueda",
             flex: 1,
@@ -356,5 +373,27 @@ Ext.define('Colsys.Status.FormBusqueda', {
                     ]
                 }).show();
             }
-        }]
+    }]
 });
+
+function findescargue(){   
+    tabpanel = Ext.getCmp('tabpanel-conf');    
+        
+   var permisos = Ext.getCmp('enlaces-status').permisos;
+
+    if (!tabpanel.getChildByElement('tab_findescargue') ){
+        
+        tabpanel.add({
+                xtype: 'Colsys.Status.GridFinDescargue',
+                title: "Finalizacion Dian",
+                id: "tab_findescargue",
+                closable: true,
+                name: "tab_findescargue",                
+                iconCls: 'calculator',
+                permisos: permisos
+            }            
+        ); // Array returned
+        tabpanel.show();//4174894 scotiankbank
+    }
+    tabpanel.setActiveTab('tab_findescargue');
+}

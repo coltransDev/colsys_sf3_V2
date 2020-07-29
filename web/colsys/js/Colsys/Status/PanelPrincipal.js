@@ -13,16 +13,16 @@ Ext.define('Colsys.Status.PanelPrincipal', {
         }
     },
     bodyCls: 'app-dashboard',
-    listeners: {
+         listeners: {
         render: function (me, eOpts) {
             var idmaster = this.idmaster;
             this.add(
-                Ext.create('Colsys.Status.PanelHeaderMaster', {
-                    id: 'panel-header-master-' + this.idmaster,
-                    title: 'Informaci\u00F3n General',
-                    idmaster: this.idmaster
-                })
-            );
+                    Ext.create('Colsys.Status.PanelHeaderMaster', {
+                        id: 'panel-header-master-' + this.idmaster,
+                        title: 'Informaci\u00F3n General',
+                        idmaster: this.idmaster
+                    })
+                    );
 
             tabs = new Array();
 
@@ -47,7 +47,7 @@ Ext.define('Colsys.Status.PanelPrincipal', {
             this.add(
                     {
                         xtype: 'tabpanel',
-                        id: 'tab-panel-modulos' + this.idmaster,                        
+                        id: 'tab-panel-modulos' + this.idmaster,
                         bodyPadding: 10,
                         items: tabs,
                         listeners: {
@@ -137,7 +137,7 @@ Ext.define('Colsys.Status.PanelPrincipal', {
 //                                                console.log('failure');
 //                                            }
 //                                        });
-                                        var mensajeCont = Ext.getCmp('form-principal-' + modulo + idmaster).texto;
+                                                var mensajeCont = Ext.getCmp('form-principal-' + modulo + idmaster).texto;
                                         Ext.getCmp('status_mensaje-' + modulo + me.idmaster).setValue(mensajeCont);
                                         break;
                                     case "otm":
@@ -228,10 +228,10 @@ Ext.define('Colsys.Status.PanelPrincipal', {
                     var houses = res.root;
 
                     $.each(houses, function (index, data) {
-                        idhouses.push(data["idhouse"]);                           
+                        idhouses.push(data["idhouse"]);   
                         idreporte = data["idreporte"];
-                        hijos.push(
-                            Ext.create('Colsys.Status.PanelHouse', {
+                            hijos.push(
+                                Ext.create('Colsys.Status.PanelHouse', {
                                 id: 'panel-house-' + data["idhouse"],
                                 manageHeight : true,
                                 collapsed: true,
@@ -261,7 +261,7 @@ Ext.define('Colsys.Status.PanelPrincipal', {
                                     }
                                 }
                             })
-                        );
+                            );
                     });
 
                     me.add({
@@ -291,7 +291,7 @@ Ext.define('Colsys.Status.PanelPrincipal', {
                 }
             });
     },
-    clientesOtm: function(filtro, idmaster){        
+    clientesOtm: function(filtro, idmaster){
         var idhouses = this.down("tabpanel").idhouses;
         if(idhouses){
             $.each(idhouses.split(","), function (key, idhouse) {
@@ -308,12 +308,12 @@ Ext.define('Colsys.Status.PanelPrincipal', {
                             idmaster: idmaster
                         });
                         
-                        Ext.getCmp('panel-hijo-' + idhouse).insert(0,panelOtm);                        
+                        Ext.getCmp('panel-hijo-' + idhouse).insert(0,panelOtm);
                     }
                 }else{
                     if(data.continuacion === "N/A" || data.continuacion === null){
                         Ext.getCmp('panel-house-' + idhouse).show();
-                    }                    
+                    }
                     if(Ext.getCmp('fieldsetotm-panel-'+ idhouse)){
                         Ext.getCmp('panel-hijo-' + idhouse).remove(0);
                     }
