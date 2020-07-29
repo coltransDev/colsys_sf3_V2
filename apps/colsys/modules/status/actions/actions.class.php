@@ -20,6 +20,10 @@ class statusActions extends sfActions {
     const RUTINA_MARITIMO = 201;
     const RUTINA_OTM = 204;
 
+    const RUTINA_AEREO = 200;
+    const RUTINA_TERRESTRE = 202;
+    const RUTINA_EXPORTACION = 203;
+
     /*
      * @param sfRequest $request A request object
      */
@@ -32,11 +36,15 @@ class statusActions extends sfActions {
     public function executeIndexExt5($request) {
 
         $user = $this->getUser();
-        $this->permisos = [];
+        $this->permisos = array();
 
         $accesosConf = $user->getControlAcceso(self::RUTINA_CONFIRMACIONES);
         $accesosSea = $user->getControlAcceso(self::RUTINA_MARITIMO);
         $accesosOtm = $user->getControlAcceso(self::RUTINA_OTM);
+
+        $accesosAer = $user->getControlAcceso(self::RUTINA_AEREO);
+        $accesosTer = $user->getControlAcceso(self::RUTINA_TERRESTRE);
+        $accesosExpo = $user->getControlAcceso(self::RUTINA_EXPORTACION);
 
         $coordinadores = array();
         $parametros = ParametroTable::retrieveByCaso("CU046");
@@ -89,6 +97,36 @@ class statusActions extends sfActions {
                     $this->permisos["otm"][utf8_encode($metodo)]["texto"] = json_decode($this->permisos["otm"][utf8_encode($metodo)]["texto"], 1);
                 }
             }
+            
+            if ($accesosAer[0]) {
+                $this->permisos["aereo"][utf8_encode($metodo)]["valor"] = true;
+                $this->permisos["aereo"][utf8_encode($metodo)]["detalle"] = $detalle;
+                $this->permisos["aereo"][utf8_encode($metodo)]["texto"] = utf8_encode($texto->getCaValor2());
+
+                if ($metodo === "ffletes") {
+                    $this->permisos["aereo"][utf8_encode($metodo)]["texto"] = json_decode($this->permisos["aereo"][utf8_encode($metodo)]["texto"], 1);
+                }
+            }
+            
+            if ($accesosTer[0]) {
+                $this->permisos["terrestre"][utf8_encode($metodo)]["valor"] = true;
+                $this->permisos["terrestre"][utf8_encode($metodo)]["detalle"] = $detalle;
+                $this->permisos["terrestre"][utf8_encode($metodo)]["texto"] = utf8_encode($texto->getCaValor2());
+
+                if ($metodo === "ffletes") {
+                    $this->permisos["terrestre"][utf8_encode($metodo)]["texto"] = json_decode($this->permisos["terrestre"][utf8_encode($metodo)]["texto"], 1);
+                }
+            }
+            
+            if ($accesosExpo[0]) {
+                $this->permisos["expo"][utf8_encode($metodo)]["valor"] = true;
+                $this->permisos["expo"][utf8_encode($metodo)]["detalle"] = $detalle;
+                $this->permisos["expo"][utf8_encode($metodo)]["texto"] = utf8_encode($texto->getCaValor2());
+
+                if ($metodo === "ffletes") {
+                    $this->permisos["expo"][utf8_encode($metodo)]["texto"] = json_decode($this->permisos["expo"][utf8_encode($metodo)]["texto"], 1);
+                }
+            }
             unset($texto);
         }
         
@@ -100,9 +138,9 @@ class statusActions extends sfActions {
                 ->addWhere("m.ca_idmaster = ?", array($request->getParameter("idmaster")))
                 ->execute();
         $this->modulo = $request->getParameter("modulo") ? $request->getParameter("modulo") : null;
-        //echo "<pre>";print_r($this->permisos);echo "</pre>";
-        //echo "<pre>";print_r($textos);echo "</pre>";
-        //exit();
+//        echo "<pre>";print_r($this->permisos);echo "</pre>";
+//        //echo "<pre>";print_r($textos);echo "</pre>";
+//        exit();
     }
 
     function executeDatosBusqueda($request) {
@@ -116,6 +154,9 @@ class statusActions extends sfActions {
             $accesosSea = $user->getControlAcceso(self::RUTINA_MARITIMO);
             $accesosOtm = $user->getControlAcceso(self::RUTINA_OTM);
 
+            $accesosAer = $user->getControlAcceso(self::RUTINA_AEREO);
+            $accesosTer = $user->getControlAcceso(self::RUTINA_TERRESTRE);
+            $accesosExpo = $user->getControlAcceso(self::RUTINA_EXPORTACION);
             //echo "Confirmaciones";print_r($accesosConf); 
             //echo "sea";print_r($accesosSea); 
             //echo "otm";print_r($accesosOtm); 
@@ -135,6 +176,16 @@ class statusActions extends sfActions {
                 }
                 if ($accesosOtm[0]) { //consulta                
                     $permisos["otm"][utf8_encode($accesosConf[$i])] = true;
+                }
+                
+                if ($accesosAer[0]) { //consulta                
+                    $permisos["aereo"][utf8_encode($accesosConf[$i])] = true;
+            }
+                if ($accesosTer[0]) { //consulta                
+                    $permisos["terrestre"][utf8_encode($accesosConf[$i])] = true;
+                }
+                if ($accesosExpo[0]) { //consulta                
+                    $permisos["expo"][utf8_encode($accesosConf[$i])] = true;
                 }
             }
 
@@ -185,6 +236,31 @@ class statusActions extends sfActions {
                 $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
                 $whereq[] = Constantes::OTMDTA;
                 $whereq[] = Constantes::TERRESTRE;
+            }
+
+            if ($permisos["aereo"]) {
+                if ($where != "")
+                    $where .= " OR ";
+                $where .= "( (ca_impoexpo = ? or ca_impoexpo = ?) AND ca_transporte=? ) ";
+                $whereq[] = Constantes::IMPO;
+                $whereq[] = Constantes::TRIANGULACION;
+                $whereq[] = Constantes::AEREO;
+            }
+
+            if ($permisos["terrestre"]) {
+                //echo "ss";
+                if ($where != "")
+                    $where .= " OR ";
+                $where .= "(ca_impoexpo = ? AND ca_transporte=? ) ";
+                $whereq[] = Constantes::INTERNO;
+                $whereq[] = Constantes::TERRESTRE;
+            }
+
+            if ($permisos["exportacion"]) {
+                if ($where != "")
+                    $where .= " OR ";
+                $where .= "(ca_impoexpo = ?  ) ";
+                $whereq[] = Constantes::EXPO;
             }
 
             $wherePermisos.=$where . " )";
@@ -360,6 +436,8 @@ class statusActions extends sfActions {
             $archivos = ArchivosTable::getArchivosActivos($data);
 
             foreach ($archivos as $archivo) {
+                $datosFile = json_decode($archivo->getCaDatos());
+                
                 $row = array();
                 $row["ref1"] = $master->getCaReferencia();
                 $row["ref2"] = $house ? $house->getCaDoctransporte() : null;
@@ -371,6 +449,7 @@ class statusActions extends sfActions {
                 $row["path"] = utf8_encode($archivo->getCaPath());
                 $row["fchcreado"] = $archivo->getCaFchcreado();
                 $row["usucreado"] = $archivo->getCaUsucreado();
+                $row["idcomprobante"] = $datosFile->idcomprobante?$datosFile->idcomprobante:null;
                 $datos[] = $row;
             }
 
@@ -385,11 +464,22 @@ class statusActions extends sfActions {
 
         $idcliente = $request->getParameter("idcliente");
         $idreporte = $request->getParameter("idreporte");
+        $cReporte = array();
+        
+        if($idreporte)
+        {
+            $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+            $idcliente=$idcliente?$idcliente:$reporte->getCliente()->getCaIdcliente();
+        }
 
         if ($idcliente) {
-
+            
             $cliente = Doctrine::getTable("Cliente")->find($idcliente);
-            $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+            if($idreporte){
+                $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+                if($reporte->getCaConfirmarClie() != null && $reporte->getCaConfirmarClie() != "" && $reporte->getCaConfirmarClie() != '')
+                    $cReporte = explode(",", $reporte->getCaConfirmarClie());
+            }
 
             $cfijos = Doctrine::getTable("Contacto")
                     ->createQuery("c")
@@ -397,19 +487,20 @@ class statusActions extends sfActions {
                     ->addWhere("ca_fijo = ?", true)
                     ->addWhere("ca_cargo != ?", 'Extrabajador')
                     ->execute();
-
-            $cReporte = explode(",", $reporte->getCaConfirmarClie());
+            
+            if($reporte->getCaConfirmarClie() != null && $reporte->getCaConfirmarClie() != "" && $reporte->getCaConfirmarClie() != '')
+                $cReporte = explode(",", $reporte->getCaConfirmarClie());
             $cCliente = explode(",", $cliente->getCaConfirmar());
 
             $cOtros = array_unique(array_merge($cReporte, $cCliente));
-
+            
             foreach ($cfijos as $fijos) {
                 $row = array();
                 //$row["idcontacto"] = $fijos->getCaIdcontacto();
                 $row["email"] = $fijos->getCaEmail();
                 $row["cargo"] = utf8_encode($fijos->getCaCargo());
                 $row["tipo"] = "Contactos Fijos";
-                $row["sel"] = true;
+                $row["sel"] = empty($cReporte)?true:($fijos->getCaEmail() ? (in_array($fijos->getCaEmail(), $cReporte) ? ($fijos->getCaEmail() != "" ? true : false) : false) : false);
                 $datos[] = $row;
             }
 
@@ -474,7 +565,7 @@ class statusActions extends sfActions {
         $conn = Doctrine::getTable("RepStatus")->getConnection();
         $conn->beginTransaction();
 
-        //try {
+        try {
             $master = Doctrine::getTable("InoMaster")->find($idmaster);
             $masterSea = Doctrine::getTable("InoMasterSea")->find($idmaster);
 
@@ -502,6 +593,10 @@ class statusActions extends sfActions {
                         $observaciones = $master->getCaObservaciones() . chr(13) . date("m/d/Y") . " Se actualizó la Fecha de Arribo de " . $master->getCaFchllegada() . " por $fchconfirmacion según confirmación de llegada.";
                         $master->setCaFchllegada($fchconfirmacion);
                         $master->setCaObservaciones($observaciones);
+                        $equipos = $master->getInoEquipo();
+                        foreach($equipos as $equipo){
+                            $equipo->calcularLimDevolucion($fchconfirmacion, $conn);
+                        }
                     }
 
                     $masterSea->setCaHoraconfirmacion($request->getParameter("horaconfirmacion"));
@@ -612,11 +707,19 @@ class statusActions extends sfActions {
 
                     $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
                     //$sucursal = $usuario->getSucursal()->getCaNombre();
-                    $where = " OR sc.ca_nombre = '" . $master->getDestino()->getCaCiudad() . "' and e.ca_idempresa = 8";
+                    $where = " and sc.ca_nombre in (
+                            select distinct(s.ca_nombre)
+                            from ino.tb_house  h
+                                inner join tb_reportes r on r.ca_idreporte=h.ca_idreporte                                    
+                                inner join ino.tb_house_sea hs ON hs.ca_idhouse = h.ca_idhouse
+                                INNER JOIN ino.tb_master m ON m.ca_idmaster = h.ca_idmaster
+                                inner join control.tb_usuarios u on r.ca_usucreado=u.ca_login
+                                inner join control.tb_sucursales s on s.ca_idsucursal=u.ca_idsucursal
+                            where m.ca_referencia = '$referencia' AND hs.ca_continuacion IS NOT NULL AND hs.ca_continuacion != 'N/A')";
 
                     $data["iddocumental"] = 11;
                     
-                    $destOtm = true; // Solo destinatarios de otm
+                    $destOtm = false; // Solo destinatarios de otm // Ticket #86454 May/25/2020
                     //Finalización de Tarea Envio Formulario 1207
                     //$inoMaestraSea = Doctrine::getTable("InoMaestraSea")->find($ca_referencia);                
                     //$idtarea = $inoMaestraSea->getProperty("idtarea");
@@ -696,13 +799,11 @@ class statusActions extends sfActions {
                         UNION SELECT DISTINCT hs.ca_datosmuisca->>'usuactualizado' as usuactualizado FROM ino.tb_house_sea hs JOIN ino.tb_house h ON h.ca_idhouse = hs.ca_idhouse WHERE h.ca_idmaster = $idmaster AND hs.ca_datosmuisca->>'usuactualizado' IS NOT NULL
                         UNION SELECT DISTINCT ca_usucreado as ca_usuario FROM ino.tb_master WHERE ca_idmaster = $idmaster
                         UNION (
-                                SELECT DISTINCT(ca_login) FROM control.tb_usuarios WHERE ca_idsucursal in (
-                                        SELECT ca_idsucursal FROM control.tb_usuarios WHERE ca_login in (
-                                                SELECT ca_vendedor FROM vi_clientes_reduc WHERE ca_idcliente in (
-                                                        SELECT ca_idcliente FROM ino.tb_house WHERE ca_idmaster = $idmaster ) 
-                                                                AND (ca_propiedades like '%cuentaglobal=true%' OR ca_propiedades like '%cuentaglobal=1%'))) 
-                                                                AND ca_departamento = 'Cuentas Globales' 
-                                                                AND ca_activo = true))";
+                            SELECT DISTINCT ca_idusuario as ca_usuario FROM control.tb_usu_parametros up INNER JOIN control.tb_usuarios u ON u.ca_login = up.ca_idusuario WHERE ca_idcliente in (
+                            SELECT ca_idcliente FROM ino.tb_house WHERE ca_idmaster = $idmaster) AND ca_idsucursal in (
+                                SELECT ca_idsucursal FROM control.tb_usuarios WHERE ca_login in (
+                                    SELECT ca_vendedor FROM vi_clientes_reduc WHERE ca_idcliente in (
+                                        SELECT ca_idcliente FROM ino.tb_house WHERE ca_idmaster = $idmaster)))))";
 
                 $con = Doctrine_Manager::getInstance()->connection();
                 $st = $con->execute($sql);
@@ -773,14 +874,14 @@ class statusActions extends sfActions {
                 //$modo = $request->getParameter("modo");
                 $email->setCaBodyhtml(sfContext::getInstance()->getController()->getPresentationFor('status', 'emailConfirmacion'));
                 $email->save($conn);
-                $email->send($conn);
+                //$email->send($conn);
 
                 $confirmaciones = new Confirmaciones();
                 $confirmaciones->setCaIdemail($email->getCaIdemail());
                 $confirmaciones->setCaIdmaster($email->getCaIdcaso());
                 $confirmaciones->setCaTipo($email->getCaTipo());
                 $confirmaciones->setCaSubject($email->getCaSubject());
-                $confirmaciones->setCaFchenvio($email->getCaFchenvio());
+                $confirmaciones->setCaFchenvio(date('Y-m-d H:i:s'));
                 $confirmaciones->save($conn);
                 
                 //Creación de tarea Envío Formulario 1207
@@ -814,10 +915,12 @@ class statusActions extends sfActions {
                 $conn->commit();
                 $this->responseArray = array("success" => true, "mensaje" => "Se ha creado el status!", "modulo" => $tipo_msg);
             } else {
-
+//                echo $request->getParameter("datosArchivos")."<br/>";
+//                print_r(json_decode(utf8_encode($request->getParameter("datosArchivos")),1))."<br/>";
+//                exit();
                 $idhouses = json_decode($request->getParameter("idhouses"), 1);
                 
-                $archivos = $request->getParameter("datosArchivos");
+                $archivos = utf8_encode($request->getParameter("datosArchivos"));
                 $datosForm = json_decode(utf8_encode($request->getParameter("datosForm")), 1);
                 $dataFiles = json_decode($archivos, 1);
                 $dataContactos = json_decode($request->getParameter("datosContactos"), 1);
@@ -1152,59 +1255,12 @@ class statusActions extends sfActions {
                 $conn->commit();
                 $this->responseArray = array("success" => true, "mensaje" => "Las comunicaciones se han enviado correctamente!", "modulo" => $tipo_msg/*, "tiempo"=> $tiempo*/);
             }
-        /*} catch (Exception $e) {
+        } catch (Exception $e) {
             //$conn->rollback();
-            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-        }*/
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
 
         $this->setTemplate("responseTemplate");
-
-
-
-
-
-//        } else {
-//            foreach ($oids as $oid) {
-//
-//                switch ($modo) {
-//                    
-//                    case "otm":
-//                        
-//                        
-//                        $etapa = $this->getRequestParameter("tipo_" . $oid);
-//
-//                        if ($etapa == "IMCOL" || $this->getRequestParameter("modfchllegada_" . $oid)) {
-//                            $status->setCaFchcontinuacion(Utils::parseDate($this->getRequestParameter("fchllegada_" . $oid)));
-//                        }
-//                        if ($etapa == "IMCOL") {
-//                            $idbodega = $this->getRequestParameter("bodega_" . $oid);
-//                            $status->setProperty("idbodega", $idbodega);
-//                        }
-//                        if ($etapa == "99999") {
-//                            $fchplanilla = $this->getRequestParameter("fchplanilla_" . $oid);
-//                            $status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));
-//                        }
-//                        
-//                        if ($etapa == "OTDES" || $this->getRequestParameter("fchcargue_" . $oid)) {
-//                            $repotm = $reporte->getRepUltVersion()->getRepOtm();                            
-//                            $repotm->setCaFchcargue($this->getRequestParameter("fchcargue_" . $oid));
-//                            $repotm->setCaFchsalida($this->getRequestParameter("fchsalidaotm_" . $oid));
-//                            $repotm->save();                            
-//                        }
-//                        
-//                        if ($etapa == "99999" || $this->getRequestParameter("fchcierreotm_" . $oid)) {
-//                            $repotm = $reporte->getRepUltVersion()->getRepOtm();                            
-//                            $repotm->setCaFchcierre($this->getRequestParameter("fchcierreotm_" . $oid));
-//                            $repotm->save();                            
-//                        }
-//                        
-//                        $status->setCaIdetapa($etapa);
-//                        break;
-//                    default:
-//                        $status->setCaIdetapa("88888");
-//                        break;
-//                }
-//
     }
 
     public function executeEmailConfirmacion($request) {
@@ -1342,6 +1398,7 @@ class statusActions extends sfActions {
         $fechas = json_decode($request->getParameter("fechas"),1);        
         $horas = json_decode($request->getParameter("horas"), 1);
         $justificaciones = json_decode($request->getParameter("justificaciones"), 1);
+        $exclusiones = json_decode($request->getParameter("exclusiones"), 1);
         $modo = $request->getParameter("modo");
         
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
@@ -1349,59 +1406,367 @@ class statusActions extends sfActions {
         try{
             foreach($idhouses as $key => $idhouse){
                 $house = Doctrine::getTable("InoHouse")->find($idhouse);
-                $options["idg"] = RepStatus::IDG_STATUS_MARITIMO;
                 
                 $fecha = $fechas[$key];
                 $hora = $horas[$key];
                 $idetapa = '88888';
                 $justifica = $justificaciones[$key];
-                $existe = false;
+                $idexclusion = $exclusiones[$key];                
                 
-                switch($modo){                    
-                    case "llegada":
-                        $options["idg"] = RepStatus::IDG_CONF_LLEGADA;
-                        $idetapa = 'IMCPD';                        
-                        
-                        $fecha = $request->getParameter("fechallegada");
-                        $hora = $request->getParameter("horallegada");
-                        break;
-                    case "desconsolidacion":                        
-                        $idetapa = 'IMDES';
-                        
-                        $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($house->getInoMaster()->getCaIdmaster(), 'Not.Desconsolidación'))->getLast();
-                        if($confirmaciones){                                
-                            $fecha = Utils::parseDate($confirmaciones->getCaFchenvio(), 'Y-m-d');
-                            $hora =  Utils::parseDate($confirmaciones->getCaFchenvio(), "H:i:s");
-                        }
-                        break;
-                    case "planilla":     
-                        $idetapa = 'IMPLA';
-                        
-                        $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($house->getInoMaster()->getCaIdmaster(), 'Not.Planilla'))->getLast();
-                        if($confirmaciones){                                
-                            $fecha = Utils::parseDate($confirmaciones->getCaFchenvio(), 'Y-m-d');
-                            $hora =  Utils::parseDate($confirmaciones->getCaFchenvio(), "H:i:s");
-                        }
-                        break;
-                }
-                
-                $indicador = Doctrine::getTable("Idg")->find($options["idg"]);                
                 $options["idcaso"] = $house->getReporte()->getCaConsecutivo();
                 $options["idhouse"] = $house->getCaIdhouse();
                 $options["doctransporte"] = $house->getCaDoctransporte();
                 $options["observaciones"] = $justifica;
-                $options["idetapa"] = $idetapa;
-                $options["fecha"] = $fecha;
-                $options["fchini"] = Utils::parseDate($fecha." ".$hora, "Y-m-d H:i:s");
-                $options["fchend"] = date("Y-m-d H:i:s");
+                $options["idexclusion"] = $idexclusion;
                 
-                $row[] = $indicador->calcularIndicador($options);
+                if($modo != "ffletes"){
+                    $options["idg"] = RepStatus::IDG_STATUS_MARITIMO;
+                    switch($modo){                    
+                        case "llegada":
+                            $options["idg"] = RepStatus::IDG_CONF_LLEGADA;
+                            $idetapa = 'IMCPD';                        
+
+                            $fecha = $request->getParameter("fechallegada");
+                            $hora = $request->getParameter("horallegada");
+                            break;
+                        case "desconsolidacion":                        
+                            $idetapa = 'IMDES';
+
+                            $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($house->getInoMaster()->getCaIdmaster(), 'Not.Desconsolidación'))->getLast();
+                            if($confirmaciones){                                
+                                $fecha = Utils::parseDate($confirmaciones->getCaFchenvio(), 'Y-m-d');
+                                $hora =  Utils::parseDate($confirmaciones->getCaFchenvio(), "H:i:s");
+                            }
+                            break;
+                        case "planilla":     
+                            $idetapa = 'IMPLA';
+
+                            $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($house->getInoMaster()->getCaIdmaster(), 'Not.Planilla'))->getLast();
+                            if($confirmaciones){                                
+                                $fecha = Utils::parseDate($confirmaciones->getCaFchenvio(), 'Y-m-d');
+                                $hora =  Utils::parseDate($confirmaciones->getCaFchenvio(), "H:i:s");
+                            }
+                            break;
+                    }
+
+                    $indicador = Doctrine::getTable("Idg")->find($options["idg"]);
+
+                    $options["idetapa"] = $idetapa;
+                    $options["fecha"] = $fecha;
+                    $options["idsucursal"] = $house->getIdsucursalxHouse();
+                    $options["fchini"] = Utils::parseDate($fecha." ".$hora, "Y-m-d H:i:s");
+                    $options["fchend"] = date("Y-m-d H:i:s");
+//                    print_r($options);
+                    $idgConfig = IdgTable::getNuevoIndicador($options);
+                    $calculo = $idgConfig->calcularIndicador($options);
+                    $cumple = $idgConfig->evaluarIndicador($calculo["estado"], $calculo["val"], $options);                    
+                    $cumple["idhouse"] = $idhouse;
                 
+                    $resultado[] = $cumple;
+                    
+                }else{
+                    if($house->getInoMaster()->getRequiereIdg()){
+                        $tipofactura = $request->getParameter("tipofactura");
+                        if($tipofactura == "ffletes"){
+                            $archivos = $request->getParameter("datosArchivos");
+
+                            $dataFiles = json_decode($archivos, 1);
+
+                            if ($dataFiles) {
+                                foreach ($dataFiles as $key => $data) {                                
+                                    if(strpos($data["documento"], "Factura") !== false){                  
+
+                                        $idcomprobante = $data["idcomprobante"];
+                                        if($idcomprobante){
+                                            $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);                
+
+                                            $options["fecha"] = date("Y-m-d");                                    
+
+                                            $cumple = $comprobante->generarIdg($options);
+                                            $cumple["idhouse"] = $idhouse;
+                                            $cumple["exclusiones"] = true;
+
+                                            $resultado[] = $cumple;
+
+                                        }else{
+                                            $resultado[] = array("cumplio" => "No", "mensaje"=>"Por favor genere el archivo desde INO por GUARDAR TRD.<br/>", "idhouse" => $options["idhouse"]);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }                
+                }
             }
-            $this->responseArray = array("success" => true, "data"=>$row);
+            
+            $this->responseArray = array("success" => true, "data"=>$resultado);
         } catch (Exception $e) {
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeVerEmailTerceros(){ 
+          
+        $login = $this->getUser()->getUserId();
+        $this->usuario = Doctrine::getTable("Usuario")->find($login);
+        
+        $this->ids = Doctrine::getTable("Ids")->find($this->getRequestParameter("id"));
+        $comprobante = Doctrine::getTable("InoComprobante")->find($this->getRequestParameter("idcomprobante"));
+        $this->reporte = $comprobante->getInoHouse()->getReporte();
+        $this->idhouse = $comprobante->getInoHouse()->getCaIdhouse();
+        $this->exclusiones = $this->reporte->getExclusiones();
+        
+        $idcomprobantes = array();
+        $this->archivos=$this->reporte->getFilesGestDoc();
+        foreach($this->archivos as $file){
+            $tipodoc = $file->getTipoDocumental();                                
+            if(strpos($tipodoc->getCaDocumento(), "Factura")>=0){                
+                $datos = json_decode(utf8_encode($file->getCaDatos()));                
+                $idcomprobantes[$file->getCaIdarchivo()] = $datos->idcomprobante;
+}
+        }
+        $this->idcomprobantes = $idcomprobantes;
+        
+        $this->contactos = array();
+        $sucursales = $this->ids->getIdsSucursal();
+                
+        foreach($sucursales as $sucursal){
+            $contactos = Doctrine::getTable("IdsContacto")->findBy("ca_idsucursal", $sucursal->getCaIdsucursal());
+            foreach($contactos as $contacto){
+                if($contacto->getCaEmail() != null && $contacto->getCaEmail() != "")
+                    $this->contactos[] = $contacto->getCaEmail();
+            }
+        }
+        $this->contactos = implode(",", $this->contactos);
+        $asunto = "Factura de Venta Id.: ".$this->reporte->getCaConsecutivo()." ";
+        $asunto.= $this->reporte->getUltimoStatus()?$this->reporte->getUltimoStatus()->getAsunto():"";
+        $asunto.= ($this->reporte->getCaImpoexpo()== Constantes::EXPO?$this->reporte->getCaOrdenClie():null);
+        
+        $this->asunto = $asunto;        
+        $this->setLayout("minimal");
+    }
+    
+    public function executeEnviarEmailTerceros($request) {        
+
+        $user = $this->getUser();
+        //Crea el correo electronico
+        $email = new Email();
+        $email->setCaUsuenvio($user->getUserId());
+        $email->setCaTipo("Status Terceros");
+        $email->setCaIdcaso($this->getRequestParameter("id"));
+        $email->setCaFrom($user->getEmail());
+        $email->setCaFromname($user->getNombre());
+
+        if ($this->getRequestParameter("readreceipt")) {
+            $email->setCaReadreceipt(true);
+        } else {
+            $email->setCaReadreceipt(false);
+        }
+
+        $email->setCaReplyto($user->getEmail());
+
+        $recips = explode(",", $this->getRequestParameter("destinatario"));
+        if (is_array($recips)) {
+            foreach ($recips as $recip) {
+                $recip = str_replace(" ", "", $recip);
+                if ($recip) {
+                    $email->addTo($recip);
+                }
+            }
+        }
+        
+        $mensaje = ($this->getRequestParameter("mensaje") . "\n\n");
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+
+        $email->addCc($this->getUser()->getEmail());        
+        $email->setCaSubject($this->getRequestParameter("asunto"));
+        
+        $email->setCaBody($mensaje ."<br/>". $usuario->getFirma());
+        $email->setCaBodyhtml(Utils::replace($mensaje));
+        
+        $attachments = $this->getRequestParameter("attachments");
+        if ($attachments) {
+           foreach ($attachments as $attachment) {
+                $params = explode("_", $attachment);
+                $idreporte = $params[0];
+                $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+                $this->forward404Unless($reporte);
+
+                $file = base64_decode($params[1]);
+                $directory = $reporte->getDirectorioBaseDocs($file);
+
+                $name = $directory;
+                $email->AddAttachment($name);
+           }
+        }
+        $email->save(); //guarda el cuerpo del mensaje    
+        $this->setLayout("email");
+    }
+    
+    public function executeVerEmailDocs(){ 
+          
+        $login = $this->getUser()->getUserId();
+        $this->usuario = Doctrine::getTable("Usuario")->find($login);
+        
+        /*$this->ids = Doctrine::getTable("Ids")->find($this->getRequestParameter("id"));
+        $comprobante = Doctrine::getTable("InoComprobante")->find($this->getRequestParameter("idcomprobante"));
+        $this->reporte = $comprobante->getInoHouse()->getReporte();
+        $this->idhouse = $comprobante->getInoHouse()->getCaIdhouse();
+        $this->exclusiones = $this->reporte->getExclusiones();
+        */
+        //$idcomprobantes = array();
+        $this->archivos=explode(",", $this->getRequestParameter("iddocs"));
+        
+        $inoMaster= Doctrine::getTable("InoMaster")->find($this->getRequestParameter("idmaster"));
+        //echo count($this->archivos);
+        $this->files=array();
+        foreach($this->archivos as $a){            
+            $file= Doctrine::getTable("Archivos")->find($a);
+            $this->files[] = $file;
+            //echo $file->getCaIdarchivo();
+            
+        }
+        //echo count($this->files);
+        //$this->idcomprobantes = $idcomprobantes;
+        //print_r($idcomprobantes);
+        $this->contactos = array();
+        
+        
+        /*$sucursales = $this->ids->getIdsSucursal();
+                
+        
+        foreach($sucursales as $sucursal){
+            $contactos = Doctrine::getTable("IdsContacto")->findBy("ca_idsucursal", $sucursal->getCaIdsucursal());
+            foreach($contactos as $contacto){
+                if($contacto->getCaEmail() != null && $contacto->getCaEmail() != "")
+                    $this->contactos[] = $contacto->getCaEmail();
+            }
+        }*/
+        $this->contactos = implode(",", $this->contactos);
+        $asunto = "Documentos referencia : ".$inoMaster->getCaReferencia();
+        //$asunto.= $this->reporte->getUltimoStatus()?$this->reporte->getUltimoStatus()->getAsunto():"";
+        //$asunto.= ($this->reporte->getCaImpoexpo()== Constantes::EXPO?$this->reporte->getCaOrdenClie():null);
+        
+        $this->asunto = $asunto;        
+        $this->setLayout("minimal");
+    }
+    
+    public function executeEnviarEmailDocs($request) {        
+
+        $user = $this->getUser();
+        //Crea el correo electronico
+        $email = new Email();
+        $email->setCaUsuenvio($user->getUserId());
+        $email->setCaTipo("Status Terceros");
+        $email->setCaIdcaso($this->getRequestParameter("id"));
+        $email->setCaFrom($user->getEmail());
+        $email->setCaFromname($user->getNombre());
+
+        if ($this->getRequestParameter("readreceipt")) {
+            $email->setCaReadreceipt(true);
+        } else {
+            $email->setCaReadreceipt(false);
+        }
+
+        $email->setCaReplyto($user->getEmail());
+
+        $recips = explode(",", $this->getRequestParameter("destinatario"));
+        if (is_array($recips)) {
+            foreach ($recips as $recip) {
+                $recip = str_replace(" ", "", $recip);
+                if ($recip) {
+                    $email->addTo($recip);
+                }
+            }
+        }
+        
+        $mensaje = ($this->getRequestParameter("mensaje") . "\n\n");
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+
+        $email->addCc($this->getUser()->getEmail());        
+        $email->setCaSubject($this->getRequestParameter("asunto"));
+        
+        $email->setCaBody($mensaje ."<br/>". $usuario->getFirma());
+        
+        $attachments = $this->getRequestParameter("attachments");
+        if ($attachments) {
+           foreach ($attachments as $att) {
+               $archivo = Doctrine::getTable("Archivos")->find($att);
+                $name = $archivo->getCaPath();
+                //$email->AddAttachment($name);
+                $mensaje.="\nArchivo : ".$archivo->getCaNombre();
+            }        
+        }
+        
+        $email->setCaBodyhtml(Utils::replace($mensaje));
+        
+        /*$attachments = $this->getRequestParameter("attachments");
+        if ($attachments) {
+           foreach ($attachments as $att) {
+                $archivo = Doctrine::getTable("Archivos")->find($att);
+                $name = $archivo->getCaPath();
+                $email->AddAttachment($name);
+           }
+        }*/
+        $email->save(); //guarda el cuerpo del mensaje    
+        $this->setLayout("email");
+    }
+    
+    public function executeInformeFindescargue($request) {        
+        
+        try{        
+            $con = Doctrine_Manager::getInstance()->getConnection('master');
+            $hoy = date('Y-m-d');
+            $dias = 5;
+            $sql="
+                SELECT m.ca_idmaster, m.ca_referencia, m.ca_impoexpo, m.ca_transporte, ori.ca_ciudad as origen, des.ca_ciudad as destino, m.ca_fchllegada, cf.ca_tipo, (CAST(ca_fchllegada AS DATE) + CAST($dias||' days' AS INTERVAL)) as ca_fchlimite
+                FROM tb_confirmaciones cf	
+                RIGHT JOIN (
+                    SELECT m.ca_idmaster
+                    FROM ino.tb_master m
+                            INNER JOIN ino.tb_master_sea ms ON ms.ca_idmaster = m.ca_idmaster	
+                        WHERE ms.ca_fchconfirmacion > '2020-05-18' and substring(ca_referencia from 16 for 2) = '20') q on q.ca_idmaster = cf.ca_idmaster and ca_tipo = 'Not.DIAN 1207'
+                    INNER JOIN ino.tb_master m ON m.ca_idmaster = q.ca_idmaster
+                    INNER JOIN tb_ciudades ori on ori.ca_idciudad = m.ca_origen
+                    INNER JOIN tb_ciudades des on des.ca_idciudad = m.ca_destino
+                WHERE cf.ca_tipo IS NULL    
+                ";
+            
+            $stmt = $con->execute($sql);
+            $datos = $stmt->fetchAll();
+            
+            $data = array();
+            foreach($datos as $key => $val){
+                list($year, $month, $day) = sscanf($datos[$key]["ca_fchlimite"], "%d-%d-%d");                
+                $fchlimite = date('Y-m-d', mktime(0, 0, 0, $month, $day, $year));
+                
+                $color = "green";
+                if($hoy >= $fchlimite){
+                    $color = "pink";
+                }
+                
+                $row["ca_idmaster"] = $datos[$key]["ca_idmaster"];
+                $row["ca_referencia"] = $datos[$key]["ca_referencia"];
+                $row["ca_impoexpo"] = utf8_encode($datos[$key]["ca_impoexpo"]);
+                $row["ca_transporte"] = utf8_encode($datos[$key]["ca_transporte"]);
+                $row["ca_origen"] = utf8_encode($datos[$key]["origen"]);
+                $row["ca_destino"] = utf8_encode($datos[$key]["destino"]);
+                $row["ca_fchllegada"] = utf8_encode($datos[$key]["ca_fchllegada"]);
+                $row["ca_fchlimite"] = utf8_encode($datos[$key]["ca_fchlimite"]);
+                $row["ca_color"] = $color;
+                $data[] = $row;
+            }
+//            echo "<pre>";print_r($data);echo "</pre>";
+//            exit;
+            
+            $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "debug" => $sql);           
+            
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+        }
+        
+        $this->setTemplate("responseTemplate");
+        
     }
 }
