@@ -278,8 +278,9 @@ class pricingComponents extends sfComponents
         $this->estados[] = array("idestado" => 3, "estado" => "Futura");
         
         $this->tipoConcepto = array();
-        $this->tipoConcepto[] = "Fletes";
-        $this->tipoConcepto[] = "Recargos";
+        $this->tipoConcepto[] = utf8_encode("Fletes");
+        $this->tipoConcepto[] = utf8_encode("Recargo x Concepto");
+        $this->tipoConcepto[] = utf8_encode("Recargo x Línea");
         
         $traficos_rs = Doctrine::getTable("Trafico")
            ->createQuery("t")

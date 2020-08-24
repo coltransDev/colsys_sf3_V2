@@ -67,7 +67,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
             }
         });
 
-        var comboEstados = new Ext.form.ComboBox({
+        var comboEstados = Ext.create('Ext.form.ComboBox', {
             store: {
                 fields: [{name: 'idestado', type: 'string'}, {name: 'estado', type: 'string'}],
                 data: <?= json_encode($estados) ?>
@@ -76,7 +76,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
             valueField: 'idestado',
             queryMode: 'local',
         });
-
+    
         Ext.util.Format.comboRenderer = function (combo) {
             return function (value) {
                 var record = combo.findRecord(combo.valueField || combo.displayField, value);
@@ -171,7 +171,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
         Ext.define('Masiva', {
             extend: 'Ext.data.Model',
             fields: [
-                {name: 'sel', type: 'string'},
+                {name: 'sel', type: 'boolean'},
                 {name: 'idtrayecto', type: 'string'},
                 {name: 'idconcepto', type: 'string'},
                 {name: 'origen', type: 'string'},
@@ -190,9 +190,10 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                 {name: 'aplicacion_min', type: 'string'},
                 {name: 'observaciones', type: 'string'},
                 {name: 'estado', type: 'string'},
+                {name: 'ncontrato', type: 'string'},
                 {name: 'idmoneda', type: 'string'},
-                {name: 'fchinicio', type: 'date', format:'Y-m-d'},
-                {name: 'fchvencimiento', type: 'date', format:'Y-m-d'},
+                {name: 'fchinicio', type: 'date', format: 'Y-m-d'},
+                {name: 'fchvencimiento', type: 'date', format: 'Y-m-d'},
                 {name: 'transporte', type: 'string'},
                 {name: 'tipoConcepto', type: 'string'},
                 {name: 'consecutivo', type: 'string'}
@@ -231,11 +232,12 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
             plugins: [cellEditing],
             columns: [
                 {
+                    header: 'Sel.',
                     xtype: 'checkcolumn',
                     menuDisabled: true,
                     tdCls: 'no-dirty',
                     dataIndex: 'sel',
-                    width: 30
+                    width: 50
                 }, {
                     header: 'Idtrayecto',
                     dataIndex: 'idtrayecto',
@@ -287,7 +289,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     align: 'right',
                     dataIndex: 'valor',
                     renderer: Ext.util.Format.usMoney,
-                    editor: new Ext.form.NumberField({
+                    editor: Ext.create('Ext.form.NumberField', {
                         allowBlank: false,
                         allowNegative: false,
                         hideTrigger: true,
@@ -299,10 +301,11 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                 }, {
                     header: 'Valor Sug.',
                     width: 100,
+                    hidden: true,
                     align: 'right',
                     dataIndex: 'valor_sug',
                     renderer: Ext.util.Format.usMoney,
-                    editor: new Ext.form.NumberField({
+                    editor: Ext.create('Ext.form.NumberField', {
                         allowBlank: false,
                         allowNegative: false,
                         hideTrigger: true,
@@ -326,7 +329,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     align: 'right',
                     dataIndex: 'valor_min',
                     renderer: Ext.util.Format.usMoney,
-                    editor: new Ext.form.NumberField({
+                    editor: Ext.create('Ext.form.NumberField', {
                         allowBlank: false,
                         allowNegative: false,
                         hideTrigger: true,
@@ -341,8 +344,17 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     align: 'right',
                     dataIndex: 'aplicacion_min'
                 }, {
+                    header: 'Nro.Contrato',
+                    width: 120,
+                    dataIndex: 'ncontrato',
+                    editor: {
+                        xtype: 'textfield',
+                        allowBlank: true
+                    }
+                }, {
                     header: 'Estado',
                     width: 120,
+                    hidden: true,
                     dataIndex: 'estado',
                     editor: comboEstados,
                     renderer: Ext.util.Format.comboRenderer(comboEstados)
@@ -388,17 +400,24 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
             showColumns: function (tipoConcepto) {
                 if (tipoConcepto[0] === "Fletes") {
                     this.columns[8].hide();             // equipo
-                    this.columns[10].hide();             // recargo
+                    this.columns[10].hide();            // recargo
                     this.columns[14].hide();            // valor_min
                     this.columns[15].hide();            // aplicacion_min
-                    this.columns[20].hide();            // observaciones
-                } else if (tipoConcepto[0] === "Recargos") {
+                    this.columns[21].hide();            // observaciones
+                } else if (tipoConcepto[0] === "Recargo x Concepto") {
                     this.columns[8].hide();             // equipo
-                    this.columns[10].show();             // recargo
+                    this.columns[10].show();            // recargo
                     this.columns[14].show();            // valor_min
                     this.columns[15].show();            // aplicacion_min
-                    this.columns[16].hide();            // estado
-                    this.columns[20].show();            // observaciones
+                    this.columns[16].hide();            // ncontrato
+                    this.columns[21].show();            // observaciones
+                } else if (tipoConcepto[0] === "Recargo x Línea") {
+                    this.columns[8].hide();             // equipo
+                    this.columns[10].show();            // recargo
+                    this.columns[14].show();            // valor_min
+                    this.columns[15].show();            // aplicacion_min
+                    this.columns[16].hide();            // ncontrato
+                    this.columns[21].show();            // observaciones
                 }
             },
 //            colocarEstilo: function (rec, val) {
@@ -416,6 +435,21 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
 //                    }
 //                }
 //            },
+            listeners: {
+                'headerclick': {
+                    fn: function (grid, col, e) {
+                        if (col.fullColumnIndex == 0) {
+                            storeMasiva.each(function (rec) {
+                                if (!rec.get(col.dataIndex)) 
+                                    rec.set(col.dataIndex, true);
+                                else
+                                    rec.set(col.dataIndex, false);
+                            });
+                        }
+                    },
+                    scope: this
+                }
+            },
             bbar: [{
                     xtype: 'container',
                     layout: 'column',
@@ -441,7 +475,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                                     id: 'regresar',
                                     width: 70,
                                     columnWidth: 0.49,
-                                    margin: '0 10 0 10',
+                                    margin: '0 5 0 5',
                                     handler: function () {
                                         Ext.getCmp('formFiltros').up('fieldset').expand();
                                         Ext.getCmp('gridMasiva').up('fieldset').collapse();
@@ -451,7 +485,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                                     text: 'Guardar Cambios',
                                     width: 70,
                                     columnWidth: 0.49,
-                                    margin: '0 10 0 10',
+                                    margin: '0 5 0 5',
                                     handler: function () {
                                         grid = Ext.getCmp('gridMasiva');
                                         grid.showColumns(Ext.getCmp('tipoConcepto').getValue());
@@ -479,13 +513,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                                                 success: function (response, opts) {
                                                     var res = Ext.decode(response.responseText);
                                                     if (res.id && res.success) {
-                                                        id = res.id.split(",");
-                                                        idreg = res.idreg.split(",");
-                                                        for (i = 0; i < id.length; i++) {
-                                                            var rec = store.getById(id[i]);
-                                                            rec.set("iddetalle", idreg[i]);
-                                                            rec.commit();
-                                                        }
+                                                        store.reload();
                                                         Ext.MessageBox.alert("Mensaje", 'Se guardo Correctamente la información');
                                                     }
                                                     if (res.errorInfo != "") {
@@ -574,7 +602,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     listeners: {
                         change: function (comboMulti, newValue, oldValue, eOpts) {
                             store = Ext.getCmp('origen').getStore();
-                            store.filtrar(newValue);
+                            store.filtrar(Ext.getCmp('impoexpo').value, newValue);
                             store = Ext.getCmp('destino').getStore();
                             store.filtrar(Ext.getCmp('impoexpo').value, Ext.getCmp('transporte').value, newValue);
                         }
@@ -590,11 +618,17 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     store: {
                         fields: [{name: 'idCiudad', type: 'string'}, {name: 'ciudad', type: 'string'}],
                         data: <?= json_encode($ciudades) ?>,
-                        filtrar: function (trafico) {
+                        filtrar: function (impoexpo, trafico) {
                             me = this;
-                            me.filterBy(function (record, id) {
-                                return (record.data.idtrafico == trafico);
-                            });
+                            if (impoexpo == "Importación") {
+                                me.filterBy(function (record, id) {
+                                    return (record.data.idtrafico == trafico);
+                                });
+                            } else {
+                                me.filterBy(function (record, id) {
+                                    return (record.data.idtrafico == "CO-057");
+                                });
+                            }
                         }
                     },
                     style: 'text-align: left',
@@ -661,7 +695,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     title: 'Modalidad',
                     name: 'modalidad',
                     id: 'modalidad',
-                    columnWidth: 0.15,
+                    columnWidth: 0.12,
                     store: storeModalidad,
                     style: 'text-align: left',
                     valueField: 'modalidad',
@@ -674,7 +708,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     name: 'tipoConcepto',
                     id: 'tipoConcepto',
                     allowBlank: false,
-                    columnWidth: 0.10,
+                    columnWidth: 0.12,
                     store: <?= json_encode($tipoConcepto) ?>,
                     style: 'text-align: left',
                     ddReorder: false,
@@ -685,7 +719,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                                 if (Ext.getCmp('modalidad').value) {
                                     modalidad = Ext.getCmp('modalidad').value;
                                     if (Ext.getCmp('impoexpo').value) {
-                                        modo = newValue.toString().toLowerCase();
+                                        modo = newValue.toString() == 'Fletes' ? 'fletes' : 'recargos';
                                         impoexpo = Ext.getCmp('impoexpo').value;
                                         store = Ext.getCmp('gridConcepto').getStore();
                                         store.load({
@@ -714,7 +748,7 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                         store: storeConcepto,
                         hideHeaders: true,
                         columns: [
-                            {text: 'Sel', dataIndex: 'sel', xtype: 'checkcolumn', width: 25},
+                            {text: 'Sel', dataIndex: 'sel', xtype: 'checkcolumn', tdCls: 'no-dirty', width: 25},
                             {text: 'Id', dataIndex: 'idconcepto', hidden: true},
                             {text: 'Concepto', dataIndex: 'concepto', flex: 1}
                         ],
@@ -725,14 +759,14 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                     xtype: 'fieldset',
                     title: 'Transportista',
                     collapsible: false,
-                    columnWidth: 0.57,
+                    columnWidth: 0.56,
                     height: 230,
                     layout: 'column',
                     items: [{
                             xtype: 'combo-transportistas',
                             name: 'transportista',
                             id: 'transportista',
-                            width: 250
+                            width: 240
                         }, {
                             xtype: 'button',
                             text: '->',
@@ -748,89 +782,115 @@ $tipoConcepto = $sf_data->getRaw("tipoConcepto");
                             name: 'gridTransport',
                             id: 'gridTransport',
                             hideHeaders: true,
+                            store: Ext.create('Ext.data.Store', {
+                                fields: ['id', 'name']
+                            }),
                             columns: [
                                 {text: 'Id', dataIndex: 'id', hidden: true},
                                 {text: 'Transportador', dataIndex: 'name', flex: 1}
                             ],
                             height: 200,
-                            width: 400
+                            width: 400,
+                            listeners: {
+                                beforecelldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
+                                    grid.getStore().removeAt(rowIndex);
+                                }
+                                
+                            }
                         }]
                 }, {
-                    xtype: 'fieldset',
-                    title: 'Acción',
-                    height: 110,
+                    xtype: 'container',
+                    height: 106,
                     collapsible: false,
                     columnWidth: 0.127,
                     items: [{
-                            xtype: 'button',
-                            margin: '10, 0, 10, 0',
-                            text: 'Realizar Búsqueda',
-                            name: 'buscar',
-                            id: 'buscar',
-                            width: 140,
-                            handler: function () {
-                                if ((Ext.getCmp('tipoConcepto').getValue()).length == 0) {
-                                    Ext.MessageBox.alert('Mensaje de Alerta', 'Debe elegir el tipo de búsqueda entre Fletes o Recargos', function () {
-                                        return false;
+                        xtype: 'fieldset',
+                        title: 'Nro.Contrato',
+                        height: 60,
+                        collapsible: false,
+                        columnWidth: 0.127,
+                        items: [{
+                                xtype: 'textfield',
+                                name: 'contrato',
+                                id: 'contrato',
+                                width: 131
+                        }]
+                    }, {
+                        xtype: 'fieldset',
+                        title: 'Acción',
+                        items: [{
+                                xtype: 'button',
+                                margin: '10, 0, 10, 0',
+                                text: 'Realizar Búsqueda',
+                                name: 'buscar',
+                                id: 'buscar',
+                                width: 140,
+                                handler: function () {
+                                    if ((Ext.getCmp('tipoConcepto').getValue()).length == 0) {
+                                        Ext.MessageBox.alert('Mensaje de Alerta', 'Debe elegir el tipo de búsqueda entre Fletes o Recargos', function () {
+                                            return false;
+                                        });
+                                    }
+                                    Ext.getCmp('formFiltros').up('fieldset').collapse();
+                                    Ext.getCmp('gridMasiva').up('fieldset').expand();
+
+                                    conceptos = [];
+                                    store = Ext.getCmp('gridConcepto').getStore();
+                                    store.each(function (record, idx) {
+                                        if (record.get('sel')) {
+                                            conceptos.push(record.get('idconcepto'));
+                                        }
+                                    });
+
+                                    transportistas = [];
+                                    store = Ext.getCmp('gridTransport').getStore();
+                                    store.each(function (record, idx) {
+                                        transportistas.push(record.get('id'));
+                                    });
+
+                                    grid = Ext.getCmp('gridMasiva');
+                                    grid.showColumns(Ext.getCmp('tipoConcepto').getValue());
+                                    store = grid.getStore();
+                                    store.reload({
+                                        params: {
+                                            impoexpo: JSON.stringify(Ext.getCmp('impoexpo').getValue()),
+                                            transporte: JSON.stringify(Ext.getCmp('transporte').getValue()),
+                                            tipoConcepto: Ext.getCmp('tipoConcepto').getValue(),
+                                            trafico: JSON.stringify(Ext.getCmp('trafico').getValue()),
+                                            estado: JSON.stringify(Ext.getCmp('estado').getValue()),
+                                            modalidad: JSON.stringify(Ext.getCmp('modalidad').getValue()),
+                                            origen: JSON.stringify(Ext.getCmp('origen').getValue()),
+                                            destino: JSON.stringify(Ext.getCmp('destino').getValue()),
+                                            contrato: Ext.getCmp('contrato').getValue(),
+                                            conceptos: JSON.stringify(conceptos),
+                                            transportistas: JSON.stringify(transportistas)
+                                        }
                                     });
                                 }
-                                Ext.getCmp('formFiltros').up('fieldset').collapse();
-                                Ext.getCmp('gridMasiva').up('fieldset').expand();
-
-                                conceptos = [];
-                                store = Ext.getCmp('gridConcepto').getStore();
-                                store.each(function (record, idx) {
-                                    if (record.get('sel')) {
-                                        conceptos.push(record.get('idconcepto'));
-                                    }
-                                });
-
-                                transportistas = [];
-                                store = Ext.getCmp('gridTransport').getStore();
-                                store.each(function (record, idx) {
-                                    transportistas.push(record.get('id'));
-                                });
-
-                                grid = Ext.getCmp('gridMasiva');
-                                grid.showColumns(Ext.getCmp('tipoConcepto').getValue());
-                                store = grid.getStore();
-                                store.reload({
-                                    params: {
-                                        impoexpo: JSON.stringify(Ext.getCmp('impoexpo').getValue()),
-                                        transporte: JSON.stringify(Ext.getCmp('transporte').getValue()),
-                                        tipoConcepto: Ext.getCmp('tipoConcepto').getValue(),
-                                        trafico: JSON.stringify(Ext.getCmp('trafico').getValue()),
-                                        estado: JSON.stringify(Ext.getCmp('estado').getValue()),
-                                        modalidad: JSON.stringify(Ext.getCmp('modalidad').getValue()),
-                                        origen: JSON.stringify(Ext.getCmp('origen').getValue()),
-                                        destino: JSON.stringify(Ext.getCmp('destino').getValue()),
-                                        conceptos: JSON.stringify(conceptos),
-                                        transportistas: JSON.stringify(transportistas)
-                                    }
-                                });
-                            }
-                        }, {
-                            xtype: 'button',
-                            margin: '10, 0, 10, 0',
-                            text: 'Nueva Búsqueda',
-                            name: 'nueva',
-                            id: 'nueva',
-                            width: 140,
-                            handler: function () {
-                                Ext.getCmp('formFiltros').up('fieldset').expand();
-                                Ext.getCmp('gridMasiva').up('fieldset').collapse();
-                                Ext.getCmp('impoexpo').reset();
-                                Ext.getCmp('transporte').reset();
-                                Ext.getCmp('trafico').reset();
-                                Ext.getCmp('estado').reset();
-                                Ext.getCmp('modalidad').reset();
-                                Ext.getCmp('origen').getStore().clearFilter();
-                                Ext.getCmp('destino').getStore().clearFilter();
-                                Ext.getCmp('tipoConcepto').reset();
-                                Ext.getCmp('gridConcepto').getStore().removeAll();
-                                Ext.getCmp('gridTransport').getStore().removeAll();
-                                Ext.getCmp('gridMasiva').getStore().removeAll();
-                            }
+                            }, {
+                                xtype: 'button',
+                                margin: '10, 0, 10, 0',
+                                text: 'Nueva Búsqueda',
+                                name: 'nueva',
+                                id: 'nueva',
+                                width: 140,
+                                handler: function () {
+                                    Ext.getCmp('formFiltros').up('fieldset').expand();
+                                    Ext.getCmp('gridMasiva').up('fieldset').collapse();
+                                    Ext.getCmp('impoexpo').reset();
+                                    Ext.getCmp('transporte').reset();
+                                    Ext.getCmp('trafico').reset();
+                                    Ext.getCmp('estado').reset();
+                                    Ext.getCmp('modalidad').reset();
+                                    Ext.getCmp('origen').getStore().clearFilter();
+                                    Ext.getCmp('destino').getStore().clearFilter();
+                                    Ext.getCmp('tipoConcepto').reset();
+                                    Ext.getCmp('contrato').reset(),
+                                    Ext.getCmp('gridConcepto').getStore().removeAll();
+                                    Ext.getCmp('gridTransport').getStore().removeAll();
+                                    Ext.getCmp('gridMasiva').getStore().removeAll();
+                                }
+                            }]
                         }]
                 }
             ]

@@ -101,6 +101,7 @@ PanelFletesPorTrayecto = function( config ){
         {name: 'consecutivo', type: 'int'},
         {name: 'idtrayecto', type: 'int'},
         {name: 'nconcepto', type: 'string'},
+        {name: 'facturacion', type: 'string'},
         {name: 'idlinea', type: 'string'},
         {name: 'origen', type: 'string'},
         {name: 'destino', type: 'string'},
@@ -635,7 +636,8 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
     * Muestra una ventana donde se pueden editar las observaciones
     **/
     onDblclick: function(e) {
-        if( !this.readOnly ){
+        //if( !this.readOnly )
+        {
             var btn = e.getTarget('.btnComentarios');
             if (btn) {
                 var t = e.getTarget();
@@ -644,13 +646,18 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
                 store = this.getStore();
                 var record = this.getStore().getAt(rowIdx);
                 activeRow = rowIdx;
+                var buttons;
+                if(!this.readOnly)
+                    buttons= Ext.MessageBox.OKCANCEL;
+                else
+                    buttons= Ext.MessageBox.CANCEL;
 
                 Ext.MessageBox.show({
                    title: 'Observaciones',
                    msg: 'Por favor coloque las observaciones:',
-                   width:300,
-                   buttons: Ext.MessageBox.OKCANCEL,
-                   multiline: true,
+                   width:600,                   
+                   multiline: 300,
+                   buttons: buttons,                   
                    fn: this.actualizarObservaciones,
                    animEl: 'mb3',
                    value: record.get("observaciones")
@@ -1292,7 +1299,7 @@ Ext.extend(PanelFletesPorTrayecto, Ext.grid.EditorGridPanel, {
         if( v!=0 ){
             return v;
         }else{
-            return "";
+            return "";script
         }
 
      }

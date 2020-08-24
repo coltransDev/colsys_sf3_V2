@@ -233,6 +233,7 @@ class pricingActions extends sfActions {
                     $minima = $pricRecargo->getCaVlrminimo();
                     $row = array(
                         'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
+                        'facturacion' => utf8_encode($tipoRecargo->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEsp()),
                         'idconcepto' => '9999',
                         'equipo' => utf8_encode($pricRecargo->getEquipo() ? $pricRecargo->getEquipo()->getCaConcepto() : ""),
                         'idequipo' => $pricRecargo->getCaIdequipo(),
@@ -289,6 +290,7 @@ class pricingActions extends sfActions {
                     $minima = $pricRecargo->getCaVlrminimo();
                     $row = array(
                         'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
+                        'facturacion' => utf8_encode($tipoRecargo->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEsp()),
                         'idconcepto' => '9999',
                         'inicio' => $pricRecargo->getCaFchinicio(),
                         'vencimiento' => $pricRecargo->getCaFchvencimiento(),
@@ -346,6 +348,7 @@ class pricingActions extends sfActions {
                     $minima = $pricRecargo->getCaVlrminimo();
                     $row = array(
                         'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
+                        'facturacion' => utf8_encode($tipoRecargo->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEsp()),
                         'idconcepto' => '9999',
                         'inicio' => $pricRecargo->getCaFchinicio(),
                         'vencimiento' => $pricRecargo->getCaFchvencimiento(),
@@ -443,6 +446,7 @@ class pricingActions extends sfActions {
             }
             $row = array(
                 'nconcepto' => "Observaciones",
+                'facturacion' => '',
                 'inicio' => '',
                 'vencimiento' => '',
                 'moneda' => '',
@@ -479,6 +483,7 @@ class pricingActions extends sfActions {
                 $row = array(
                     'consecutivo' => $pricConcepto->getCaConsecutivo(),
                     'nconcepto' => utf8_encode($pricConcepto->getConcepto()->getCaConcepto()),
+                    'facturacion' => 'Fletes',
                     'equipo' => utf8_encode($pricConcepto->getEquipo() ? $pricConcepto->getEquipo()->getCaConcepto() : ""),
                     'idequipo' => $pricConcepto->getCaIdequipo(),
                     'inicio' => $pricConcepto->getCaFchinicio(),
@@ -539,6 +544,7 @@ class pricingActions extends sfActions {
 
                         $row = array(
                             'nconcepto' => utf8_encode($tipoRecargo->getCaRecargo()),
+                            'facturacion' => utf8_encode($tipoRecargo->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEsp()),
                             'idconcepto' => $pricConcepto->getCaIdconcepto(),
                             'equipo' => utf8_encode($pricRecargo->getEquipo() ? $pricRecargo->getEquipo()->getCaConcepto() : ""),
                             'idequipo' => $pricRecargo->getCaIdequipo(),
@@ -579,6 +585,7 @@ class pricingActions extends sfActions {
                 //Se incluye una fila antes de los recargos generales del trayecto
                 $row = array(
                     'nconcepto' => "Recargos generales del trayecto",
+                    'facturacion' => '',
                     'inicio' => '',
                     'vencimiento' => '',
                     'moneda' => '',
@@ -973,6 +980,7 @@ class pricingActions extends sfActions {
                 'ciudad' => utf8_encode($recargo->getCiudad()->getCaCiudad()),
                 'idrecargo' => $recargo->getCaIdrecargo(),
                 'recargo' => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                'facturacion' => utf8_encode($recargo->getTipoRecargo()->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEsp()),
                 'inicio' => $recargo->getCaFchinicio(),
                 'vencimiento' => $recargo->getCaFchvencimiento(),
                 'vlrrecargo' => $recargo->getCaVlrrecargo(),
@@ -1003,6 +1011,7 @@ class pricingActions extends sfActions {
                     'linea' => utf8_encode($recargo->getIdsProveedor()->getCaSigla() ? $recargo->getIdsProveedor()->getCaSigla() : $recargo->getIdsProveedor()->getIds()->getCaNombre()),
                     'idrecargo' => $recargo->getCaIdrecargo(),
                     'recargo' => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                    'facturacion' => utf8_encode($recargo->getTipoRecargo()->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEsp()),
                     'idconcepto' => $recargo->getCaIdconcepto(),
                     'concepto' => utf8_encode($recargo->getConcepto()->getCaConcepto()),
                     'inicio' => $recargo->getCaFchinicio(),
@@ -1030,6 +1039,7 @@ class pricingActions extends sfActions {
                 'ciudad' => '+',
                 'idrecargo' => '',
                 'recargo' => '',
+                'facturacion' => '',
                 'vlrrecargo' => '',
                 'vlrminimo' => '',
                 'aplicacion' => '',
@@ -1483,6 +1493,7 @@ class pricingActions extends sfActions {
                 'linea' => utf8_encode($recargo->getIdsProveedor()->getCaSigla()?$recargo->getIdsProveedor()->getCaSigla():$recargo->getIdsProveedor()->getIds()->getCaNombre()),
                 'idrecargo' => $recargo->getCaIdrecargo(),
                 'recargo' => utf8_encode($recargo->getTipoRecargo()->getCaRecargo()),
+                'facturacion' => utf8_encode($recargo->getTipoRecargo()->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEsp()),
                 'idconcepto' => $recargo->getCaIdconcepto(),
                 'concepto' => $recargo->getCaIdconcepto() == 9999 ? "Todos los conceptos" : utf8_encode($recargo->getConcepto()->getCaConcepto()),
                 'inicio' => $recargo->getCaFchinicio(),
@@ -1510,6 +1521,7 @@ class pricingActions extends sfActions {
                 'linea' => '+',
                 'idrecargo' => '',
                 'recargo' => '',
+                'facturacion' => '',
                 'vlrrecargo' => '',
                 'vlrminimo' => '',
                 'aplicacion' => '',
@@ -3486,7 +3498,7 @@ class pricingActions extends sfActions {
                     break;
             }
             
-            $where.= $this->fechaInicial?"COALESCE(r.ca_fchactualizado, r.ca_fchcreado) BETWEEN '".$this->fechaInicial."' and '".$this->fechaFinal."'":"r.ca_fchcreado is not null";
+            $where.= $request->getParameter("fechaInicial")?"COALESCE(r.ca_fchactualizado, r.ca_fchcreado) BETWEEN '".$this->fechaInicial."' and '".$this->fechaFinal."'":"r.ca_fchcreado is not null";
             $where.= $this->impoexpo?" AND $sufijo.ca_impoexpo = '".$this->impoexpo."'":"";
             $where.= $this->transporte?" AND $sufijo.ca_transporte = '".$this->transporte."'":"";
             $where.= $this->modalidad?" AND $sufijo.ca_modalidad = '".$this->modalidad."'":"";
@@ -3613,56 +3625,90 @@ class pricingActions extends sfActions {
         $trafico = json_decode($request->getParameter("trafico"));
         $origen = json_decode($request->getParameter("origen"));
         $destino = json_decode($request->getParameter("destino"));
-        $tipoConcepto = $request->getParameter("tipoConcepto");
+        $tipoConcepto = utf8_decode($request->getParameter("tipoConcepto"));
         $conceptos = json_decode($request->getParameter("conceptos"));
+        $contrato = $request->getParameter("contrato");
         
         $from = "pric.tb_trayectos t ";
-        $columns = "t.ca_idtrayecto, t.ca_idlinea, i.ca_nombre AS ca_proveedor, t.ca_transporte, t.ca_modalidad, t.ca_impoexpo, tfo.ca_nombre as ca_traorigen, tfd.ca_nombre as ca_tradestino, o.ca_ciudad as ca_origen, d.ca_ciudad as ca_destino, ";
-        $joins = "INNER JOIN ids.tb_proveedores p ON p.ca_idproveedor = t.ca_idlinea "
-                . "INNER JOIN ids.tb_ids i ON i.ca_id = ca_idproveedor "
+        if ( $tipoConcepto != "Recargo x Línea" ) {
+            $columns = "distinct t.ca_idtrayecto, t.ca_idlinea, t.ca_transporte, t.ca_modalidad, t.ca_impoexpo, t.ca_ncontrato, tfd.ca_nombre as ca_tradestino, o.ca_ciudad as ca_origen, d.ca_ciudad as ca_destino, ";
+            $joins = "INNER JOIN ids.tb_proveedores p ON p.ca_idproveedor = t.ca_idlinea "
                 . "INNER JOIN tb_ciudades o ON o.ca_idciudad = t.ca_origen "
                 . "INNER JOIN tb_traficos tfo ON tfo.ca_idtrafico = o.ca_idtrafico "
                 . "INNER JOIN tb_ciudades d ON d.ca_idciudad = t.ca_destino "
                 . "INNER JOIN tb_traficos tfd ON tfd.ca_idtrafico = d.ca_idtrafico ";
-        $where = "t.ca_activo IS TRUE and ";
+        } else {
+            $columns = "distinct r.ca_idlinea, r.ca_transporte, r.ca_modalidad, r.ca_impoexpo, ";
+        }
+        $columns.= "i.ca_nombre AS ca_proveedor, tfo.ca_nombre as ca_traorigen, ";
+        $joins.= "INNER JOIN ids.tb_ids i ON i.ca_id = ca_idproveedor ";
         $orderBY = "i.ca_nombre";
         if ( $tipoConcepto == "Fletes" ) {
             $columns.= "f.ca_consecutivo, f.ca_idconcepto, c.ca_concepto, f.ca_vlrneto, f.ca_vlrsugerido, f.ca_aplicacion, f.ca_estado, f.ca_idmoneda, f.ca_fchinicio, f.ca_fchvencimiento, f.ca_idequipo, e.ca_concepto as ca_equipo, ";
             $joins.= "LEFT JOIN pric.tb_fletes f ON f.ca_idtrayecto = t.ca_idtrayecto ";
             $joins.= "INNER JOIN tb_conceptos c ON c.ca_idconcepto = f.ca_idconcepto ";
             $joins.= "LEFT JOIN tb_conceptos e ON e.ca_idconcepto = f.ca_idequipo ";
-        }else if ( $tipoConcepto == "Recargos" ) {
+        }else if ( $tipoConcepto == "Recargo x Concepto" ) {
             $columns.= "r.ca_consecutivo, r.ca_idconcepto, c.ca_concepto, r.ca_idrecargo, tr.ca_recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones, r.ca_idmoneda, r.ca_idrecargo, r.ca_fchinicio, r.ca_fchvencimiento, r.ca_idequipo, e.ca_concepto as ca_equipo, ";
             $joins.= "LEFT JOIN pric.tb_recargosxconcepto r ON r.ca_idtrayecto = t.ca_idtrayecto ";
             $joins.= "INNER JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto ";
             $joins.= "LEFT JOIN tb_conceptos e ON e.ca_idconcepto = r.ca_idequipo ";
             $joins.= "LEFT JOIN tb_tiporecargo tr ON tr.ca_idrecargo = r.ca_idrecargo ";
+        }else if ( $tipoConcepto == "Recargo x Línea" ) {
+            $from = "ids.tb_proveedores p ";
+            $columns.= " CASE WHEN LEFT(r.ca_impoexpo, 4) = 'Expo' THEN 'Todos' ELSE tfo.ca_nombre END as ca_origen"
+                    . ", CASE WHEN LEFT(r.ca_impoexpo, 4) = 'Expo' THEN tfo.ca_nombre ELSE 'Todos' END as ca_destino"
+                    . ", r.ca_consecutivo, r.ca_idconcepto, c.ca_concepto, r.ca_idrecargo, tr.ca_recargo, r.ca_vlrrecargo, r.ca_aplicacion, r.ca_vlrminimo, r.ca_aplicacion_min, r.ca_observaciones, r.ca_idmoneda, r.ca_idrecargo, r.ca_fchinicio, r.ca_fchvencimiento, null as ca_idequipo, '' as ca_equipo, ";
+            $joins.= "LEFT JOIN pric.tb_recargosxlinea r ON r.ca_idlinea = p.ca_idproveedor ";
+            $joins.= "INNER JOIN tb_conceptos c ON c.ca_idconcepto = r.ca_idconcepto ";
+            $joins.= "INNER JOIN tb_traficos tfo ON tfo.ca_idtrafico = r.ca_idtrafico ";
+            $joins.= "LEFT JOIN tb_tiporecargo tr ON tr.ca_idrecargo = r.ca_idrecargo ";
         }
 
-        if ( $transporte ) {
-            $where.= "t.ca_transporte in ('" . implode("','", $transporte) . "') and ";
-        }
-        if ( $modalidad ) {
-            $where.= "t.ca_modalidad in ('" . implode("','", $modalidad) . "') and ";
-        }
-        if ( $impoexpo ) {
-            $where.= "t.ca_impoexpo in ('" . implode("','", $impoexpo) . "') and ";
-        }
-        if ( $transportistas ){
-            $where.= "t.ca_idlinea in (" . implode(",", $transportistas) . ") and ";
-        }
-        if ( $trafico ) {
-            if ($impoexpo == Constantes::EXPO) {
-                $where.= "d.ca_idtrafico in ('" . implode("','", $trafico) . "') and ";
-            } else {
-                $where.= "o.ca_idtrafico in ('" . implode("','", $trafico) . "') and ";
+        if ( $tipoConcepto != "Recargo x Línea" ) {
+            $where = "t.ca_activo IS TRUE and ";
+            if ( $transporte ) {
+                $where.= "t.ca_transporte in ('" . implode("','", $transporte) . "') and ";
             }
-        }
-        if ( $origen ) {
-            $where.= "t.ca_origen in ('" . implode("','", $origen) . "') and ";
-        }
-        if ( $destino ) {
-            $where.= "t.ca_destino in ('" . implode("','", $destino) . "') and ";
+            if ( $modalidad ) {
+                $where.= "t.ca_modalidad in ('" . implode("','", $modalidad) . "') and ";
+            }
+            if ( $impoexpo ) {
+                $where.= "t.ca_impoexpo in ('" . implode("','", $impoexpo) . "') and ";
+            }
+            if ( $transportistas ){
+                $where.= "t.ca_idlinea in (" . implode(",", $transportistas) . ") and ";
+            }
+            if ( $trafico[0] != '%' and $trafico[0] != '' ) {
+                if (utf8_decode($impoexpo[0]) == Constantes::EXPO) {
+                    $where.= "d.ca_idtrafico in ('" . implode("','", $trafico) . "') and ";
+                } else {
+                    $where.= "o.ca_idtrafico in ('" . implode("','", $trafico) . "') and ";
+                }
+            }
+            if ( $origen ) {
+                $where.= "t.ca_origen in ('" . implode("','", $origen) . "') and ";
+            }
+            if ( $destino ) {
+                $where.= "t.ca_destino in ('" . implode("','", $destino) . "') and ";
+            }
+        } else {
+            $where = "";
+            if ( $transporte ) {
+                $where.= "r.ca_transporte in ('" . implode("','", $transporte) . "') and ";
+            }
+            if ( $modalidad ) {
+                $where.= "r.ca_modalidad in ('" . implode("','", $modalidad) . "') and ";
+            }
+            if ( $impoexpo ) {
+                $where.= "r.ca_impoexpo in ('" . implode("','", $impoexpo) . "') and ";
+            }
+            if ( $transportistas ){
+                $where.= "r.ca_idlinea in (" . implode(",", $transportistas) . ") and ";
+            }
+            if ( $trafico[0] != '%' and $trafico[0] != '' ) {
+                $where.= "r.ca_idtrafico in ('" . implode("','", $trafico) . "') and ";
+            }
         }
 
         if ( $estado ) {
@@ -3680,13 +3726,20 @@ class pricingActions extends sfActions {
                 $where.= "f.ca_estado in ('" . implode("','", $estado) . "') and ";
             }
         }
-        
+
         if ( $conceptos ) {
             if ( $tipoConcepto == "Fletes" ) {
                 $where.= "f.ca_idconcepto in (" . implode(",", $conceptos) . ") and ";
-            }else if ( $tipoConcepto == "Recargos" ) {
-                $where.= "r.ca_idconcepto in (" . implode(",", $conceptos) . ") and ";
+            }else if ( $tipoConcepto == "Recargo x Concepto" ) {
+                $where.= "r.ca_idrecargo in (" . implode(",", $conceptos) . ") and ";
+            }else if ( $tipoConcepto == "Recargo x Línea" ) {
+                $where.= "r.ca_idrecargo in (" . implode(",", $conceptos) . ") and ";
             }
+        }
+        if ( $contrato ) {
+            if ( $tipoConcepto == "Fletes" ) {
+                $where.= "t.ca_ncontrato = '$contrato' and ";
+            }            
         }
         
         $columns = substr($columns, 0, strlen($columns)-2);
@@ -3696,7 +3749,10 @@ class pricingActions extends sfActions {
                     $joins
                 WHERE $where
                 ORDER BY $orderBY";
-        //die(utf8_decode($sql));
+//        if ($this->getUser()->getUserId() == 'clopez') {
+//            die(utf8_decode($sql));
+//        }
+        
         $con = Doctrine_Manager::getInstance()->connection();
         $st = $con->execute(utf8_decode($sql));
         $masivas = $st->fetchAll();
@@ -3714,6 +3770,7 @@ class pricingActions extends sfActions {
                 $aplicacion_min = "";
                 $observaciones = "";
                 $estado = $masiva["ca_estado"];
+                $ncontrato = $masiva["ca_ncontrato"];
                 $idmoneda = $masiva["ca_idmoneda"];
             } else {
                 $idrecargo = $masiva["ca_idrecargo"];
@@ -3725,16 +3782,17 @@ class pricingActions extends sfActions {
                 $aplicacion_min = $masiva["ca_aplicacion_min"];
                 $observaciones = $masiva["ca_observaciones"];
                 $estado = null;
+                $ncontrato = $masiva["ca_ncontrato"];
                 $idmoneda = $masiva["ca_idmoneda"];
             }
             $row = array(
                 'idtrayecto' => $masiva["ca_idtrayecto"],
                 'idconcepto' => $masiva["ca_idconcepto"],
-                'origen' => $masiva["ca_origen"],
-                'destino' => $masiva["ca_destino"],
+                'origen' => utf8_encode($masiva["ca_origen"]),
+                'destino' => utf8_encode($masiva["ca_destino"]),
                 'concepto' => utf8_encode($masiva["ca_concepto"]),
                 'idlinea' => $masiva["ca_idlinea"],
-                'proveedor' => $masiva["ca_proveedor"],
+                'proveedor' => utf8_encode($masiva["ca_proveedor"]),
                 'consecutivo' => $masiva["ca_consecutivo"],
                 'idequipo' => $masiva["ca_idequipo"],
                 'equipo' => utf8_encode($masiva["ca_equipo"]),
@@ -3747,11 +3805,12 @@ class pricingActions extends sfActions {
                 'aplicacion_min' => utf8_encode($aplicacion_min),
                 'observaciones' => utf8_encode($observaciones),
                 'estado' => $estado,
+                'ncontrato' => $ncontrato,
                 'idmoneda' => $idmoneda,
                 'fchinicio' => $masiva["ca_fchinicio"]." 00:00:00", // Se agrega la hora para efectos de la zona horaria
                 'fchvencimiento' => $masiva["ca_fchvencimiento"]." 00:00:00", // Se agrega la hora para efectos de la zona horaria
                 'transporte' => utf8_encode($masiva["ca_transporte"]),
-                'tipoConcepto' => $tipoConcepto
+                'tipoConcepto' => utf8_encode($tipoConcepto)
             );
             $data[] = $row;
         }
@@ -3770,12 +3829,14 @@ class pricingActions extends sfActions {
         $datos = json_decode($datos);
         $errorInfo = "";
         $ids = array();
+        $idt = array();
+        $user = $this->getUser();
         
         $conn = Doctrine::getTable("PricFlete")->getConnection();
         $conn->beginTransaction();
         try {
             foreach ($datos as $dato) {
-                if ($dato->tipoConcepto == "Fletes"){
+                if (utf8_decode($dato->tipoConcepto) == "Fletes"){
                     $consecutivo = $dato->consecutivo;
                     
                     $pricFlete = Doctrine::getTable("PricFlete")
@@ -3784,17 +3845,22 @@ class pricingActions extends sfActions {
                         ->fetchOne();
                     
                     if ($pricFlete) {
-                        if ($dato->valor){
+                        if ($dato->valor == 0 || $dato->valor == ''){
+                            $pricFlete->setCaVlrneto(0);
+                        } else if ($dato->valor) {
                             $pricFlete->setCaVlrneto($dato->valor);
                         }
-                        if ($dato->valor_sug){
+                        if ($dato->valor_sug == 0 || $dato->valor_sug == ''){
+                            $pricFlete->setCaVlrsugerido(0);
+                        }else if ($dato->valor_sug){
                             $pricFlete->setCaVlrsugerido($dato->valor_sug);
                         }
                         if ($dato->aplicacion){
-                            $pricFlete->setCaAplicacion($dato->aplicacion);
+                            $pricFlete->setCaAplicacion(utf8_decode($dato->aplicacion));
                         }
-                        if ($dato->estado){
-                            $pricFlete->setCaEstado($dato->estado);
+                        if ($dato->estado or $dato->estado == 0){
+                            $estado = ($dato->estado==0)?null:$dato->estado;
+                            $pricFlete->setCaEstado($estado);
                         }
                         if ($dato->idmoneda){
                             $pricFlete->setCaIdmoneda($dato->idmoneda);
@@ -3805,29 +3871,39 @@ class pricingActions extends sfActions {
                         if ($dato->fchvencimiento){
                             $pricFlete->setCaFchvencimiento($dato->fchvencimiento);
                         }
-                        $pricFlete->save();
+                        $pricFlete->save($conn);
                         $ids[] = $dato->id;
+                        
+                        if ($dato->ncontrato or $dato->ncontrato == ""){
+                            $trayecto = $pricFlete->getTrayecto();
+                            $trayecto->setCaNcontrato($dato->ncontrato);
+                            $trayecto->save($conn);
+                        }
                     }
-                }else if ($dato->tipoConcepto == "Recargos"){
+                }else if (utf8_decode($dato->tipoConcepto) == "Recargo x Concepto"){
                     $pricRecargo = Doctrine::getTable("PricRecargoxConcepto")
                         ->createQuery("r")
                         ->addWhere("r.ca_consecutivo = ?", $dato->consecutivo)
                         ->fetchOne();
                     if ($pricRecargo) {
-                        if ($dato->valor){
+                        if ($dato->valor == 0 || $dato->valor == ''){
+                            $pricRecargo->setCaVlrrecargo(0);
+                        } else if ($dato->valor){
                             $pricRecargo->setCaVlrrecargo($dato->valor);
                         }
                         if ($dato->aplicacion){
-                            $pricRecargo->setCaAplicacion($dato->aplicacion);
+                            $pricRecargo->setCaAplicacion(utf8_decode($dato->aplicacion));
                         }
-                        if ($dato->valor_min){
+                        if ($dato->valor_min == 0 || $dato->valor_min == ''){
+                            $pricRecargo->setCaVlrminimo(0);
+                        }else if ($dato->valor_min){
                             $pricRecargo->setCaVlrminimo($dato->valor_min);
                         }
                         if ($dato->aplicacion_min){
-                            $pricRecargo->setCaAplicacionMin($dato->aplicacion_min);
+                            $pricRecargo->setCaAplicacionMin(utf8_decode($dato->aplicacion_min));
                         }
                         if ($dato->observaciones){
-                            $pricRecargo->setCaObservaciones($dato->observaciones);
+                            $pricRecargo->setCaObservaciones(utf8_decode($dato->observaciones));
                         }
                         if ($dato->idmoneda){
                             $pricRecargo->setCaIdmoneda($dato->idmoneda);
@@ -3838,7 +3914,44 @@ class pricingActions extends sfActions {
                         if ($dato->fchvencimiento){
                             $pricRecargo->setCaFchvencimiento($dato->fchvencimiento);
                         }
-                        $pricRecargo->save();
+                        $pricRecargo->save($conn);
+                        $ids[] = $dato->id;
+                    }
+                }else if (utf8_decode($dato->tipoConcepto) == "Recargo x Línea"){
+                    $pricRecargo = Doctrine::getTable("PricRecargoxLinea")
+                        ->createQuery("r")
+                        ->addWhere("r.ca_consecutivo = ?", $dato->consecutivo)
+                        ->fetchOne();
+                    if ($pricRecargo) {
+                        if ($dato->valor == 0 || $dato->valor == ''){
+                            $pricRecargo->setCaVlrrecargo(0);
+                        }else if ($dato->valor){
+                            $pricRecargo->setCaVlrrecargo($dato->valor);
+                        }
+                        if ($dato->aplicacion){
+                            $pricRecargo->setCaAplicacion(utf8_decode($dato->aplicacion));
+                        }
+                        if ($dato->valor_min == 0 || $dato->valor_min == ''){
+                            $pricRecargo->setCaVlrminimo(0);
+                        }else if ($dato->valor_min){
+                            $pricRecargo->setCaVlrminimo($dato->valor_min);
+                        }
+                        if ($dato->aplicacion_min){
+                            $pricRecargo->setCaAplicacionMin(utf8_decode($dato->aplicacion_min));
+                        }
+                        if ($dato->observaciones){
+                            $pricRecargo->setCaObservaciones(utf8_decode($dato->observaciones));
+                        }
+                        if ($dato->idmoneda){
+                            $pricRecargo->setCaIdmoneda($dato->idmoneda);
+                        }
+                        if ($dato->fchinicio){
+                            $pricRecargo->setCaFchinicio($dato->fchinicio);
+                        }
+                        if ($dato->fchvencimiento){
+                            $pricRecargo->setCaFchvencimiento($dato->fchvencimiento);
+                        }
+                        $pricRecargo->save($conn);
                         $ids[] = $dato->id;
                     }
                 } 

@@ -105,6 +105,7 @@ PanelRecargosPorCiudad = function( config ){
         {name: 'ciudad', type: 'string'},
         {name: 'idrecargo', type: 'string'},
         {name: 'recargo', type: 'string'},
+        {name: 'facturacion', type: 'string'},
         {name: 'idconcepto', type: 'string'},
         {name: 'concepto', type: 'string'},
         {name: 'inicio', type: 'date', dateFormat:'Y-m-d'},
@@ -198,10 +199,10 @@ PanelRecargosPorCiudad = function( config ){
     }
 
     this.expander = new Ext.grid.RowExpander({
-        lazyRender : false,
+        lazyRender : true,
         width: 15,
         tpl : new Ext.Template(
-            '<p><div class=\'btnComentarios\' id=\'obs_{_id}\'>&nbsp; {observaciones}</div></p>'
+            '<p><div style="position: relative;">  <div class=\'btnComentarios\' id=\'obs_{_id}\' style=\'z-index: 1000\'>&nbsp; {observaciones}</div> </div></p>'
         ),
         getRowClass : function(record, rowIndex, p, ds){
             p.cols = p.cols-1;
@@ -822,7 +823,8 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
     * Muestra una ventana donde se pueden editar las observaciones
     **/
     onDblclick: function(e) {
-        if( !this.readOnly ){
+        //if( !this.readOnly )
+        {
             var btn = e.getTarget('.btnComentarios');
             if (btn) {
                 var t = e.getTarget();
@@ -831,12 +833,23 @@ Ext.extend(PanelRecargosPorCiudad, Ext.grid.EditorGridPanel, {
                 store = this.getStore();
                 var record = this.getStore().getAt(rowIdx);
                 activeRow = rowIdx;
+                var buttons;
+                if(!this.readOnly)
+                {
+                    buttons= Ext.MessageBox.OKCANCEL;
+                }
+                else
+                {
+                    buttons= Ext.MessageBox.CANCEL;
+                }
+                console.log(buttons);
+                
                 Ext.MessageBox.show({
                    title: 'Observaciones',
                    msg: 'Por favor coloque las observaciones:',
-                   width:300,
-                   buttons: Ext.MessageBox.OKCANCEL,
-                   multiline: true,
+                   width:600,                   
+                   multiline: 300,
+                   buttons: buttons,                   
                    fn: this.actualizarObservaciones,
                    animEl: 'mb3',
                    value: record.get("observaciones")

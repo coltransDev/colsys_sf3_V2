@@ -209,7 +209,6 @@ PanelTarifarioAduanaCliente = function( config ){
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
                     style: 'text-align:left',
-                    allowNegative: false,
                     decimalPrecision :2
                 })
       },
@@ -232,7 +231,6 @@ PanelTarifarioAduanaCliente = function( config ){
         editor: new Ext.form.NumberField({
                     allowBlank: false ,
                     style: 'text-align:left',
-                    allowNegative: false,
                     decimalPrecision :2
                 })
       },
@@ -709,7 +707,8 @@ Ext.extend(PanelTarifarioAduanaCliente, Ext.grid.EditorGridPanel, {
     * Muestra una ventana donde se pueden editar las observaciones
     **/
     onDblclick: function(e) {
-        if( !this.readOnly ){
+        //if( !this.readOnly )
+        {
             var btn = e.getTarget('.btnComentarios');
             if (btn) {
                 var t = e.getTarget();
@@ -718,13 +717,17 @@ Ext.extend(PanelTarifarioAduanaCliente, Ext.grid.EditorGridPanel, {
                 store = this.getStore();
                 var record = this.getStore().getAt(rowIdx);
                 activeRow = rowIdx;
-
+                var buttons;
+                if(!this.readOnly)
+                    buttons= Ext.MessageBox.OKCANCEL;
+                else
+                    buttons= Ext.MessageBox.CANCEL;
                 Ext.MessageBox.show({
                    title: 'Observaciones',
                    msg: 'Por favor coloque las observaciones:',
-                   width:300,
-                   buttons: Ext.MessageBox.OKCANCEL,
-                   multiline: true,
+                   width:600,                   
+                   multiline: 300,
+                   buttons: buttons,                   
                    fn: this.actualizarObservaciones,
                    animEl: 'mb3',
                    value: record.get("observaciones")
