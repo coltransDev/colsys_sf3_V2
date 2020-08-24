@@ -37,6 +37,7 @@ class pricingComponents extends sfComponents
 							"titulo"=>utf8_encode($notificacion->getCaTitulo()), 
 							"mensaje"=>utf8_encode($notificacion->getCaMensaje()), 
 							"caducidad"=>$notificacion->getCaCaducidad(),
+                                                        "impoexpo"=> utf8_encode($notificacion->getCaImpoexpo()),
 							"fchcreado"=>$notificacion->getCaFchcreado(), 
 							"usucreado"=>$notificacion->getCaUsucreado() );
 			$this->data[] = $row;

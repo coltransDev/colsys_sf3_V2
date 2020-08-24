@@ -2519,6 +2519,7 @@ class pricingActions extends sfActions {
         $titulo = $this->getRequestParameter("titulo");
         $mensaje = $this->getRequestParameter("mensaje");
         $caducidad = $this->getRequestParameter("caducidad");
+        $impoexpo = $this->getRequestParameter("impoexpo");
         $id = $this->getRequestParameter("id");
 
         $user = $this->getUser();
@@ -2532,6 +2533,7 @@ class pricingActions extends sfActions {
         $notificacion->setCaTitulo(utf8_decode($titulo));
         $notificacion->setCaMensaje(utf8_decode($mensaje));
         $notificacion->setCaCaducidad($caducidad);
+        $notificacion->setCaImpoexpo(utf8_decode($impoexpo));
         $notificacion->setCaUsucreado($user->getUserId());
 
         $this->fchcreado = date("Y-m-d h:i:s", time());
@@ -2544,6 +2546,7 @@ class pricingActions extends sfActions {
             "mensaje" => $mensaje,
             "titulo" => $titulo,
             "caducidad" => $caducidad,
+            "impoexpo" => $impoexpo,
             "usucreado" => $user->getUserId(),
             "success" => true,
             "id" => $id);

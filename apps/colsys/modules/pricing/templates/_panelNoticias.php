@@ -1,5 +1,6 @@
 <?
 $data = $sf_data->getRaw('data');
+include_component("widgets", "widgetImpoexpo");
 include_component("pm", "editarTicketWindow", array("nivel"=>$nivelTickets));
 
 ?>
@@ -15,6 +16,7 @@ PanelNoticias = function( config ){
 
     this.record = Ext.data.Record.create([
         {name: 'idnotificacion', type: 'string'},
+        {name: 'impoexpo', type: 'string'},
         {name: 'titulo', type: 'string'},
         {name: 'mensaje', type: 'string'},
         {name: 'caducidad', type: 'string'},
@@ -35,12 +37,10 @@ PanelNoticias = function( config ){
                 successProperty: 'success'
             },
             this.record
-        ),
-        proxy: new Ext.data.MemoryProxy( this.data )
-        ,
-        sortInfo:{field: 'fchcreado', direction: "DESC"}
-
-
+        ),        
+        proxy: new Ext.data.MemoryProxy( this.data ),
+        sortInfo:{field: 'fchcreado', direction: "DESC"},
+        groupField: 'impoexpo'
     });
 
     /*
@@ -55,6 +55,13 @@ PanelNoticias = function( config ){
     }
     
     this.columns = [
+		{
+			header: "Tipo",
+			width: 220,
+			sortable: true,			
+			dataIndex: 'impoexpo',
+			id: 'impoexpo'
+		},
 		{
 			header: "Titulo",
 			width: 220,
@@ -76,8 +83,7 @@ PanelNoticias = function( config ){
     
 
     PanelNoticias.superclass.constructor.call(this, {        
-        stripeRows: true,
-        //autoExpandColumn: 'nconcepto',
+        stripeRows: true,        
         title: 'Notificaciones',
 
         closable: true,
@@ -115,12 +121,13 @@ PanelNoticias = function( config ){
                 }
             }
         ],
-        
-        viewConfig: {
+        view: new Ext.grid.GroupingView({
             forceFit:true,
             enableRowBody:true,
-            getRowClass : this.applyRowClass
-        },        
+            hideGroupedColumn: true,
+            getRowClass : this.applyRowClass,
+            groupTextTpl: '<span style="color:blue;">{text}</span>'
+        }),
         listeners:{
             rowcontextmenu: this.onRowContextMenu,
             click: this.onClickHandler
@@ -279,7 +286,7 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
     ventanaEdicion: function( record ){
         win = new Ext.Window({
             width       : 400,
-            height      : 250,
+            height      : 280,
             closeAction :'hide',
             plain       : true,
 
@@ -313,6 +320,12 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
                         name: 'caducidad',
                         allowBlank:false
 
+                    }),
+                    new WidgetImpoexpo({
+                        fieldLabel: 'Impoexpo',                        
+                        id: 'impoexpo',
+                        name:'impoexpo',
+                        allowBlank:false
                     })
                 ]
 
@@ -327,6 +340,7 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
                     var idnotificacion = fp.getForm().findField("idnotificacion").getValue();
                     var titulo = fp.getForm().findField("titulo").getValue();
                     var mensaje = fp.getForm().findField("mensaje").getValue();
+                    var impoexpo = fp.getForm().findField("impoexpo").getValue();
                     var caducidad = Ext.util.Format.date( fp.getForm().findField("caducidad").getValue(), 'Y-m-d');
 
                     if(fp.getForm().isValid()){
@@ -340,10 +354,13 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
                                 waitMsg: 'Guardando cambios...',
                                 url: '<?=url_for("pricing/guardarNotificacion")?>', 						//method: 'POST',
                                 //Solamente se envian los cambios
-                                params :	{ idnotificacion:idnotificacion,
+                                params : { 
+                                    idnotificacion:idnotificacion,
                                               titulo:titulo,
                                               mensaje:mensaje,
-                                              caducidad:caducidad},
+                                    caducidad:caducidad,
+                                    impoexpo:impoexpo
+                                },
 
                                 //Ejecuta esta accion en caso de fallo
                                 //(404 error etc, ***NOT*** success=false)
@@ -368,7 +385,7 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
                                         rec = storeNoticias.getById(res.idnotificacion);
                                         if( !rec ){
                                             var rec = new recordNoticias(
-                                                {titulo:res.titulo, mensaje:res.mensaje, caducidad:caducidad, idnotificacion:res.idnotificacion, fchcreado:fchcreado, usucreado:res.usucreado}
+                                                {titulo:res.titulo, mensaje:res.mensaje, caducidad:caducidad, idnotificacion:res.idnotificacion, fchcreado:fchcreado, usucreado:res.usucreado, impoexpo: res.impoexpo}
                                             );
                                             rec.id = res.idnotificacion;
                                             records = [];
@@ -381,6 +398,7 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
                                             rec.set("mensaje" , res.mensaje);
                                             rec.set("caducidad" , caducidad);
                                             rec.set("titulo" , res.titulo);
+                                            rec.set("impoexpo" , res.impoexpo);
                                             //rec.set("fchcreado" , res.fchcreado);
                                             rec.set("usucreado" , res.usucreado);
                                             rec.commit();
@@ -414,6 +432,7 @@ Ext.extend(PanelNoticias, Ext.grid.GridPanel, {
             fp.getForm().findField("titulo").setValue(record.data.titulo);
             fp.getForm().findField("mensaje").setValue(record.data.mensaje);
             fp.getForm().findField("caducidad").setValue(record.data.caducidad);
+            fp.getForm().findField("impoexpo").setValue(record.data.impoexpo);
 
         }
 
