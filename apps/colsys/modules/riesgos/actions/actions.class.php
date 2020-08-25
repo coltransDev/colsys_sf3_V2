@@ -740,7 +740,7 @@ class riesgosActions extends sfActions {
         $data[] = array("valor" => "Clientes");
         $data[] = array("valor" => utf8_encode("Entes Públicos"));
         $data[] = array("valor" => "Entes Privados");
-        $data[] = array("valor" => "Proveedores");
+        $data[] = array("valor" => "Proveedores");        
         $data[] = array("valor" => "Todos los colaboradores");
         
         /*$cargos = Doctrine::getTable("Cargo")
@@ -1113,7 +1113,7 @@ class riesgosActions extends sfActions {
         $q = new Doctrine_RawSql();        
         $q->select('{vl.*}');
         $q->from("idg.tb_valoracion vl
-                LEFT JOIN idg.tb_riesgos r ON r.ca_idriesgo = vl.ca_idriesgo AND r.ca_activo = TRUE
+                INNER JOIN idg.tb_riesgos r ON r.ca_idriesgo = vl.ca_idriesgo AND r.ca_activo = TRUE
                 INNER JOIN (SELECT ca_idriesgo, max(ca_ano) as ca_ano 
                             FROM idg.tb_valoracion 
                             GROUP BY ca_idriesgo order by ca_idriesgo) ul on ul.ca_idriesgo = vl.ca_idriesgo and ul.ca_ano = vl.ca_ano");
@@ -1134,7 +1134,7 @@ class riesgosActions extends sfActions {
         
         
         if(!empty($valores)){
-            foreach($valores as $valor){
+            foreach($valores as $valor){                
                 $impacto = (($valor->getCaOperativo()*10*0.01)+($valor->getCaLegal()*30*0.01)+($valor->getCaEconomico()*40*0.01)+($valor->getCaComercial()*20*0.01));
                 $grafica[] = array(
                     'idriesgo' => $valor->getCaIdriesgo(),
@@ -1435,14 +1435,14 @@ class riesgosActions extends sfActions {
         $sql = "SELECT f.ca_factor, sum(v.impacto) as impacto, (
                     SELECT sum(v.impacto)
                     FROM idg.tb_factores f
-                            INNER JOIN idg.tb_riesgos r ON f.ca_idriesgo = r.ca_idriesgo	
+                            INNER JOIN idg.tb_riesgos r ON f.ca_idriesgo = r.ca_idriesgo AND r.ca_activo = TRUE
                             INNER JOIN (
                                     SELECT max(ca_idvaloracion), ca_idriesgo, ca_peso as probabilidad, ((ca_operativo*10*0.01)+(ca_legal*30*0.01)+(ca_economico*40*0.01)+(ca_comercial*20*0.01)) as impacto
                                     FROM idg.tb_valoracion
                                     GROUP BY ca_idriesgo, probabilidad, impacto order by ca_idriesgo ) as v ON v.ca_idriesgo = f.ca_idriesgo
                                     WHERE ca_factor = 'Todos los colaboradores') as todos
             FROM idg.tb_factores f
-                    INNER JOIN idg.tb_riesgos r ON f.ca_idriesgo = r.ca_idriesgo	
+                    INNER JOIN idg.tb_riesgos r ON f.ca_idriesgo = r.ca_idriesgo AND r.ca_activo = TRUE
                     INNER JOIN (
                             SELECT max(ca_idvaloracion), ca_idriesgo, ca_peso as probabilidad, ((ca_operativo*10*0.01)+(ca_legal*30*0.01)+(ca_economico*40*0.01)+(ca_comercial*20*0.01)) as impacto
                             FROM idg.tb_valoracion
@@ -1551,8 +1551,8 @@ class riesgosActions extends sfActions {
     
     public function executeAsignarRiesgosxCargo(sfWebRequest $request){
         
-        $cargo = $request->getParameter("cargo");
-        $cargo2 = $request->getParameter("cargo2");
+        $cargo = utf8_decode($request->getParameter("cargo"));
+        $cargo2 = utf8_decode($request->getParameter("cargo2"));
         
         $factores = Doctrine::getTable("IdgFactor")->createQuery("f")->select("ca_idriesgo, ca_factor")->where("ca_factor = ?",$cargo)->execute();
         
