@@ -5227,6 +5227,7 @@ class inoF2Actions extends sfActions {
                     $row["numserial"] = utf8_encode($seguro->getInoEquipo()->getCaSerial());
                     $row["unidad_neg"] = "Contenedores";
                 }
+                $row["idmaster"] = utf8_encode($inoHouse->getInoMaster()->getCaIdmaster());
                 $row["impoexpo"] = utf8_encode($inoHouse->getInoMaster()->getCaImpoexpo());
                 $row["transporte"] = utf8_encode($inoHouse->getInoMaster()->getCaTransporte());
                 $row["origen"] = utf8_encode($inoHouse->getInoMaster()->getOrigen()->getCaCiudad());
@@ -5272,6 +5273,7 @@ class inoF2Actions extends sfActions {
             $row["usuliquidado"]= $seguro->getCaUsuliquidado();
             $row["fchanulado"]= $seguro->getCaFchanulado();
             $row["usuanulado"]= $seguro->getCaUsuanulado();
+            $row["modificable"]= (!$seguro->getCaFchliquidado())?true:false;
             $datos[] = $row;
         }
 
@@ -5327,8 +5329,12 @@ class inoF2Actions extends sfActions {
                 $seguro->valoresPorDefecto();
                 $seguro->save();
                         
+                $referencia = explode(".", $seguro->getCaReferencia());
+                $anio = 2000 + $referencia[4];
+                $mes =  $referencia[2];
+                
                 $conn->commit();
-                $this->responseArray = array("success" => true);
+                $this->responseArray = array("success" => true, "anio" => $anio, "mes" => $mes);
             } catch (Exception $e) {
                 $conn->rollback();
                 $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
@@ -5370,6 +5376,28 @@ class inoF2Actions extends sfActions {
                 $conn->rollback();
                 $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
             }
+        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeCargueInicialSeguros(sfWebRequest $request) {
+        $seguros = Doctrine::getTable("InoSeguro")
+                ->createQuery("s")
+                ->execute();
+        $conn = Doctrine_Manager::getInstance()->connection();
+        $conn->beginTransaction();
+        $i = 1;
+        try {
+            foreach ($seguros as $seguro) {
+                print_r($i++ . " -> " . $seguro->getCaIdseguro() . " " . $seguro->getCaReferencia() ."<br />");
+                $seguro->valoresPorDefecto();
+                $seguro->save();
+            }
+            $conn->commit();
+            $this->responseArray = array("success" => true);
+        } catch (Exception $e) {
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
         $this->setTemplate("responseTemplate");
     }
