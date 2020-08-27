@@ -1433,21 +1433,39 @@ class inoF2Actions extends sfActions {
         $caso_uso = $request->getParameter("caso_uso");
         $referencia = $request->getParameter("referencia");
         $tipo = $request->getParameter("tipo");
+        $options["fecha"] = date("Y-m-d H:i:s");        
 
         $datos = array();
         
-        $impoexpo = "";       
+        $impoexpo = $eve = "";       
+        $idg = $fchlimite = $num_dias = null;
         
         if($tipo=="Aduana"){            
             $masterAduana = $master = Doctrine::getTable("InoMaestraAdu")->findBy("ca_referencia",$referencia)->getFirst();
             $idmodalidad = $masterAduana->getInoExpoAdu()->getCaIdregimen();
             $impoexpo = $masterAduana->getCaImpoexpo();
             
+            $aplicaIdg = $masterAduana->getRequiereIdgAduana();            
+            if($aplicaIdg){
+                $options["impoexpo"] = $impoexpo;
+                $options["transporte"] = $masterAduana->getCaTransporte();                        
+                $idgConfig = $masterAduana->getIdgAduana($options);
+                $tbIndicador = "InoViIndicadoresExpAdu";
+            }
+            
             $master = new InoMaster();
             $master->setCaReferencia($referencia);            
+            
         }else{
-        $master = Doctrine::getTable("InoMaster")->findBy("ca_referencia",$referencia)->getFirst();
+            $master = Doctrine::getTable("InoMaster")->findBy("ca_referencia",$referencia)->getFirst();
             $idmodalidad = $master->getDatosJson("modalidad");
+            
+            $aplicaIdg = $master->getRequiereIdg();            
+            if($aplicaIdg){
+                $house = Doctrine::getTable("InoHouse")->findByDql("ca_idmaster = ?", array($master->getCaIdmaster()))->getFirst();
+                $idgConfig = $house->getIdgxHouse($options);
+                $tbIndicador = "InoViIndicadoresExp";                
+            }
         }
         
         $con = Doctrine_Manager::getInstance()->connection();
@@ -1465,12 +1483,33 @@ class inoF2Actions extends sfActions {
 
         $rs = $con->execute($sql);
         $eventos = $rs->fetchAll();
-        $eve = "";
         
         $ultimoevento = $master->getFchUltimoEvento($impoexpo);
         $infoeventos  = $master->getInfoEventos($impoexpo);
         $idcliente = $master->getIdsExpo($tipo)->getCaIdcliente();
-        $cliente = $master->getIdsExpo($tipo)->getCliente()->getCaCompania();
+        $cliente = $master->getIdsExpo($tipo)->getCliente()->getCaCompania();        
+                    
+        if($aplicaIdg){     
+            if($ultimoevento){
+                $color = "green";
+                $num_dias = intval($idgConfig->getCaLim1());
+                eval('$indicador = Doctrine::getTable("'.$tbIndicador.'")->findBy("ca_referencia", $master->getCaReferencia())->getFirst();');
+                
+                if($indicador->getCaIdgval()){
+                    
+                    $idg = $indicador->getCaIdgval();
+                    if($indicador->getCaIdgval() > $num_dias)
+                        $color = "red";
+                }else{
+                    $festivos = TimeUtils::getFestivos();        
+                    $nvafecha = TimeUtils::addTimeWorkingDays($festivos, $ultimoevento,  $num_dias);                    
+                    $nvafecha = date("Y-m-d",$nvafecha);
+                    
+                    if(date("Y-m-d") > $nvafecha)
+                        $color = "red";
+                }
+            }
+        }
         
         foreach ($eventos as $evento) {
 
@@ -1511,12 +1550,17 @@ class inoF2Actions extends sfActions {
                     "fchevento" => $evento["ca_fchevento"],
                     "opcion" => $evento["ca_realizado"],
                     "tipoespecial" => $tipoespecial,
-                            "documentos" => utf8_encode($stringdocs),
-                            "ultimoevento" => $ultimoevento,
-                            "infoeventos" => $infoeventos["tb_eventos"],
-                            "idclientehouse" => $idcliente,
-                            "cliente"=> utf8_encode($cliente),
-                            "idmodalidad"=>$idmodalidad
+                    "documentos" => utf8_encode($stringdocs),
+                    "ultimoevento" => $ultimoevento,
+                    "infoeventos" => $infoeventos["tb_eventos"],
+                    "idclientehouse" => $idcliente,
+                    "cliente"=> utf8_encode($cliente),
+                    "idmodalidad"=>$idmodalidad,
+                    "aplicaidg" => $aplicaIdg,
+                    "color" => $color,
+                    "idg" => $idg,
+                    "meta" => $num_dias,
+                    "fchlimite" => $nvafecha
                 );
             }
         }
