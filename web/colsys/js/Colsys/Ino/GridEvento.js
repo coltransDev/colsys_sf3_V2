@@ -455,11 +455,22 @@ Ext.define('Colsys.Ino.GridEvento', {
         var ultDoc = Ext.Date.format(data.ultimoevento, 'Y-m-d');
         var eventos = data.infoeventos;
         
-        var info = '<table id="customers">';
-        info+= "<tr><th>Ultimo documento</th></tr>";
-        info+= '<tr><td style="text-align: center;"><h2>'+ultDoc+'</h2></td></tr>';          
-        info+= '<tr><th>Eventos</th></tr>'
-        info+= '<tr><td style="text-align: center; text-align: -moz-center;">'+eventos+'</td></tr>';
+        var info = '<table id="customers">';        
+        if(data.aplicaidg){            
+            if(data.idg){
+                subtitle = 'Valor Idg';
+                subtexto = data.idg;
+            }else{
+                subtitle = 'Fch. L\u00edmite Env\u00edo Factura';
+                subtexto = data.fchlimite;
+            }
+        }
+        
+        info+= '<tr><th colspan = "2" >Informaci\u00f3n para Idg</th></tr>';
+        info+= "<tr><th>Ultimo documento</th><th>"+subtitle+"</th></tr>";
+        info+= '<tr><td style="text-align: center;"><h2>'+ultDoc+'</h2></td><td style="text-align: center; color:'+ data.color +'; "><h2>'+subtexto+'</h2></td></tr>';
+        
+        info+= '<tr><td colspan = "2" style="text-align: center; text-align: -moz-center;">'+eventos+'</td></tr>';
         info+= "</table>";
         panel.setHtml(info);
     }
