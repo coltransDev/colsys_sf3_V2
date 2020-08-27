@@ -460,6 +460,11 @@ class NuevoStatusForm extends BaseForm {
                 $this->validatorSchema['observaciones_idg'] = new sfValidatorString(array('required' => true), array('required' => $idg["mensaje"]));                
                 $this->validatorSchema['exclusiones_idg'] = new sfValidatorString(array('required' => false), array('required' => "Selecciona una exclusión si aplica"));
             }
+            /*No debe permitir enviar el status*/
+            if($idg["cumplio"] == "Out"){
+                $taintedValues["observaciones_idg"] = null;
+                $this->validatorSchema['observaciones_idg'] = new sfValidatorString(array('required' => true), array('required' => $idg["mensaje"]));
+            }
         }
         
         /*IDG EXPO - COLLECT*/
