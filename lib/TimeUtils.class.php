@@ -428,6 +428,41 @@ class TimeUtils{
 		return $start;
 	}
 
+    /*
+    * Retorna el timestamp añadiendo el numero de días la fecha de inicio
+    * Teniendo en cuenta los festivos
+    * @author: Andrea Ramírez
+    */
+    static function addTimeWorkingDays($festiv, $inicio, $dias ){
+
+        $start = strtotime($inicio);		
+        $time = $dias;
+
+        while ( $time>0 ){
+            list($ano, $mes, $dia, $hor, $min, $seg) = sscanf(date("Y-m-d", $start), "%d-%d-%d %d:%d:%d");
+            $start = mktime(8,0,0,$mes,$dia+1,$ano);
+//            print_r(sscanf(date("Y-m-d", $start), "%d-%d-%d %d:%d:%d"));
+//            print_r($list);
+//            echo "dia".date("N", $start)."<br/>";
+            if (!is_null($festiv) and date("N", $start)>= 5 and date("N", $start)< 7) {               // Evalua si es un fin de semana
+                $start = mktime(8,0,0,$mes,$dia+1,$ano);
+//                echo "start".date("Y-m-d H:i:s", $start)."<br>";
+                 continue;
+            }else if (!is_null($festiv) and in_array(date("Y-m-d", $start),$festiv)) {  // Evalua si es un día festivo
+                $start = mktime(8,0,0,$mes,$dia+1,$ano);
+//                echo "start".date("Y-m-d H:i:s", $start)."<br>";
+                continue;
+            }else {
+                $time -= 1;
+            }
+
+//            echo "start".date("Y-m-d H:i:s", $start)."<br>";
+//            echo "time".$time."<br>";
+//            exit;
+        }
+        return $start;
+    }
+
     static function array_avg($array,$precision="2"){
 
         try
