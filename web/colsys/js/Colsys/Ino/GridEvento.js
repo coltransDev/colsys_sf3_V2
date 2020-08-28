@@ -453,7 +453,7 @@ Ext.define('Colsys.Ino.GridEvento', {
     },
     actualizarPanelResumen: function(data, panel){
         var ultDoc = Ext.Date.format(data.ultimoevento, 'Y-m-d');
-        var eventos = data.infoeventos;
+        var eventos = data.infoeventos;        
         
         var info = '<table id="customers">';        
         if(data.aplicaidg){            
@@ -464,6 +464,9 @@ Ext.define('Colsys.Ino.GridEvento', {
                 subtitle = 'Fch. L\u00edmite Env\u00edo Factura';
                 subtexto = data.fchlimite;
             }
+        }else{
+            subtitle = 'No aplica Idg';
+            subtexto = 'N/A';
         }
         
         info+= '<tr><th colspan = "2" >Informaci\u00f3n para Idg</th></tr>';
