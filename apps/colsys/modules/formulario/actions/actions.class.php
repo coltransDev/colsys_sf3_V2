@@ -141,9 +141,9 @@ class formularioActions extends sfActions {
             } else {
                 $this->setLayout('formulario');
             }
-            if ($bloque) {
-                $this->setTemplate('selServicios');
-            }
+//            if ($bloque) { No se está usando
+//                $this->setTemplate('selServicios');
+//            }
         } else {
 
             $existe_contacto = getExisteControl($num_contacto, $idFormulario);
@@ -161,9 +161,9 @@ class formularioActions extends sfActions {
                 } else {
                     $this->setLayout('formulario');
                 }
-                if ($bloque) {
-                    $this->setTemplate('selServicios');
-                }
+//                if ($bloque) { No se está usando
+//                    $this->setTemplate('selServicios');
+//                }
             } else {
                 $bloque = $this->formulario->getBloqueServicio($idFormulario);
                 $this->bloque = $bloque;
@@ -235,6 +235,7 @@ class formularioActions extends sfActions {
         eval("\$metEncAvg = \"$metodo\";");
         
         $encEnv = $this->formulario->$metEncEnv($options);                
+        
         $encAvg = $this->formulario->$metEncAvg($options, true);
 
         $clientes = array();
@@ -259,6 +260,7 @@ class formularioActions extends sfActions {
         }
 
         $clientes1 = array();
+        $encuestas1 = $encuestas2 = array();
         $this->sucRes = array();
         $this->encuestas3 = array();
         $this->encuestas4 = array();
@@ -379,12 +381,13 @@ class formularioActions extends sfActions {
             $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
             $options["sucursal"] = $sucursal->getCaNombre();
         }
-        
+        $contactos = [];
         $idtipo = $this->formulario->getCaIdtipo();
         $metodo = "getListaEncuestasDiligenciadas$idtipo";        
         eval("\$metEncAvg = \"$metodo\";");
 
         $contactos = $this->formulario->$metEncAvg($options, true);
+        $cliente = [];
 
         foreach ($contactos as $contacto) {
             $cliente[$contacto["i_ca_nombre"]]["suma"]+= $contacto["re_ca_resultado"];
@@ -438,6 +441,9 @@ class formularioActions extends sfActions {
             }
         }
         
+//        echo "<pre>";print_r($contactos);echo "</pre>";
+        //echo "<pre>";print($this->contactos);echo "</pre>";
+        
         $detect = new Mobile_Detect();
         $dispositivo = ($detect->isMobile() ? ($detect->isTablet() ? 'tablet' : 'mobile') : 'desktop');
         $this->device = $dispositivo;
@@ -466,13 +472,13 @@ class formularioActions extends sfActions {
         }
 
         $contactos = $this->formulario->getListaEncuestasDiligenciadas($options, true);
+        $cliente = [];
 
         foreach ($contactos as $contacto) {
             $cliente[$contacto["i_ca_nombre"]]["suma"]+= $contacto["re_ca_resultado"];
             $cliente[$contacto["i_ca_nombre"]]["casos"] ++;
         }
 
-        $listaContactos = array();
         $this->contactos = array();
         foreach ($contactos as $contacto) {
 
@@ -525,9 +531,15 @@ class formularioActions extends sfActions {
             $options["sucursal"] = $sucursal->getCaNombre();
         }
 
-//        $empresas = $this->formulario->getNumEncuestasEnviadas($options);
-        $empresas = $this->formulario->getNumEncuestasEnviadas2($options);
-        $prefijo = "rs_";
+        $idtipo = $this->formulario->getCaIdtipo();
+        $metodo = "getNumEncuestasEnviadas$idtipo";        
+        eval("\$metEncEnv = \"$metodo\";");
+        
+        $empresas = $this->formulario->$metEncEnv($options);                        
+        $prefijo = "e_";
+        
+        if($idtipo == 2)
+            $prefijo = "rs_";
 //        echo "<pre>";print_r($empresas);echo "</pre>";
         $this->empresas = array();
         foreach ($empresas as $empresa) {
@@ -678,101 +690,112 @@ class formularioActions extends sfActions {
 //        $clientes['TGL COLOMBIA LTDA.']['ca_idcontacto'] = 11124;
 //        $clientes['TGL COLOMBIA LTDA.']['ca_email'] = 'alramirez@coltrans.com.co';
 
-        $clientes['TGL COLOMBIA LTDA.']['ca_idcontacto'] = 31776;
-        $clientes['TGL COLOMBIA LTDA.']['ca_email'] = 'gorbegozo@coltrans.com.co';
-        
-        $clientes['KNIGHT S.A.S.']['ca_idcontacto'] = 27969;
-        $clientes['KNIGHT S.A.S.']['ca_email'] = 'pdominguez@coltrans.com.co';
-        
-        $clientes['INNOVACION NATURAL DE COLOMBIA S.A.']['ca_idcontacto'] = 13446;
-        $clientes['INNOVACION NATURAL DE COLOMBIA S.A.']['ca_email'] = 'mcohen@coltrans.com.co';
-        
-        $clientes['CUBIERTAS S.A.S']['ca_idcontacto'] = 21098;
-        $clientes['CUBIERTAS S.A.S']['ca_email'] = 'thansmeier@coltrans.com.co';
-        
-        $clientes['TECSIL S.A.']['ca_idcontacto'] = 13554;
-        $clientes['TECSIL S.A.']['ca_email'] = 'amartinez@coltrans.com.co';
-        
-        $clientes['DISTRIBUCIONES Y REPRESENTACIONES ELECTRICAS S.A.S.  DISREL S.A.S.']['ca_idcontacto'] = 13557;
-        $clientes['DISTRIBUCIONES Y REPRESENTACIONES ELECTRICAS S.A.S.  DISREL S.A.S.']['ca_email'] = 'yalile.garcia@colmas.com.co';
-        
-        $clientes['GEN PRODUCTS COMPANY SAS']['ca_idcontacto'] = 13604;
-        $clientes['GEN PRODUCTS COMPANY SAS']['ca_email'] = 'apsanchez@coltrans.com.co';
-        
-        $clientes['GEA ANDINA S.A.S.']['ca_idcontacto'] = 13639;
-        $clientes['GEA ANDINA S.A.S.']['ca_email'] = 'jmarulanda@coltrans.com.co';
-        
-        $clientes['C Y C EQUIPOS S.A.S']['ca_idcontacto'] = 23429;
-        $clientes['C Y C EQUIPOS S.A.S']['ca_email'] = 'angelica.rolon@colmas.com.co';
-        
-        $clientes['QUIMTIA S.A.S.']['ca_idcontacto'] = 13695;
-        $clientes['QUIMTIA S.A.S.']['ca_email'] = 'dcgonzalez@coltrans.com.co';
-        
-        $clientes['BIOTER DIAGNOSTICA SAS']['ca_idcontacto'] = 29212;
-        $clientes['BIOTER DIAGNOSTICA SAS']['ca_email'] = 'gbedoya@coltrans.com.co';
-        
-        $clientes['ESTRATO 9  S.A.S ']['ca_idcontacto'] = 19510;
-        $clientes['ESTRATO 9  S.A.S ']['ca_email'] = 'pbravo@coltrans.com.co';
-        
-        $clientes['SWEETSOL SUCURSAL COLOMBIA']['ca_idcontacto'] = 18477;
-        $clientes['SWEETSOL SUCURSAL COLOMBIA']['ca_email'] = 'gmpineda@coltrans.com.co';
-        
-        $clientes['UFINET COLOMBIA S.A.']['ca_idcontacto'] = 23703;
-        $clientes['UFINET COLOMBIA S.A.']['ca_email'] = 'sdelgado@coltrans.com.co';
-        
-        $clientes['GRUPO INVERSIONISTA GUAYAQUIL ASOCIADOS SAS']['ca_idcontacto'] = 32223;
-        $clientes['GRUPO INVERSIONISTA GUAYAQUIL ASOCIADOS SAS']['ca_email'] = 'bdelatorre@coltrans.com.co';
-        
-        $clientes['IMPORTACIONES Y EXPORTACIONES CARDENAS GAVILANES LTDA. / I-EXPORT CARGA LTDA.']['ca_idcontacto'] = 14154;
-        $clientes['IMPORTACIONES Y EXPORTACIONES CARDENAS GAVILANES LTDA. / I-EXPORT CARGA LTDA.']['ca_email'] = 'leramirez@coltrans.com.co';
-        
-        $clientes['COMERCIALIZADORA  INTERNACIONAL DE COLOMBIA CIDECOLOMBIA  COM S.A.S']['ca_idcontacto'] = 14207;
-        $clientes['COMERCIALIZADORA  INTERNACIONAL DE COLOMBIA CIDECOLOMBIA  COM S.A.S']['ca_email'] = 'apaternina@coltrans.com.co';
-        
-        $clientes['M&M EQUIPOS MEDICOS S.A.S.']['ca_idcontacto'] = 14214;
-        $clientes['M&M EQUIPOS MEDICOS S.A.S.']['ca_email'] = 'acmoreno@coltrans.com.co';
-        
-        $clientes['DYSTAR COLOMBIA S.A.S']['ca_idcontacto'] = 19249;
-        $clientes['DYSTAR COLOMBIA S.A.S']['ca_email'] = 'jacastano@coltrans.com.co';
-        
-        $clientes['INTEGRAL MILLENIUM S.A.S']['ca_idcontacto'] = 14263;
-        $clientes['INTEGRAL MILLENIUM S.A.S']['ca_email'] = 'galvarez@coltrans.com.co';
-        
-        $clientes['COLLAZOS LOPEZ MAURICIO / FIJACIONES Y ACCESORIOS']['ca_idcontacto'] = 14314;
-        $clientes['COLLAZOS LOPEZ MAURICIO / FIJACIONES Y ACCESORIOS']['ca_email'] = 'mramos@coltrans.com.co';
-        
-        $clientes['LEASE PROJECT S.A.S.']['ca_idcontacto'] = 14316;
-        $clientes['LEASE PROJECT S.A.S.']['ca_email'] = 'oviasus@coltrans.com.co';
-        
-        $clientes['TODO CAMPEROS LIMITADA ']['ca_idcontacto'] = 14321;
-        $clientes['TODO CAMPEROS LIMITADA ']['ca_email'] = 'secretaria@colmas.com.co';
-        
-        $clientes['SERVEX COLOMBIA SAS']['ca_idcontacto'] = 14328;
-        $clientes['SERVEX COLOMBIA SAS']['ca_email'] = 'olga.mosquera@colmas.com.co';
-        
-        $clientes['COMPA?IA INTERNACIONAL DE ALIMENTOS SAS / CINAL SAS']['ca_idcontacto'] = 14330;
-        $clientes['COMPA?IA INTERNACIONAL DE ALIMENTOS SAS / CINAL SAS']['ca_email'] = 'cazambrano@coltrans.com.co';
-        
-        $clientes['REHAU S.A.S']['ca_idcontacto'] = 15709;
-        $clientes['REHAU S.A.S']['ca_email'] = 'claudia.mejia@colmas.com.co';
-        
-        $clientes['CRUZ Y GANDINI SAS']['ca_idcontacto'] = 14442;
-        $clientes['CRUZ Y GANDINI SAS']['ca_email'] = 'seguros@coltrans.com.co';
-        
-        $clientes['ICONO PET LTDA']['ca_idcontacto'] = 14466;
-        $clientes['ICONO PET LTDA']['ca_email'] = 'vsalazar@coltrans.com.co';
-        
-        $clientes['PET SPA PRODUCTS SAS']['ca_idcontacto'] = 24103;
-        $clientes['PET SPA PRODUCTS SAS']['ca_email'] = 'ipavajeau@coltrans.com.co';
-        
-        $clientes['CARIBBEAN ECO SOAPS UIBS S.A.S.']['ca_idcontacto'] = 14470;
-        $clientes['CARIBBEAN ECO SOAPS UIBS S.A.S.']['ca_email'] = 'amorales@coltrans.com.co';
-        
-        $clientes['INTERNATIONAL TRADE AGENCY S.A.S. SIGLA INTRA S.A.S']['ca_idcontacto'] = 14486;
-        $clientes['INTERNATIONAL TRADE AGENCY S.A.S. SIGLA INTRA S.A.S']['ca_email'] = 'smgomez@coltrans.com.co';
+//        $clientes['KNIGHT S.A.S.']['ca_idcontacto'] = 29644;
+//        $clientes['KNIGHT S.A.S.']['ca_email'] = 'oviasus@coltrans.com.co';
+//        
+//        $clientes['SOLUCIONES EN MATERIALES COMPUESTOS S.A.S. (SMC COLOMBIA S.A.S.).']['ca_idcontacto'] = 17760;
+//        $clientes['SOLUCIONES EN MATERIALES COMPUESTOS S.A.S. (SMC COLOMBIA S.A.S.).']['ca_email'] = 'japerez@coltrans.com.co';
+//
+//        $clientes['CUBIERTAS S.A.S']['ca_idcontacto'] = 2712;
+//        $clientes['CUBIERTAS S.A.S']['ca_email'] = 'apaternina@coltrans.com.co';
+//        
+        $clientes['TECSIL S.A.']['ca_idcontacto'] = 19073;
+        $clientes['TECSIL S.A.']['ca_email'] = 'gmpineda@coltrans.com.co';
+//        
+//        $clientes['DISTRIBUCIONES Y REPRESENTACIONES ELECTRICAS S.A.S.  DISREL S.A.S.']['ca_idcontacto'] = 16027;
+//        $clientes['DISTRIBUCIONES Y REPRESENTACIONES ELECTRICAS S.A.S.  DISREL S.A.S.']['ca_email'] = 'analistacomercial@coltrans.com.co';
+//        
+//        $clientes['CC AIRES S.A.S']['ca_idcontacto'] = 4948;
+//        $clientes['CC AIRES S.A.S']['ca_email'] = 'yalile.garcia@colmas.com.co';
+//        
+//        $clientes['GEN PRODUCTS COMPANY SAS']['ca_idcontacto'] = 10398;
+//        $clientes['GEN PRODUCTS COMPANY SAS']['ca_email'] = 'gbedoya@coltrans.com.co';
 
-        $idformulario = 20;
+//        $clientes['C Y C EQUIPOS S.A.S']['ca_idcontacto'] = 11589;
+//        $clientes['C Y C EQUIPOS S.A.S']['ca_email'] = 'mramos@coltrans.com.co';
+//
+//        $clientes['BIOTER DIAGNOSTICA SAS']['ca_idcontacto'] = 30874;
+//        $clientes['BIOTER DIAGNOSTICA SAS']['ca_email'] = 'sdelgado@coltrans.com.co';
 
+//        $clientes['SWEETSOL SUCURSAL COLOMBIA']['ca_idcontacto'] = 5898;
+//        $clientes['SWEETSOL SUCURSAL COLOMBIA']['ca_email'] = 'gorbegozo@coltrans.com.co';
+        
+//        $clientes['SWEETSOL SUCURSAL COLOMBIA']['ca_idcontacto'] = 21846;
+//        $clientes['SWEETSOL SUCURSAL COLOMBIA']['ca_email'] = 'pizquierdo@coltrans.com.co';
+        
+        
+//        $clientes['TGL COLOMBIA LTDA.']['ca_idcontacto'] = 31776;
+//        $clientes['TGL COLOMBIA LTDA.']['ca_email'] = 'gorbegozo@coltrans.com.co';
+//        
+//        $clientes['INNOVACION NATURAL DE COLOMBIA S.A.']['ca_idcontacto'] = 13446;
+//        $clientes['INNOVACION NATURAL DE COLOMBIA S.A.']['ca_email'] = 'mcohen@coltrans.com.co';
+//        
+//        $clientes['GEA ANDINA S.A.S.']['ca_idcontacto'] = 13639;
+//        $clientes['GEA ANDINA S.A.S.']['ca_email'] = 'jmarulanda@coltrans.com.co';
+//        
+//        $clientes['QUIMTIA S.A.S.']['ca_idcontacto'] = 13695;
+//        $clientes['QUIMTIA S.A.S.']['ca_email'] = 'dcgonzalez@coltrans.com.co';
+//        
+//        $clientes['ESTRATO 9  S.A.S ']['ca_idcontacto'] = 19510;
+//        $clientes['ESTRATO 9  S.A.S ']['ca_email'] = 'pbravo@coltrans.com.co';
+//        
+//        $clientes['UFINET COLOMBIA S.A.']['ca_idcontacto'] = 23703;
+//        $clientes['UFINET COLOMBIA S.A.']['ca_email'] = 'sdelgado@coltrans.com.co';
+//        
+//        $clientes['GRUPO INVERSIONISTA GUAYAQUIL ASOCIADOS SAS']['ca_idcontacto'] = 32223;
+//        $clientes['GRUPO INVERSIONISTUAYAQUIL ASOCIADOS SAS']['ca_email'] = 'bdelatorre@coltrans.com.co';
+//        
+//        $clientes['IMPORTACIONES Y EXPORTACIONES CARDENAS GAVILANES LTDA. / I-EXPORT CARGA LTDA.']['ca_idcontacto'] = 14154;
+//        $clientes['IMPORTACIONES Y EXPORTACIONES CARDENAS GAVILANES LTDA. / I-EXPORT CARGA LTDA.']['ca_email'] = 'leramirez@coltrans.com.co';
+//        
+//        $clientes['COMERCIALIZADORA  INTERNACIONAL DE COLOMBIA CIDECOLOMBIA  COM S.A.S']['ca_idcontacto'] = 14207;
+//        $clientes['COMERCIALIZADORA  INTERNACIONAL DE COLOMBIA CIDECOLOMBIA  COM S.A.S']['ca_email'] = 'apaternina@coltrans.com.co';
+//        
+//        $clientes['M&M EQUIPOS MEDICOS S.A.S.']['ca_idcontacto'] = 14214;
+//        $clientes['M&M EQUIPOS MEDICOS S.A.S.']['ca_email'] = 'acmoreno@coltrans.com.co';
+//        
+//        $clientes['DYSTAR COLOMBIA S.A.S']['ca_idcontacto'] = 19249;
+//        $clientes['DYSTAR COLOMBIA S.A.S']['ca_email'] = 'jacastano@coltrans.com.co';
+//        
+//        $clientes['INTEGRAL MILLENIUM S.A.S']['ca_idcontacto'] = 14263;
+//        $clientes['INTEGRAL MILLENIUM S.A.S']['ca_email'] = 'galvarez@coltrans.com.co';
+//        
+//        $clientes['COLLAZOS LOPEZ MAURICIO / FIJACIONES Y ACCESORIOS']['ca_idcontacto'] = 14314;
+//        $clientes['COLLAZOS LOPEZ MAURICIO / FIJACIONES Y ACCESORIOS']['ca_email'] = 'mramos@coltrans.com.co';
+//        
+//        $clientes['LEASE PROJECT S.A.S.']['ca_idcontacto'] = 14316;
+//        $clientes['LEASE PROJECT S.A.S.']['ca_email'] = 'oviasus@coltrans.com.co';
+//        
+//        $clientes['TODO CAMPEROS LIMITADA ']['ca_idcontacto'] = 14321;
+//        $clientes['TODO CAMPEROS LIMITADA ']['ca_email'] = 'secretaria@colmas.com.co';
+//        
+//        $clientes['SERVEX COLOMBIA SAS']['ca_idcontacto'] = 14328;
+//        $clientes['SERVEX COLOMBIA SAS']['ca_email'] = 'olga.mosquera@colmas.com.co';
+//        
+//        $clientes['COMPA?IA INTERNACIONAL DE ALIMENTOS SAS / CINAL SAS']['ca_idcontacto'] = 14330;
+//        $clientes['COMPA?IA INTERNACIONAL DE ALIMENTOS SAS / CINAL SAS']['ca_email'] = 'cazambrano@coltrans.com.co';
+//        
+//        $clientes['REHAU S.A.S']['ca_idcontacto'] = 15709;
+//        $clientes['REHAU S.A.S']['ca_email'] = 'claudia.mejia@colmas.com.co';
+//        
+//        $clientes['CRUZ Y GANDINI SAS']['ca_idcontacto'] = 14442;
+//        $clientes['CRUZ Y GANDINI SAS']['ca_email'] = 'seguros@coltrans.com.co';
+//        
+//        $clientes['ICONO PET LTDA']['ca_idcontacto'] = 14466;
+//        $clientes['ICONO PET LTDA']['ca_email'] = 'vsalazar@coltrans.com.co';
+//        
+//        $clientes['PET SPA PRODUCTS SAS']['ca_idcontacto'] = 24103;
+//        $clientes['PET SPA PRODUCTS SAS']['ca_email'] = 'ipavajeau@coltrans.com.co';
+//        
+//        $clientes['CARIBBEAN ECO SOAPS UIBS S.A.S.']['ca_idcontacto'] = 14470;
+//        $clientes['CARIBBEAN ECO SOAPS UIBS S.A.S.']['ca_email'] = 'amorales@coltrans.com.co';
+//        
+//        $clientes['INTERNATIONAL TRADE AGENCY S.A.S. SIGLA INTRA S.A.S']['ca_idcontacto'] = 14486;
+//        $clientes['INTERNATIONAL TRADE AGENCY S.A.S. SIGLA INTRA S.A.S']['ca_email'] = 'smgomez@coltrans.com.co';
+        
+        echo "<pre>"; print_r($clientes); echo "</pre>";
+        $idformulario = 24;
+        
         $formulario = Doctrine::getTable("Formulario")->find($idformulario);
         $empresa = $formulario->getEmpresa();
 
@@ -782,7 +805,7 @@ class formularioActions extends sfActions {
         foreach ($clientes as $key => $cli) {
             try {
                 $contacto = $cli["ca_idcontacto"];
-                $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto, 'idformulario' => $idformulario, "empresa" => $empresa));
+                $html = $this->getPartial('formulario/emailHtmlColtransPruebas', array('contacto' => $contacto, 'idformulario' => $idformulario, "empresa" => $empresa));
                 $email = new Email();
                 $email->setCaUsuenvio("Administrador");
                 $email->setCaFrom($formulario->getCaNombreFormato());
@@ -800,7 +823,7 @@ class formularioActions extends sfActions {
                 $emails_Control.="No se pudo enviar " . $cli["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
             }
             $this->html = $html;
-            echo $cli["ca_email"] . "<br>";
+            echo $cli["ca_email"] ." (".$key.")"."<br>";
         }
 
         /* $email = new Email();
@@ -818,102 +841,161 @@ class formularioActions extends sfActions {
         $this->setTemplate('envioEmailsPrueba');
     }
 
-    public function executeEnvioEmailsColmas() {
-
-        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
-
-        if (file_exists($filecontrol)) {
-            $inicio = file_get_contents($filecontrol);
-        }
-        if (!$inicio)
-            $inicio = 0;
-
-        $con = Doctrine_Manager::getInstance()->connection();
-
-        $nreg = 120;
-        $conteo = 0;
-        $emails_Control = "";
-        $idformulario = 20;        
+    public function executeEnvioEmailsColmas($request) {
         
-//        $sql = "
-//            SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
-//            FROM vi_clientes_reduc c
-//                INNER JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%' and con.ca_propiedades IS NULL
-//                INNER JOIN vi_clientes_std std ON c.ca_idcliente = std.ca_idcliente
-//            WHERE (std.ca_colmas_std = 'Activo') AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
-//            GROUP BY con.ca_email, c.ca_idcliente
-//            ORDER BY ca_idcliente, ca_idcontacto
-//            LIMIT $nreg OFFSET $inicio";
+        $idformulario = $request->getParameter("id");
+        $tipoenvio = $request->getParameter("tipoenvio");
         
-         //Consulta para Reenvio Coltrans
-        $sql = "
-            SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
-            FROM vi_clientes_reduc c
-                INNER JOIN vi_clientes_std std ON c.ca_idcliente = std.ca_idcliente
-                RIGHT JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente AND ca_fijo=true AND con.ca_email like '%@%'
-                    WHERE NOT EXISTS 
-			(
+        $conn = Doctrine::getTable("Email")->getConnection();
+        $conn->beginTransaction();
+
+        try {
+            $formulario = Doctrine::getTable("Formulario")->find($idformulario);
+            $inicio = $formulario->getCaOffset();
+            $nreg = 200;
+            $empresa = $formulario->getEmpresa();
+            $asunto = "Encuesta de servicio, dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
+
+            $con = Doctrine_Manager::getInstance()->connection();
+            if ($tipoenvio == "prueba") {
+
+                $clientes = $info = array();
+                $usuariosprueba = array(
+//                "alramirez@coltrans.co"
+                    "oviasus@coltrans.com.co",
+                    "ycvillamil@coltrans.com.co",
+                    "mviasus@coltrans.com.co",
+                    "japerez@coltrans.com.co",
+                    "secretaria@colmas.com.co",
+                    "angelica.rolon@colmas.com.co",
+                    "apaternina@coltrans.com.co",
+                    "seguros@coltrans.com.co",
+                    "leramirez@coltrans.com.co",
+                    "apsanchez@coltrans.com.co"
+                );
+                $nreg = count($usuariosprueba);
+                $inicio = 0;
+
+                $sql = "
+                SELECT DISTINCT max(con.ca_idcontacto) as ca_idcontacto, c.ca_compania as ca_compania
+                FROM vi_clientes_reduc c                    
+                    INNER JOIN ids.tb_sucursales s ON s.ca_id = c.ca_idcliente
+                    INNER JOIN ids.tb_contactos con ON con.ca_idsucursal = s.ca_idsucursal AND ca_fijo = true AND con.ca_email like '%@%' and con.ca_propiedades IS NULL
+                    INNER JOIN vi_clientes std ON c.ca_idcliente = std.ca_idcliente
+                WHERE (std.ca_colmas_std = 'Activo')  AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and c.ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
+                GROUP BY c.ca_compania
+                ORDER BY ca_idcontacto
+                LIMIT $nreg OFFSET $inicio";
+
+                $st = $con->execute($sql);
+                $listado = $st->fetchAll();
+
+                foreach ($listado as $key => $lista) {
+                    $clientes[$lista["ca_compania"]]["ca_idcontacto"] = $lista["ca_idcontacto"];
+                    $clientes[$lista["ca_compania"]]["ca_email"] = $usuariosprueba[$key];
+                    $info[$lista["ca_compania"]] = $usuariosprueba[$key];
+                }
+
+//            echo "<pre>";print_r($clientes);echo "</pre>";
+                echo "<pre>";
+                print_r($info);
+                echo "</pre>";
+                exit;
+            } else {
+                /*$sql = "
+                SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
+                FROM vi_clientes_reduc c                    
+                        INNER JOIN ids.tb_sucursales s ON s.ca_id = c.ca_idcliente
+                        INNER JOIN ids.tb_contactos con ON con.ca_idsucursal = s.ca_idsucursal AND ca_fijo = true AND con.ca_email like '%@%' and con.ca_propiedades IS NULL
+                        INNER JOIN vi_clientes std ON c.ca_idcliente = std.ca_idcliente
+                WHERE (std.ca_colmas_std = 'Activo')  AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and c.ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
+                GROUP BY con.ca_email, c.ca_idcliente
+                ORDER BY ca_idcliente, ca_idcontacto
+                LIMIT $nreg OFFSET $inicio";*/
+                
+                /*Consulta para reenvio*/
+                $sql = "
+                    SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
+                    FROM vi_clientes_reduc c
+                            INNER JOIN ids.tb_sucursales s ON s.ca_id = c.ca_idcliente
+                            INNER JOIN ids.tb_contactos con ON con.ca_idsucursal = s.ca_idsucursal AND ca_fijo = true AND con.ca_email like '%@%' and con.ca_propiedades IS NULL
+                            INNER JOIN vi_clientes std ON c.ca_idcliente = std.ca_idcliente
+                    WHERE NOT EXISTS (
                             SELECT * 
                             FROM encuestas.tb_control_encuesta cf 
                             WHERE con.ca_idcontacto = cf.ca_id_contestador and cf.ca_idformulario = $idformulario
-			) 
-	                AND std.ca_colmas_std = 'Activo' AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
-            GROUP BY con.ca_email, c.ca_idcliente
-            ORDER BY ca_idcliente, ca_idcontacto
-            LIMIT $nreg OFFSET $inicio";
-        
-         $formulario = Doctrine::getTable("Formulario")->find($idformulario);
-        $empresa = $formulario->getEmpresa();
-        $asunto = "Encuesta de servicio, dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $data["email"] = array();     
-
-        $st = $con->execute($sql);
-        $clientes = $st->fetchAll();
-        
-        foreach ($clientes as $cliente) {
-            $conteo++;
-            if(!in_array($cliente["ca_email"], $data["email"])){
-                try {
-                    $contacto = $cliente["ca_idcontacto"];
-                    $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto, 'idformulario' => $idformulario, "empresa" => $empresa));
-                    $email = new Email();
-                    $email->setCaUsuenvio("Administrador");
-                    $email->setCaFrom($formulario->getCaNombreFormato());
-                    $email->setCaFromname(strtoupper($empresa->getCaNombre()));
-                    $email->setCaSubject($asunto);
-                    $email->setCaAddress($cliente["ca_email"]);
-                    //$email->setCaAddress('alramirez@coltrans.com.co');
-                    $email->setCaBody($contacto);
-                    $email->setCaBodyhtml($html);
-                    $email->setCaTipo("Encuesta");
-                    $email->setCaIdcaso($idformulario);
-                    $email->save();
-                    $email->send();
-                    $emails_Control.=$cliente["ca_idcliente"] . "->" . $cliente["ca_email"] . "<br>";
-                } catch (Exception $e) {
-                    $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
-                    print_r($e);
-                }
+                    ) 
+                    AND std.ca_colmas_std = 'Activo' AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and c.ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
+                    GROUP BY con.ca_email, c.ca_idcliente
+                    ORDER BY ca_idcliente, ca_idcontacto
+                    LIMIT $nreg OFFSET $inicio";
+                
+                $st = $con->execute($sql);
+                $clientes = $st->fetchAll();
             }
-            $this->html = $html;
-            echo $cliente["ca_email"] . "<br/>";
-        }
-        
-        file_put_contents($filecontrol, $inicio + $conteo);
-        $emailsControl.= "inicio=>" . $inicio . " nreg=>" . $nreg . " control.txt=>" . file_get_contents($filecontrol) . "<br/>";
 
-        $email = new Email();
-        $email->setCaUsuenvio("Administrador");
-        $email->setCaFrom($formulario->getCaNombreFormato());
-        $email->setCaFromname(strtoupper($empresa->getCaNombre()));
-        $email->setCaSubject("Emails enviados - Encuesta Formulario->" . $idformulario);
-        $email->setCaAddress("alramirez@coltrans.com.co");
-        $email->setCaBodyhtml("Emails enviados:<br>" . $emails_Control);
-        $email->setCaTipo("Encuesta");
-        $email->setCaIdcaso($idformulario);
-        $email->save();
-        echo "enviados";
-        echo $html;
+            foreach ($clientes as $cliente) {
+                $conteo++;
+                if (!in_array($cliente["ca_email"], $data["email"])) {
+                    try {
+                        $contacto = $cliente["ca_idcontacto"];
+                        $html = $this->getPartial('formulario/emailHtmlColmas', array('contacto' => $contacto, 'idformulario' => $idformulario, "empresa" => $empresa, "tipo" => $formulario->getCaIdtipo()));
+
+                        $email = new Email();
+                        $email->setCaUsuenvio("Administrador");
+                        $email->setCaFrom($formulario->getCaNombreFormato());
+                        $email->setCaFromname(strtoupper($empresa->getCaNombre()));
+                        $email->setCaSubject($asunto);
+                        $email->setCaAddress($cliente["ca_email"]);
+                        //$email->setCaAddress('alramirez@coltrans.com.co');
+                        $email->setCaBody($contacto);
+                        $email->setCaBodyhtml($html);
+                        $email->setCaTipo("Encuesta");
+                        $email->setCaIdcaso($idformulario);
+                        $email->save($conn);
+                        $email->send($conn);
+                        $emails_Control .= $cliente["ca_idcliente"] . "->" . $cliente["ca_email"] . "<br>";
+                    } catch (Exception $e) {
+                        $emails_Control .= "No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
+                        print_r($e);
+                    }
+                }
+                $this->html = $html;
+                echo $cliente["ca_email"] . "<br/>";
+            }
+
+            $formulario->setCaOffset($inicio + $nreg);
+            $formulario->save();
+
+            $emailsControl .= "inicio=>" . $inicio . " nreg=>" . $nreg . "<br/>";
+
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaFrom($formulario->getCaNombreFormato());
+            $email->setCaFromname(strtoupper($empresa->getCaNombre()));
+            $email->setCaSubject("Emails enviados - Encuesta Formulario->" . $idformulario);
+            $email->setCaAddress("alramirez@coltrans.com.co");
+            $email->setCaBodyhtml("Emails enviados:<br>" . $emails_Control);
+            $email->setCaTipo("Encuesta");
+            $email->setCaIdcaso($idformulario);
+            $email->save($conn);
+            
+            $conn->commit();
+
+            echo "enviados<br/>" . $html;
+        } catch (Exception $e) {
+            //echo $e->getMessage();
+            $email = new Email();
+            $email->setCaUsuenvio("Administrador");
+            $email->setCaFrom($formulario->getCaNombreFormato());
+            $email->setCaFromname(strtoupper($empresa->getCaNombre()));
+            $email->setCaSubject("Emails enviados - Encuesta Formulario->" . $idformulario);
+            $email->setCaAddress("alramirez@coltrans.com.co");
+            $email->setCaBodyhtml("Error en envío de encuesta" . $e->getMessage());
+            $email->setCaTipo("Encuesta");
+            $email->setCaIdcaso($idformulario);
+            $email->save($conn);
+        }
         exit;
 
         $this->setTemplate('envioEmailsPrueba');
@@ -921,90 +1003,81 @@ class formularioActions extends sfActions {
 
     public function executeEnvioEmailsColtrans() {
 
-        $filecontrol = $config = sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "formulario" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "control.txt";
-
-        if (file_exists($filecontrol)) {
-            $inicio = file_get_contents($filecontrol);
-        }
-        if (!$inicio)
-            $inicio = 0;
         $con = Doctrine_Manager::getInstance()->connection();
-
-        $nreg = 120;
+        
+        $nreg = 300;
         $conteo = 0;
-        $emails_Control = "";
-        $idformulario = 19;
+        $emailsControl = "";
+        $idformulario = 24;
+        
+        $formulario = Doctrine::getTable("Formulario")->find($idformulario);
+        $empresa = $formulario->getEmpresa();
+        $inicio = $formulario->getCaOffset();        
+        $asunto = "Encuesta de servicio, dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
+        $data["email"] = array();
 
 //        $sql = "
 //            SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
-//            FROM vi_clientes_reduc c
-//                INNER JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%' and con.ca_propiedades IS NULL
-//                INNER JOIN vi_clientes_std std ON c.ca_idcliente = std.ca_idcliente
-//            WHERE (std.ca_coltrans_std = 'Activo') AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
+//            FROM vi_clientes_reduc c                    
+//                    INNER JOIN ids.tb_sucursales s ON s.ca_id = c.ca_idcliente
+//                    INNER JOIN ids.tb_contactos con ON con.ca_idsucursal = s.ca_idsucursal AND ca_fijo = true AND con.ca_email like '%@%' and con.ca_propiedades IS NULL
+//                    INNER JOIN vi_clientes std ON c.ca_idcliente = std.ca_idcliente
+//            WHERE (std.ca_coltrans_std = 'Activo')  AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and c.ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
 //            GROUP BY con.ca_email, c.ca_idcliente
 //            ORDER BY ca_idcliente, ca_idcontacto
 //            LIMIT $nreg OFFSET $inicio";
-
+//        
+        
         //Consulta para Reenvio Coltrans
         $sql = "
             SELECT DISTINCT con.ca_email, max(con.ca_idcontacto) as ca_idcontacto, c.ca_idcliente
             FROM vi_clientes_reduc c
-                INNER JOIN vi_clientes_std std ON c.ca_idcliente = std.ca_idcliente
-                RIGHT JOIN tb_concliente con ON c.ca_idcliente = con.ca_idcliente AND ca_fijo=true AND con.ca_email like '%@%'
-                    WHERE NOT EXISTS 
-			(
-                            SELECT * 
-                            FROM encuestas.tb_control_encuesta cf 
-                            WHERE con.ca_idcontacto = cf.ca_id_contestador and cf.ca_idformulario = $idformulario
-			) 
-	                AND std.ca_coltrans_std = 'Activo' AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
+                    INNER JOIN ids.tb_sucursales s ON s.ca_id = c.ca_idcliente
+                    INNER JOIN ids.tb_contactos con ON con.ca_idsucursal = s.ca_idsucursal AND ca_fijo = true AND con.ca_email like '%@%' and con.ca_propiedades IS NULL
+                    INNER JOIN vi_clientes std ON c.ca_idcliente = std.ca_idcliente
+            WHERE NOT EXISTS (
+                    SELECT * 
+                    FROM encuestas.tb_control_encuesta cf 
+                    WHERE con.ca_idcontacto = cf.ca_id_contestador and cf.ca_idformulario = $idformulario
+            ) 
+            AND std.ca_coltrans_std = 'Activo' AND (c.ca_tipo  is NULL OR c.ca_tipo LIKE '%Proveedor%') AND c.ca_vendedor IS NOT NULL and c.ca_vendedor not in ('Administrador','Comercial','comercial-baq','comercial-med','comercial-clo')
             GROUP BY con.ca_email, c.ca_idcliente
             ORDER BY ca_idcliente, ca_idcontacto
-            LIMIT $nreg OFFSET $inicio";
-        
+            LIMIT $nreg OFFSET $inicio";       
 
-//          $sql = "SELECT c.ca_idcliente,c.ca_compania, con.ca_email,ca_coltrans_std,ca_colmas_std,con.ca_idcontacto
-//          FROM vi_clientes c
-//          INNER JOIN tb_concliente con on c.ca_idcliente=con.ca_idcliente and ca_fijo=true and con.ca_email like '%@%'
-//          WHERE c.ca_idcliente = 5622
-//          ORDER BY 2,3"; */
 
         $st = $con->execute($sql);
         $clientes = $st->fetchAll();
-        
-//        $clientes["BANCO DE BOGOTA S.A."]["ca_idcontacto"] = 11124;
-//        $clientes["BANCO DE BOGOTA S.A."]["ca_email"] = "alramirez@coltrans.com.co";
-//        $clientes["BANCO DE BOGOTA S.A."]["ca_coltrans_std"] = "Activo";
-
-        $formulario = Doctrine::getTable("Formulario")->find($idformulario);
-        $empresa = $formulario->getEmpresa();
-        $asunto = "Encuesta de servicio, dos minutos de su tiempo nos ayuda a prestarle un mejor servicio";
-        $data["email"] = array();
         
         foreach ($clientes as $cliente) {
             $conteo++;
             
             if(!in_array($cliente["ca_email"], $data["email"])){
                 try {
-                    $data["email"][] = $cliente["ca_email"];
-                    $contacto = $cliente["ca_idcontacto"];
-                        
-                    $html = $this->getPartial('formulario/emailHtmlColtrans', array('contacto' => $contacto, 'idformulario' => $idformulario, "empresa" => $empresa));
+                    $ids = Doctrine::getTable("Ids")->find($cliente["ca_idcliente"]);
+                    if (filter_var($cliente["ca_email"], FILTER_VALIDATE_EMAIL)) {
+                        $data["email"][] = $cliente["ca_email"];                    
                     
-                    $email = new Email();
-                    $email->setCaUsuenvio("Administrador");
-                    $email->setCaFrom($formulario->getCaNombreFormato());
-                    $email->setCaFromname(strtoupper($empresa->getCaNombre()));
-                    $email->setCaSubject($asunto);
-                    $email->setCaAddress($cliente["ca_email"]);
-                    //$email->setCaAddress('alramirez@coltrans.com.co');
-                    $email->setCaBody($contacto);
-                    $email->setCaBodyhtml($html);
-                    $email->setCaTipo("Encuesta");
-                    $email->setCaIdcaso($idformulario);
-                    $email->save();
-                    $email->send();
-                    $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
+                        $contacto = $cliente["ca_idcontacto"];
+                        $html = $this->getPartial('formulario/emailHtmlColtrans', array('contacto' => $contacto, 'idformulario' => $idformulario, "empresa" => $empresa));
+
+                        $email = new Email();
+                        $email->setCaUsuenvio("Administrador");
+                        $email->setCaFrom($formulario->getCaNombreFormato());
+                        $email->setCaFromname(strtoupper($empresa->getCaNombre()));
+                        $email->setCaSubject($asunto);
+                        $email->setCaAddress($cliente["ca_email"]);
+//                        $email->setCaAddress('alramirez@coltrans.com.co');
+                        $email->setCaBody($contacto);
+                        $email->setCaBodyhtml($html);
+                        $email->setCaTipo("Encuesta");
+                        $email->setCaIdcaso($idformulario);
+                        $email->save();
+                        $email->send();
+                        $emails_Control.=$cliente["ca_compania"] . "->" . $cliente["ca_email"] . "<br>";
+                    } else {
+                        $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . "Dirección email errada =>".$ids->getCaNombre()." - ".$ids->getIdsCliente()->getCaVendedor()."=> ".$cliente["ca_email"]. "<br>";                        
+                    }
                 } catch (Exception $e) {
                     $emails_Control.="No se pudo enviar " . $cliente["ca_email"] . ": porque : " . $e->getMessage() . "<br>";
                 }
@@ -1012,9 +1085,11 @@ class formularioActions extends sfActions {
             $this->html = $html;
             echo $cliente["ca_email"] . "<br>";
         }
+        $formulario->setCaOffset($inicio + $nreg);
+        $formulario->save();
 
-        file_put_contents($filecontrol, $inicio + $conteo);
-
+//        file_put_contents($filecontrol, $inicio + $conteo);
+//
         $emailsControl.= "inicio=>" . $inicio . " nreg=>" . $nreg . " control.txt=>" . file_get_contents($filecontrol) . "<br/>";
 
         $email = new Email();
@@ -1167,8 +1242,7 @@ class formularioActions extends sfActions {
         $this->servicio = 'aduana';
         $this->empresa = 2;
 
-        $id = $request->getParameter('ca_id');
-        $idFormularioEncode = $idFormulario;
+        $id = $request->getParameter('ca_id');        
         $idDecode = base64_decode($id);
         $idFormulario = intval($idDecode);
 
@@ -1234,8 +1308,7 @@ class formularioActions extends sfActions {
      * aun no funciona
      */
 
-    public function executeCopy(sfWebRequest $request) {
-        $idFormulario = $request->getParameter('ca_id');
+    public function executeCopy(sfWebRequest $request) {        
         $this->formulario = Doctrine_Core::getTable('formulario')->find(array($request->getParameter('ca_id')));
         $this->forward404Unless($this->formulario);
     }
@@ -1248,7 +1321,7 @@ class formularioActions extends sfActions {
      */
     public function executeRefrescarFormulario(sfWebRequest $request) {
         $idForm = $request->getParameter('id'); //no llega
-        $idForm2 = 1;
+        
         $servicios = $request->getParameter('servicios'); //no llega
         $this->servicios = $pieces = explode(",", $servicios);
         $this->cantidad = sizeof($servicios);
@@ -1257,7 +1330,7 @@ class formularioActions extends sfActions {
         $html = $this->getPartial('formulario/test'); //para mandarle el $formulario deberia tener el parametro
         sfConfig::set('sf_web_debug', false);
         $cant = 2;
-        $this->responseArray = array("success" => true, "formulario" => $this->formulario, "html" => $html, "cantidad" => $cantidad, "idFormulario" => $idForm);
+        $this->responseArray = array("success" => true, "formulario" => $this->formulario, "html" => $html, "cantidad" => $cant, "idFormulario" => $idForm);
         $this->setTemplate("responseTemplate");
     }
 
@@ -1282,7 +1355,7 @@ class formularioActions extends sfActions {
         $this->cierre = $request->getParameter('cierre');
 
         $this->consolidado = array();
-        $i = 1;
+        
         foreach ($this->encuestas as $encuesta) {
             $this->consolidado[] = array(
                 "idform" => $this->formulario->getCaId(),
@@ -1586,7 +1659,7 @@ class formularioActions extends sfActions {
         $conn->beginTransaction();
 
         try {
-            if(!$user->getUserId()){
+            //if(!$user->getUserId()){
                 if($tipo == 1){ // Encuesta Anual
 
                     $existe_contacto = Doctrine::getTable("controlEncuesta")->findByDql("ca_id_contestador = ? AND ca_idformulario = ?", array($idcontacto, $idformulario));
@@ -1736,8 +1809,8 @@ class formularioActions extends sfActions {
                 }else{
                     $this->responseArray = array("success" => false, "id" => $idformulario, "errorInfo"=>utf8_encode("Tipo de encuenta inválida!"));
                 }
-            }else
-                $this->responseArray = array( "success" => false, "errorInfo" => utf8_encode("Los usuarios internos NO DEBEN responder la encuesta")); 
+            //}else
+              //  $this->responseArray = array( "success" => false, "errorInfo" => utf8_encode("Los usuarios internos NO DEBEN responder la encuesta")); 
         } catch (Exception $e) {
             $conn->rollBack();
             $this->responseArray = array( "success" => false, "errorInfo" => utf8_encode($e->getMessage()));
@@ -1780,5 +1853,178 @@ class formularioActions extends sfActions {
         $this->result = $respuestas;
         
         $this->setLayout("none");
+    }
+    
+     public function executeDatosPreguntasNew(sfWebRequest $request){
+        
+        $idformulario = $request->getParameter("idformulario");
+        
+//        try{
+            $formulario = Doctrine::getTable("formulario")->find($idformulario);
+            $bloques = Doctrine::getTable("Bloque")
+                    ->createQuery("b")
+                    ->where("ca_idformulario = ?",$idformulario)
+                    ->orderBy("ca_orden ASC")
+                    ->execute();
+            
+            $row = $data = $servicios = array();
+            
+            if($bloques){
+                foreach($bloques as $bloque){
+                    $preguntas = Doctrine::getTable("Pregunta")
+                            ->createQuery("p")
+                            ->where("ca_idbloque = ?", $bloque->getCaId())
+                            ->addWhere("ca_activo = ?", TRUE)
+                            ->orderBy("ca_orden ASC")
+                            ->execute();
+                    
+                    //if(count($servicios)==0){                        
+                        if($preguntas){
+                            foreach($preguntas as $pregunta){
+//                                echo $pregunta->getCaId()."-".$pregunta->getCaTipo()."-".$pregunta->getProperty("idpadre")."<br/>";                            
+                                if($pregunta->getCaTipo()==5){
+                                    $opciones = Doctrine::getTable("Opcion")->findBy("ca_idpregunta",$pregunta->getCaId());
+                                    
+                                    foreach($opciones as $opcion){
+                                        $datos = json_decode($opcion->getCaDatos());                                        
+                                        if(!in_array($opcion->getCaTexto(), $servicios)){
+                                            $servicios[$datos->idtipo]["nombre"] = utf8_encode($opcion->getCaTexto());
+                                            $servicios[$datos->idtipo]["oculto"] = $opcion->getDatosJson("oculto");
+                                    }
+                                }
+                                }                                
+                                if($pregunta->getProperty("idpadre")){
+                                    $idpadre[$pregunta->getProperty("idpadre")] = $pregunta->getCaId();
+                                }else{
+                                    $idpadre[$pregunta->getProperty("idpadre")] = null;
+                                }
+                            }
+                        }
+                    //}
+//                    echo "<pre>";print_r($servicios);echo "</pre>";                    
+//                    echo "<pre>";print_r($idpadre);echo "</pre>";
+                }
+
+                foreach($bloques as $bloque){                    
+                    $preguntas = Doctrine::getTable("Pregunta")
+                            ->createQuery("p")
+                            ->where("ca_idbloque = ?", $bloque->getCaId())
+                            ->addWhere("ca_activo = ?", TRUE)
+                            ->orderBy("ca_orden ASC")
+                            ->execute();
+
+                    foreach($preguntas as $pregunta){
+                        if($pregunta->getCaTipo()!=5){
+                            $row = [];
+                            $row["idservicio"] = $pregunta->getCaIdbloque();
+                            $row["idpregunta"] = $pregunta->getCaId();
+                            //$row["idformulario"] = $pregunta->getBloque()->getFormulario()->getCaId();
+                            //$row["titulo"] = utf8_encode($pregunta->getBloque()->getFormulario()->getCaTitulo());
+                            $row["pregunta"] = utf8_encode($pregunta->getCaTexto());
+                            $row["error"] = utf8_encode($pregunta->getCaError());
+                            $row["ayuda"] = utf8_encode($pregunta->getCaAyuda());
+                            $row["obligatoria"] = $pregunta->getCaObligatoria();
+                            $row["tipo"] = $pregunta->getCaTipo();
+                            $row["orden"] = $pregunta->getCaOrden();
+                            $row["comentarios"] = utf8_encode($pregunta->getCaComentarios());
+                            $row["oculto"] = $pregunta->getProperty("oculto")?$pregunta->getProperty("oculto"):false;
+                            $row["idhijo"] = $idpadre[$pregunta->getCaId()];
+
+
+                            if($pregunta->getCaTipo()==6){
+                                $row["servicios"][8]["nombre"] = utf8_encode("Quejas y reclamos");
+                                $row["servicios"][8]["oculto"] = true;
+                                $row["subservicios"] = $servicios;
+                            }else
+                                $row["servicios"] = $servicios;
+                            /*foreach($servicios as $key =>$val){
+                                $row["servicios"][$key]["nombre"] = utf8_encode($servicios[$key]["nombre"]);
+                                $row["servicios"][$key]["oculto"] = utf8_encode($servicios[$key]["oculto"]);
+                            }*/
+
+                            $opcionesp = $pregunta->getOpcionesOrdenadas($pregunta->getCaId());                           
+                            
+                            $row["opciones"] = [];
+                            switch($pregunta->getCaTipo()){
+                                case 8:
+                                    foreach($opcionesp as $opcion){
+                                        $row["opciones"][utf8_encode($opcion->getCaTexto())] = $opcion->getCaTitle(); 
+                                    }
+                                    break;
+                                case 6:
+                                    foreach($opcionesp as $opcion){
+                                        $r["inputValue"] = utf8_encode($opcion->getCaTexto()); 
+                                        $r["boxLabel"] = utf8_encode($opcion->getCaTitle()); 
+                                        $row["opciones"][] = $r;
+                                    }
+                                    break;
+                                case 9:
+                                case 10:
+                                    $i=1;
+                                    foreach($opcionesp as $opcion){                                        
+                                        $r["inputValue"] = utf8_encode($opcion->getCaTexto()); 
+                                        $r["boxLabel"] = utf8_encode($opcion->getCaTitle());
+                                        $r["userCls"] = $opcion->getDatosJson("class");
+                                        $r["id"] = "Item".utf8_encode($opcion->getCaTexto())."-".$pregunta->getCaId();
+                                        $row["opciones"][] = $r;
+                                        $i++;
+                                    }       
+                                    break;
+                            }       
+                            $data[] = $row;
+                        }
+                    }
+                }
+            }
+            
+            $idempresa = $formulario->getCaEmpresa();
+            $empresa = Doctrine::getTable("Empresa")->findOneBy('ca_idempresa', $idempresa);
+            
+            $logo = $empresa->getLogoEncuesta();
+//            $logo = $empresa->getLogoHtml();
+
+//            echo "#Servicios:".count($servicios)."<br>";
+//            echo "#Preguntas:".count($preguntas)."<br>";        
+//            echo "Servicios:<br/>";
+//            echo "<pre>";print_r($calificar);echo "</pre>";
+//            echo "Data:<br/>";
+//            echo "<pre>";print_r($data);echo "</pre>";
+//            exit();
+            $this->responseArray = array("success" => true, "id" => $idformulario, "data"=>$data, "titulo"=> utf8_encode($formulario->getCaTitulo()), "encabezado"=> utf8_encode($formulario->getCaIntroduccion()), "servicio"=> utf8_encode($formulario->getCaAlias()), "logo"=>$logo);
+//        } catch (Exception $e){
+//            $this->responseArray = array( "success" => false, "error" => utf8_encode($e->getMessage()));
+//        }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeInformeResumenExt5(sfWebRequest $request){
+        
+        $idFormulario = $request->getParameter('ca_id');
+        $this->forward404Unless($idFormulario);
+        $this->formulario = Doctrine_Core::getTable('formulario')->find($idFormulario);
+
+        $this->pregunta = $request->getParameter('pid');
+        $this->servicio = $request->getParameter('seid');
+
+        $idsucursal = $request->getParameter('idsucursal');
+
+        $options["login"] = $request->getParameter('login');
+        $options["idcliente"] = $request->getParameter('idcliente');
+        $options["idservicio"] = $request->getParameter('seid');
+        $options["idpregunta"] = $request->getParameter('pid');
+        $options["sucursal"] = $idsucursal == "NA" ? "Todas Las sucursales" : ($idsucursal == null ? "Sin asignar" : "");
+
+        if ($idsucursal && $idsucursal != "NA") {
+            $sucursal = Doctrine::getTable("Sucursal")->find($idsucursal);
+            $options["sucursal"] = $sucursal->getCaNombre();
+        }
+        $contactos = [];
+        $idtipo = $this->formulario->getCaIdtipo();
+        $metodo = "getListaEncuestasDiligenciadas$idtipo";        
+        eval("\$metEncAvg = \"$metodo\";");
+
+        $contactos = $this->formulario->$metEncAvg($options, true);
+    
+        
     }
 }

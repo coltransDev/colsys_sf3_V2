@@ -2,7 +2,7 @@
     <? if ($formulario->ca_empresa == 1) { ?>
         <img class="logo-topmenu" src="/images/logos/colmas.png" alt="Colmas SA" />    
     <? } else { ?>
-        <img class="logo-topmenu" src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans30anos_medium.jpg" alt="Coltrans SA" />
+        <img class="logo-topmenu" src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans1988_medium.png" alt="Coltrans SA" />
     <? } ?>
 </div>
 <div class="resultado">
@@ -10,10 +10,10 @@
     <br>
     <br>
     <br>
-    <p class="align-center">Sus datos fueron diligenciados previamente. Por lo tanto este enlace ya no es válido.</p>
+    <p class="align-center">Esta encuesta ya fue respondida, por lo tanto este enlace ya no es válido.</p>
     <br>
     <br>
-    <p class="align-center"><b>Muchas Gracias!!!</b></p>
+    <p class="align-center"><b>?Muchas Gracias!</b></p>
     <br>
     <br>
     <? if ($formulario->ca_empresa == 1) { ?>

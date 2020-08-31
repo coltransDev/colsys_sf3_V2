@@ -160,7 +160,7 @@
     //                                                Ext.MessageBox.alert("Mensaje", 'Muchas gracias por su tiempo!!! Sus datos han sido diligenciados correctamente.');
                                                     Ext.Msg.show({
                                                         title:'Muchas gracias por su tiempo',
-                                                        message: 'Sus datos han sido diligenciados correctamente.',
+                                                        message: 'Sus respuestas han sido registradas correctamente.',
                                                         buttons: Ext.Msg.OK,
                                                         icon: Ext.Msg.INFO,
                                                         fn: function(btn) {

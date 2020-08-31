@@ -159,16 +159,16 @@
                                             var res = Ext.JSON.decode(options.response.responseText);                                                       
                                             if(res.success){
                                                 me.disable();
-                                                alert('Muchas gracias por su tiempo!!!. Sus datos han sido diligenciados correctamente.');
-                                                window.location.href = 'http://www.coltrans.com.co';
+                                                alert('?Muchas gracias por su tiempo!. Sus respuestas han sido registradas correctamente.');
+                                                window.location.href = 'https://www.coltrans.com.co';
                                             }else{                                                        
                                                 alert(res.errorInfo);
-                                                window.location.href = 'http://www.coltrans.com.co';
+                                                window.location.href = 'https://www.coltrans.com.co';
                                             }
                                         },
                                         failure: function(form, action) {
                                              alert(action.result.errorInfo);
-                                             window.location.href = 'http://www.coltrans.com.co';
+                                             window.location.href = 'https://www.coltrans.com.co';
                                         }
                                     });
                                 }else{

@@ -167,12 +167,12 @@
     //                                                Ext.MessageBox.alert("Mensaje", 'Muchas gracias por su tiempo!!! Sus datos han sido diligenciados correctamente.');
                                                     Ext.Msg.show({
                                                         title:'Muchas gracias por su tiempo',
-                                                        message: 'Sus datos han sido diligenciados correctamente.',
+                                                        message: 'Sus respuestas han sido registradas correctamente.',
                                                         buttons: Ext.Msg.OK,
                                                         icon: Ext.Msg.INFO,
                                                         fn: function(btn) {
                                                             if (btn === 'ok') {
-                                                                window.location.href = 'http://www.coltrans.com.co';
+                                                                window.location.href = 'https://www.coltrans.com.co';
                                                             }
                                                         }
                                                     });
@@ -184,7 +184,7 @@
                                                         icon: Ext.Msg.WARNING,
                                                         fn: function(btn) {
                                                             if (btn === 'ok') {
-                                                                window.location.href = 'http://www.coltrans.com.co';
+                                                                window.location.href = 'https://www.coltrans.com.co';
                                                             }
                                                         }
                                                     });  

@@ -13,7 +13,7 @@
     <p class="align-center">La recolección de datos para ésta encuesta ya fue cerrada.</p>
     <br>
     <br>
-    <p class="align-center"><b>Muchas Gracias!!!</b></p>
+    <p class="align-center"><b>!Muchas Gracias!</b></p>
     <br>
     <br>
     <? if ($formulario->ca_empresa == 1) { ?>

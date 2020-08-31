@@ -2,15 +2,15 @@
     <? if ($formulario->ca_empresa == 1) { ?>
         <img class="logo-topmenu" src="/images/logos/colmas.png" alt="Colmas SA" />    
     <? } else { ?>
-        <img class="logo-topmenu" src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans30anos_medium.jpg" alt="Coltrans SA" />
+        <img class="logo-topmenu" src="http://www.coltrans.com.co/logosoficiales/coltrans/Coltrans1988_medium.png" alt="Coltrans SA" />
     <? } ?>
 </div>
 <div class="resultado">
-    <h1>Muchas gracias por su tiempo!!!</h1>
+    <h1>?Muchas gracias por su tiempo!</h1>
     <br>
     <br>
     <br>
-    <p class="align-center">Sus datos han sido guardados correctamente</p>
+    <p class="align-center">Sus respuestas han sido registradas correctamente.</p>
     <br>
     <br>
     <br>
