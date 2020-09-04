@@ -2024,7 +2024,80 @@ class formularioActions extends sfActions {
         eval("\$metEncAvg = \"$metodo\";");
 
         $contactos = $this->formulario->$metEncAvg($options, true);
-    
         
+        $data = array();
+        $fields = array();
+        $leftAxis = array();
+        $topAxis = array();
+        $aggregate = array();
+        
+        
+
+        
+        
+        $fields[] = array("title" => "IdCliente", "name" => "idcliente", "type" => "integer");
+        $fields[] = array("title" => "Compania", "name" => "compania", "type" => "string");
+        //$fields[] = array("title" => "IdContacto", "name" => "ce_ca_id", "type" => "string");
+        $fields[] = array("title" => "Nombre", "name" => "nombre", "type" => "string");
+        //$fields[] = array("title" => "Apellido", "name" => "cc_ca_papellido", "type" => "string");
+        //$fields[] = array("title" => "Email", "name" => "cc_ca_email", "type" => "string");
+        $fields[] = array("title" => "Comercial", "name" => "comercial", "type" => "string");
+        $fields[] = array("title" => "Sucursal", "name" => "sucursal", "type" => "string");        
+        $fields[] = array("title" => "Resultado", "name" => "resultado", "type" => "float", "allowNull"=>true);
+        $fields[] = array("title" => "Pregunta", "name" => "pregunta", "type" => "string");
+        $fields[] = array("title" => "Servicio", "name" => "servicio", "type" => "string");
+        
+        
+        $leftAxis[] = array("header" => "Sucursal", "dataIndex" => "sucursal", "width"=>120);
+        $leftAxis[] = array("header" => "Comercial", "dataIndex" => "comercial", "width"=>150);
+        $leftAxis[] = array("header" => "Compania", "dataIndex" => "compania", "width"=>300);        
+        $leftAxis[] = array("header" => "Servicio", "dataIndex" => "servicio", "width"=>160);
+        
+        $aggregate[] = array("header" => "Resultado", "dataIndex" => "resultado", "aggregator" => "avg", "align" => "justify");
+        $topAxis[] = array("header" => "Pregunta", "dataIndex" => "pregunta", "direction" => "ASC");
+        
+        $data['fields'] = $fields;
+        $data['topAxis'] = $topAxis;
+        $data['leftAxis'] = $leftAxis;
+        $data['aggregate'] = $aggregate;
+        
+        
+        if (count($contactos) > 0) {
+            foreach($contactos as $contacto){
+                $a = strip_tags(trim($contacto["p_ca_texto"]));
+//                $pregunta = "";
+//                foreach($a as $key => $val){
+//                    $pregunta.= $val."<br/>";                    
+//                }
+                //$pregunta = "<span style='font-size:9px;'>".$pregunta."</span>";
+                $pregunta = html_entity_decode($contacto["p_ca_texto"]);
+                
+                $row = array();
+                $row["title"] = utf8_encode($this->formulario->getCaTitulo());
+                $row["idform"] = $this->formulario->getCaId();
+                $row["idcliente"] = $contacto["i_ca_id"];
+                $row["idencuesta"] = $contacto["ce_ca_id"];
+                $row["compania"] = utf8_encode($contacto["i_ca_nombre"]);
+                $row["nombre"] = utf8_encode($contacto["cc_ca_nombres"]) . " " . utf8_encode($contacto["cc_ca_papellido"]);
+                $row["comercial"] = utf8_encode($contacto["u_ca_nombre"]);
+                $row["sucursal"] = utf8_encode($contacto["s_ca_nombre"]);
+                $row["comercial"] = utf8_encode($contacto["u_ca_nombre"]);
+                $row["resultado"] = $contacto["re_ca_resultado"];
+                $row["pregunta"] = utf8_encode($pregunta);
+                $row["servicio"] = utf8_encode($contacto["cf_ca_value"]);
+
+                $data['datos'][] = $row;
+            }
+            
+        }
+        
+        $this->data = $data;
+        //$this->responseArray = array("success" => true, "data" => $data, "total" => count($data));
+        //echo "<pre>";print_r($data);echo "</pre>";
+        //exit;
+
+//        $this->setTemplate("responseTemplate");
     }
+    
+    
 }

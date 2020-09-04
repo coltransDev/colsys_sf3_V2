@@ -64,6 +64,7 @@ if (isset($options["idpregunta"]) && $options["idpregunta"])
             stateful: true,
             stateId: 'stateGrid',
             width: 750,
+            height: 380,
             renderTo: 'grid1',
             viewConfig: {
                 stripeRows: true
@@ -137,7 +138,8 @@ if (isset($options["idpregunta"]) && $options["idpregunta"])
                         var idpregunta = '<?= $options["idpregunta"] ? "/pid/" . $options["idpregunta"] : "/pid/0"?>';                        
                         var idsuc = '<?= $options["idsucursal"] ? $options["idsucursal"] : "NA"?>';                        
                         var url = '<?= url_for("formulario/contactosExt4?ca_id=") ?>' + idform + '/idsucursal/' + idsuc + login + idcliente + idservicio + idpregunta;                        
-                        return '<span style="font-weight:bold;">'+ value + ' ' + '<a href="' + url + '" target="_blank"><img src="/images/16x16/report.gif" alt="Ver reporte"/></a></span>';
+                        var url1 = '<?= url_for("formulario/informeResumenExt5?ca_id=") ?>' + idform + '/idsucursal/' + idsuc + login + idcliente + idservicio + idpregunta;                        
+                        return '<span style="font-weight:bold;">'+ value + ' ' + '<a href="' + url + '" target="_blank"><img src="/images/16x16/show_complete.png" title="Seguimiento" alt="Seguimientos"/></a>&nbsp<a href="' + url1 + '" target="_blank"><img src="/images/16x16/report.gif" alt="Ver Resumen" title="Ver Resumen"/></a></span>';
                     },
                     renderer: function(value, metaData, record, rowIndex, colIndex, store) {
                         var idform = record.data.idform;
@@ -146,8 +148,9 @@ if (isset($options["idpregunta"]) && $options["idpregunta"])
                         var idcliente = '<?= $options["idcliente"] ? "/idcliente/" . $options["idcliente"] : "" ?>'; 
                         var idservicio = '<?= $options["idservicio"] ? "/seid/" . $options["idservicio"] : "/seid/0"?>';
                         var idpregunta = '<?= $options["idpregunta"] ? "/pid/" . $options["idpregunta"] : "/pid/0" ?>'; 
-                        var url = '<?= url_for("formulario/contactosExt4?ca_id=") ?>' + idform + login + idcliente + idservicio + idpregunta + "/idsucursal/" + idsuc;                        
-                        return value + ' ' + '<a href="' + url + '" target="_blank"><img src="/images/16x16/report.gif" alt="Ver reporte"/></a>';
+                        var url = '<?= url_for("formulario/contactosExt4?ca_id=") ?>' + idform + login + idcliente + idservicio + idpregunta + "/idsucursal/" + idsuc;
+                        var url1 = '<?= url_for("formulario/informeResumenExt5?ca_id=") ?>' + idform + login + idcliente + idservicio + idpregunta + "/idsucursal/" + idsuc;
+                        return value + ' ' + '<a href="' + url + '" target="_blank"><img src="/images/16x16/show_complete.png" title="Seguimientos" alt="Seguimientos"/></a>&nbsp<a href="' + url1 + '" target="_blank"><img src="/images/16x16/report.gif" alt="Ver Resumen" title="Ver Resumen"/></a>';
                     }
                 },
             ]
