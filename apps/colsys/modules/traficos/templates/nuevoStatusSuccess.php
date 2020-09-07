@@ -323,7 +323,7 @@ $folder = $reporte->getDirectorioBase();
             $(".linea").hide();
         }
 
-        if(value== "IAFFL" || value== "EEFFL" || value== "EEETD"){
+        if(value== "IAFFL" || value== "EEFFL" || value== "EEETD" || value== "EFADU"){
             $("#observaciones").show();
             $("#exclusiones").show();
         }else{
