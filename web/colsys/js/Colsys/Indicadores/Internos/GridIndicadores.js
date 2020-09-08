@@ -20,6 +20,9 @@ Ext.define('Colsys.Indicadores.Internos.GridIndicadores', {
             return "row_"+record.get('ca_color'); 
         }
     },
+    plugins: [
+        new Ext.grid.plugin.CellEditing({clicksToEdit: 1})
+    ],
     listeners:{
         render: function (me, eOpts){
             
