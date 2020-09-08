@@ -20,9 +20,13 @@ Ext.define('Colsys.Widgets.WgTiposcomprobantes', {
         },
         autoLoad: true
     }),
-    qtip: 'Listado '
-
-
+    qtip: 'Listado ',
+    listConfig: {
+        loadingText: 'buscando...',
+        emptyText: 'No existen registros',
+        getInnerTpl: function() {
+            return '<tpl for="."><div class="search-item"><b>{titulo}</b><p><span>{empresa}</span><p><span>{aplicacion}</span></p><p><span>{numeracion}</span></p><tpl if="!activo"><span class="rojo">Inactivo</span></div></tpl></tpl>';
+                    
+        }
+    }
 });
-
-
