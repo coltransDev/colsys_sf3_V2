@@ -1,5 +1,5 @@
 var win_comodato = null;
-var contextMenu = Ext.create('Ext.menu.Menu');
+var contextMenu=null;
 
 
 
@@ -228,7 +228,7 @@ Ext.define('Colsys.Ino.GridContenedores', {
                                         if (res.success) {
                                             store.reload();
                                         } else {
-                                            Ext.MessageBox.alert("Mensaje", 'Error eliminando el registro.<br>' + res.errorInfo);
+                                            Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.errorInfo);
                                         }
                                     }
                                 });
@@ -313,7 +313,8 @@ Ext.define('Colsys.Ino.GridContenedores', {
                             row.id = r.id
                             changes[i] = row;
                         }
-                        
+                        console.log(changes);
+
                         var gridContenedores = JSON.stringify(changes);
 
                         Ext.Ajax.request({
@@ -373,7 +374,10 @@ Ext.define('Colsys.Ino.GridContenedores', {
         stripeRows: true,
         listeners: {
             beforeitemcontextmenu: function (view, record, item, index, e) {
-                contextMenu.removeAll();
+                if(contextMenu!=null)
+                    contextMenu.removeAll();
+                
+                var contextMenu = Ext.create('Ext.menu.Menu');
                 permisos = this.up('grid').permisos;
                 if (permisos.Comodatos) {
                     var comodato = Ext.create('Ext.menu.Item', {
@@ -427,7 +431,6 @@ Ext.define('Colsys.Ino.GridContenedores', {
                                         success: function (response, options) {
                                             var res = Ext.JSON.decode(response.responseText);
                                             if (res.success) {
-                                                Ext.MessageBox.alert("Mensaje", 'Contenedor eliminado correctamente.<br>' + res.msg);
                                                 store.reload();
                                             } else {
                                                 Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando los registros.<br>' + res.responseInfo);
