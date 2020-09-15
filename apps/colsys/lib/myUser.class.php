@@ -37,6 +37,10 @@ class myUser extends sfBasicSecurityUser {
         return $this->getAttribute('iddepartamento');
     }
 
+    public function getIdciudad() {
+        return $this->getAttribute('idciudad');
+    }
+
     public function getCargo() {
         return $this->getAttribute('cargo');
     }
@@ -74,7 +78,11 @@ class myUser extends sfBasicSecurityUser {
 
         $niveles = $this->getAttribute('niveles');
         if (!isset($niveles[$rutina])) {
-            $usuario = Doctrine::getTable('Usuario')->createQuery('u')->where('u.ca_login = ? ', $this->getUserId())->fetchOne();
+            $usuario = Doctrine::getTable('Usuario')
+                    ->createQuery('u')
+                    ->select("ca_login")
+                    ->where('u.ca_login = ? ', $this->getUserId())->fetchOne();
+            
             if ($usuario) {
                 $niveles[$rutina] = $usuario->getNivelAcceso($rutina);
                 //$niveles[$rutina] = 10;
@@ -106,7 +114,7 @@ class myUser extends sfBasicSecurityUser {
      * @date:  2016-05-02
      */
     public function getAccesosRutina($rutina) {
-        $permisos = ($this->getAttribute('permisos')?$this->getAttribute('permisos'):array());
+        $permisos = $this->getAttribute('permisos')?$this->getAttribute('permisos'):array();
         $permisos = array(); /* FIX-ME Guardar nuevamente los accesos en la sesion*/
         if (!$permisos[$rutina]){
             $sql = "select distinct us.ca_login, au.ca_rutina, au.ca_acceso, false as ca_denegar"
@@ -132,7 +140,7 @@ class myUser extends sfBasicSecurityUser {
             foreach ($acceso_usuario as $key => $acceso) {
                 if ($acceso["ca_acceso"] !== 0) {
                     if ($acceso["ca_denegar"]) {
-                        $acceso_total = $acceso_total & ~$acceso["ca_acceso"];
+                        //$acceso_total = $acceso_total & ~$acceso["ca_acceso"];
                     } else {
                         $acceso_total = $acceso_total | $acceso["ca_acceso"];
                     }
@@ -157,6 +165,7 @@ class myUser extends sfBasicSecurityUser {
             $acceso_rutina = array();
             $rutinasNiveles = Doctrine::getTable("RutinaNivel")
                     ->createQuery("n")
+                    ->select("ca_nivel,ca_valor")
                     ->where("n.ca_rutina >= 200")
                     ->andWhere("n.ca_rutina = ?", $rutina)
                     ->execute();
@@ -178,7 +187,8 @@ class myUser extends sfBasicSecurityUser {
      */
     public function getControlAcceso($rutina) {
         $acceso_usuario = $this->getAccesosRutina($rutina);
-        $acceso_rutina = $this->getAccesoTotalRutina($rutina);        
+        $acceso_rutina = $this->getAccesoTotalRutina($rutina);
+        
         $acceso_total = 0;
         foreach ($acceso_rutina as $key => $valor) {
             $acceso_total += pow(2, $key);
@@ -191,7 +201,6 @@ class myUser extends sfBasicSecurityUser {
                 $opciones[$key] = $acceso_rutina[$key];
             }
         }
-
         return $opciones;
     }
     
@@ -269,7 +278,7 @@ class myUser extends sfBasicSecurityUser {
      * Registra un evento para el usuario
      */
 
-    public function log($event, $params = false) {
+    public function log($event, $params = false,$data=array()) {
 
         $log = new UsuarioLog();
         $log->setCaLogin($this->getUserId());
@@ -279,10 +288,15 @@ class myUser extends sfBasicSecurityUser {
         } else {
             $log->setCaUrl($_SERVER['REQUEST_URI'] . $this->serializeArray($_POST));
         }
+        if($data["url"])
+            $log->setCaUrl($data["url"]);
 
         $log->setCaEvent($event);
         $log->setCaIpaddress($_SERVER['REMOTE_ADDR']);
-        $log->setCaUseragent($_SERVER['HTTP_USER_AGENT']);
+        if($data["agent"])
+            $log->setCaUseragent($data["agent"]);
+        else
+            $log->setCaUseragent($_SERVER['HTTP_USER_AGENT']);        
         $log->save();
     }
 
@@ -302,7 +316,12 @@ class myUser extends sfBasicSecurityUser {
      */
 
     public function signInLDAP($username) {
-        $user = Doctrine::getTable("Usuario")->find($username);
+        //$user = Doctrine::getTable("Usuario")->find($username);
+        $user = Doctrine::getTable("Usuario")
+            ->createQuery("u")
+            ->select("ca_login,ca_idsucursal,ca_nombre,ca_email,ca_cargo,ca_extension,ca_authmethod,ca_departamento")
+            ->where("u.ca_login = ?", $username)
+            ->fetchOne();
 
         if ($user) {
             $this->setAttribute('user_id', $username);
@@ -310,7 +329,7 @@ class myUser extends sfBasicSecurityUser {
             $this->addCredential('colsys_user');
             $this->setCulture('es_CO');
 
-            $sucursal = $user->getSucursal();
+            //$sucursal = $user->getSucursal();
             $this->setAttribute('idsucursal', $user->getCaIdsucursal());
             $this->setAttribute('nombre', $user->getCaNombre());
             $this->setAttribute('email', $user->getCaEmail());
@@ -325,16 +344,31 @@ class myUser extends sfBasicSecurityUser {
 
             $departamento = Doctrine::getTable("Departamento")
                     ->createQuery("d")
+                    ->select("ca_iddepartamento")
                     ->where("d.ca_nombre = ?", $user->getCaDepartamento())
                     ->fetchOne();
             if ($departamento) {
                 $this->setAttribute('iddepartamento', $departamento->getCaIddepartamento());
             }
 
-            $trafico = Doctrine::getTable("Trafico")->find($idtrafico);
+            //$trafico = Doctrine::getTable("Trafico")->find($idtrafico);
+            $trafico = Doctrine::getTable("Trafico")
+                    ->createQuery("t")
+                    ->select("ca_idmoneda")
+                    ->where("t.ca_idtrafico = ?", $idtrafico)
+                    ->fetchOne();
 
             if ($trafico) {
                 $this->setAttribute('idmoneda', $trafico->getCaIdmoneda());
+            }
+
+            $ciudad = Doctrine::getTable("Ciudad")
+                    ->createQuery("c")
+                    ->select("ca_idciudad")
+                    ->where("c.ca_ciudad = ?", $user->getSucursal()->getCaNombre())
+                    ->fetchOne();
+            if ($ciudad) {
+                $this->setAttribute('idciudad', $ciudad->getCaIdciudad());
             }
 
             $this->log("Login LDAP");
@@ -346,7 +380,12 @@ class myUser extends sfBasicSecurityUser {
      */
 
     public function signInAlternative($username) {
-        $user = Doctrine::getTable("Usuario")->find($username);
+        //$user = Doctrine::getTable("Usuario")->find($username);
+        $user = Doctrine::getTable("Usuario")
+            ->createQuery("u")
+            ->select("ca_login,ca_idsucursal,ca_nombre,ca_email,ca_cargo,ca_extension,ca_authmethod,ca_departamento,ca_forcechange")
+            ->where("u.ca_login = ?", $username)
+            ->fetchOne();
 
         if ($user) {
 
@@ -355,7 +394,7 @@ class myUser extends sfBasicSecurityUser {
             $this->addCredential('colsys_user');
             $this->setCulture('es_CO');
 
-            $sucursal = $user->getSucursal();
+            //$sucursal = $user->getSucursal();
             $this->setAttribute('idsucursal', $user->getCaIdsucursal());
             $this->setAttribute('nombre', $user->getCaNombre());
             $this->setAttribute('email', $user->getCaEmail());
@@ -376,11 +415,23 @@ class myUser extends sfBasicSecurityUser {
                 $this->setAttribute('iddepartamento', $departamento->getCaIddepartamento());
             }
 
-
-            $trafico = Doctrine::getTable("Trafico")->find($idtrafico);
+            $trafico = Doctrine::getTable("Trafico")
+                    ->createQuery("t")
+                    ->select("ca_idmoneda")
+                    ->where("t.ca_idtrafico = ?", $idtrafico)
+                    ->fetchOne();
 
             if ($trafico) {
                 $this->setAttribute('idmoneda', $trafico->getCaIdmoneda());
+            }
+
+            $ciudad = Doctrine::getTable("Ciudad")
+                    ->createQuery("c")
+                    ->select("ca_idciudad")
+                    ->where("c.ca_ciudad = ?", $user->getSucursal()->getCaNombre())
+                    ->fetchOne();
+            if ($ciudad) {
+                $this->setAttribute('idciudad', $ciudad->getCaIdciudad());
             }
 
             $this->log("Login SHA1");
@@ -404,6 +455,7 @@ class myUser extends sfBasicSecurityUser {
         $this->setAttribute('idtrafico', null);
         $this->setAttribute('idempresa', null);
         $this->setAttribute('iddepartamento', null);
+        $this->setAttribute('idciudad', null);
         $this->setAttribute('authmethod', null);
         $this->setAttribute('menu', null);
         $this->setAttribute('niveles', null);
