@@ -68,6 +68,14 @@ class myUser extends sfBasicSecurityUser {
         return $this->getAttribute('datos');
     }
 
+    public function getProperty($param) {
+        if( $this->getAttribute('propiedades') ){
+            $array = sfToolkit::stringToArray( $this->getAttribute('propiedades') );                    
+            return isset($array[$param])?$array[$param]:null;
+        }         
+        return $this->getAttribute('propiedades');
+    }
+
     public function setDatos($dato = null) {
         if ($dato) {
             $this->setAttribute("datos", $dato);
@@ -341,6 +349,7 @@ class myUser extends sfBasicSecurityUser {
             $this->setAttribute('authmethod', $user->getCaAuthmethod());
             $this->setAttribute('forcechange', false);
             $this->setAttribute('niveles', null);
+            $this->setAttribute('propiedades', $user->getCaPropiedades());
 
             $departamento = Doctrine::getTable("Departamento")
                     ->createQuery("d")
@@ -406,6 +415,7 @@ class myUser extends sfBasicSecurityUser {
             $this->setAttribute('authmethod', $user->getCaAuthmethod());
             $this->setAttribute('forcechange', $user->getCaForcechange());
             $this->setAttribute('niveles', null);
+            $this->setAttribute('propiedades', $user->getCaPropiedades());
 
             $departamento = Doctrine::getTable("Departamento")
                     ->createQuery("d")
