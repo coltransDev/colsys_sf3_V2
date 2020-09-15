@@ -5,6 +5,7 @@
  *  (c) Coltrans S.A. - Colmas Ltda.
  */
 $grupos = $sf_data->getRaw("grupos");
+$deps = $sf_data->getRaw("deps");
 $status = $sf_data->getRaw("status");
 $empresas = $sf_data->getRaw("empresas");
 $unidades = $sf_data->getRaw("unidades");
@@ -1825,9 +1826,18 @@ include_component("widgets", "widgetParametros",array("caso_uso"=>"CU047"));
                 this.desnombrarCampos();
                 this.ocultarEmpresa();
             }
-
-            if( this.nivel==2 || this.nivel==3 ){
-                if( iddepartamento!=<?=$iddepartamento?> ){
+            
+            /*Usuarios que manejan más de un área en Helpdesk y tienen nivel 2 o superior*/
+            var deps = <?=json_encode($deps)?>;
+            var encontro = false;
+            for(i in deps ){                               
+                if( deps[i] == iddepartamento ){
+                    encontro = true;       
+                }
+            }
+            
+            if( this.nivel==2 || this.nivel==3 ){                
+                if( iddepartamento!=<?=$iddepartamento?> && !encontro){
                     this.bloquearCampos();
                 }else{
                     this.desbloquearCampos();
