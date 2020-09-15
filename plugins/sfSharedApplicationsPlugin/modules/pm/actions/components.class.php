@@ -193,6 +193,7 @@ class pmComponents extends sfComponents {
         
         $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
         $this->grupoEmp = $usuario->getGrupoEmpresarial();
+        $this->deps = array();
 
         $departamentos = Doctrine::getTable("Departamento")
                 ->createQuery("d")
@@ -212,7 +213,26 @@ class pmComponents extends sfComponents {
         }
 
         $this->iddepartamento = $this->getUser()->getIddepartamento();
+        
+        $depAdic = $this->getUser()->getProperty("helpDesk");
+        if($depAdic){
 
+            $d = Doctrine::getTable("Departamento")
+                  ->createQuery("d");
+
+            if(strpos($depAdic,"|"))
+                $d->orWhereIn("d.ca_nombre", explode("|",$depAdic));
+            else
+                $d->orWhere("d.ca_nombre = ?", $depAdic);            
+
+            $departamentos = $d->execute();
+
+            foreach($departamentos as $d){                    
+                $this->deps[] = $d->getCaIddepartamento();                                        
+            }
+            $this->deps[] = $this->getUser()->getIddepartamento();
+        }        
+        
         $user = sfContext::getInstance()->getUser();
 
         $usersGroup = Doctrine::getTable("HdeskUserGroup")
@@ -246,6 +266,10 @@ class pmComponents extends sfComponents {
         }
         
         $this->unidades = ParametroTable::retrieveByCaso("CU078");
+        
+//        print_r($this->deps);
+//        print_r($this->groups);
+//        exit;
     }
 
     /*
