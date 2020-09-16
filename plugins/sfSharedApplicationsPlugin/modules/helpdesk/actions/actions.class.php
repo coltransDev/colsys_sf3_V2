@@ -615,108 +615,90 @@ class helpdeskActions extends sfActions {
     public function executeGuardarRespuestaTicket1(sfWebRequest $request) {
 
         $user=null;
-        if($request->getParameter("iduser"))
-        {
+        if($request->getParameter("iduser")){
             $user = Doctrine::getTable("Usuario")->find($request->getParameter("iduser"));            
-            //echo $user->getNivelAcceso(helpdeskActions::RUTINA);
         }
-        else
-        {
+        else{
             $user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());            
         }
         
-        
         $this->nivel = $user->getNivelAcceso(helpdeskActions::RUTINA);        
-        $idticket = $request->getParameter("idticket");
-        
-        echo "usuario:".$user->getCaLogin()."<br>";
-        echo "nivel:".$this->nivel."<br>";
-        echo "idticket:".$idticket."<br>";
+        $idticket = $request->getParameter("idticket");        
         $ticket = HdeskTicketTable::retrieveIdTicket($idticket, $this->nivel,$user);
-        
-        
         $this->forward404Unless($ticket);
         
+        $conn = Doctrine::getTable("HdeskResponse")->getConnection();
+        $conn->beginTransaction();
+        try {
         
-//        echo "<br>".$this->nivel."---".$idticket."<br>";
-        exit;
+            $respuesta = new HdeskResponse();
+            $respuesta->setCaIdticket($request->getParameter("idticket"));
+            $respuesta->setCaText(utf8_decode($request->getParameter("comentario")));            
+            $respuesta->setCaLogin($user->getCaLogin());
+            $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
+            $respuesta->save($conn);
 
-
-        //$user = $this->getUser();
-
-        $respuesta = new HdeskResponse();
-        $respuesta->setCaIdticket($request->getParameter("idticket"));
-        $respuesta->setCaText(utf8_decode($request->getParameter("comentario")));
-        //$respuesta->setCaLogin($user->getUserId());
-        $respuesta->setCaLogin($user->getCaLogin());
-        $respuesta->setCaCreatedat(date("Y-m-d H:i:s"));
-        $respuesta->save();
-
-        $logins = array($ticket->getCaLogin());
-        if ($ticket->getCaAssignedto()) {
-            $logins[] = $ticket->getCaAssignedto();
-        } else {
-            $usuarios = Doctrine::getTable("HdeskUserGroup")
-                    ->createQuery("h")
-                    ->where("h.ca_idgroup = ? ", $ticket->getCaIdgroup())
-                    ->addOrderBy("h.ca_login")
-                    ->execute();
+            $logins = array($ticket->getCaLogin());
+            if ($ticket->getCaAssignedto()) {
+                $logins[] = $ticket->getCaAssignedto();
+            } else {
+                $usuarios = Doctrine::getTable("HdeskUserGroup")
+                        ->createQuery("h")
+                        ->where("h.ca_idgroup = ? ", $ticket->getCaIdgroup())
+                        ->addOrderBy("h.ca_login")
+                        ->execute();
+                foreach ($usuarios as $usuario) {
+                    $logins[] = $usuario->getCaLogin();
+                }
+            }
+            
+            $usuarios = $ticket->getUsuarios();
             foreach ($usuarios as $usuario) {
                 $logins[] = $usuario->getCaLogin();
             }
-        }
 
-
-        $usuarios = $ticket->getUsuarios();
-        foreach ($usuarios as $usuario) {
-            $logins[] = $usuario->getCaLogin();
-        }
-
-
-
-        if ($ticket->getCaAssignedto() == $user->getCaLogin() || in_array($user->getCaLogin(), $logins)) {
-            $tarea = $ticket->getTareaIdg();
-            if ($tarea) {
-                if (!$tarea->getCaFchterminada()) {
-                    $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
-                    $tarea->setCaUsuterminada($user->getCaLogin());
-                    $tarea->save();
+            if ($ticket->getCaAssignedto() == $user->getCaLogin() || in_array($user->getCaLogin(), $logins)) {
+                $tarea = $ticket->getTareaIdg();
+                if ($tarea) {
+                    if (!$tarea->getCaFchterminada()) {
+                        $tarea->setCaFchterminada(date("Y-m-d H:i:s"));
+                        $tarea->setCaUsuterminada($user->getCaLogin());
+                        $tarea->save($conn);
+                    }
                 }
             }
-        }
 
-        //echo $user->getCaLogin()."<br>";
-        $email = new Email();
-        $email->setCaUsuenvio($user->getCaLogin());
-        $email->setCaTipo("Notificación");
-        $email->setCaIdcaso($ticket->getCaIdticket());
-        $email->setCaFrom("no-reply@coltrans.com.co");
-        $email->setCaFromname("Colsys Notificaciones");
+            $email = new Email();
+            $email->setCaUsuenvio($user->getCaLogin());
+            $email->setCaTipo("Notificación");
+            $email->setCaIdcaso($ticket->getCaIdticket());
+            $email->setCaFrom("no-reply@coltrans.com.co");
+            $email->setCaFromname("Colsys Notificaciones");
+            $email->setCaSubject("Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
+            $texto = "Se ha creado una respuesta \n\n<br /><br />";
+            
+            $request->setParameter("id", $ticket->getCaIdticket());
+            $request->setParameter("format", "email");
+            $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
 
+            $email->setCaBodyhtml($texto);
 
-        $email->setCaSubject("Nueva respuesta Ticket #" . $ticket->getCaIdticket() . " [" . $ticket->getCaTitle() . "]");
-
-        $texto = "Se ha creado una respuesta \n\n<br /><br />";
-        $request->setParameter("id", $ticket->getCaIdticket());
-        $request->setParameter("format", "email");
-        $texto.= sfContext::getInstance()->getController()->getPresentationFor('pm', 'verTicket');
-
-        $email->setCaBodyhtml($texto);
-
-        foreach ($logins as $login) {
-
-            if ($user->getCaLogin() != $login) {
-                $usuario = Doctrine::getTable("Usuario")->find($login);
-                $email->addTo($usuario->getCaEmail());
+            foreach ($logins as $login) {
+                if ($user->getCaLogin() != $login) {
+                    $usuario = Doctrine::getTable("Usuario")->find($login);
+                    $email->addTo($usuario->getCaEmail());
+                }
             }
+
+            $this->setLayout("none");
+            $email->save($conn);
+            //$email->send();
+            $conn->commit();
+            $this->ticket = $ticket;
+        }catch(Exception $e){
+            $conn->rollback();
+            echo $e->getMessage();
         }
-
-        $this->setLayout("none");
-
-        $email->save();
-        //$email->send();
-
-        $this->ticket = $ticket;
     }
     
 }
