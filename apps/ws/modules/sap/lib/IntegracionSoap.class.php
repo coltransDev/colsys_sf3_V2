@@ -386,6 +386,7 @@ class IntegracionSoap {
                                     ->createQuery("c")
                                     ->innerJoin("c.InoTipoComprobante tc")
                                     ->where("c.ca_docentry = ?", $docentrycruce)
+                                    ->addWhere("tc.ca_idempresa = ?", $company)
                                     ->addWhere("tc.ca_tipo = 'F'")                                    
                                     ->fetchOne();
 
@@ -647,7 +648,7 @@ class IntegracionSoap {
                 $idsEstado->stopBlaming();
                 $idsEstado->save($conn);
 
-                $mensaje = 'El socio de negocio tipo '.$tipoIds.' se activo correctamente! IdempresaColsys=>'. $company;
+                $mensaje = 'El socio de negocio con Id:'.$idsEstado->getCaId().' tipo '.$tipoIds.' se activo correctamente! IdempresaColsys=>'. $company;
                 $estado = 1;
                 $reenvio = "n";
                 $success = true;
