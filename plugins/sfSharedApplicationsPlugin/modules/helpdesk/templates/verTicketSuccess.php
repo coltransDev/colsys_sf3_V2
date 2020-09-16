@@ -133,15 +133,19 @@ $i = 1;
         </tr>
     </table><br/>    
     <table class="tableList alignCenter"  id="archivos" width='40%'>
-        <tr>
-            <th colspan="2">
-                Adjuntos
-            </th>
-            <td>
-                <div id="button" name="button" align="center" ></div>
-            </td>
-        </tr>
         <?
+        if($ticket->getCaAction() != "Cerrado"){
+            ?>
+            <tr>
+                <th colspan="2">
+                    Adjuntos
+                </th>
+                <td>
+                    <div id="button" name="button" align="center" ></div>
+                </td>
+            </tr>
+            <?
+        }
         foreach ($filenames as $file) {
             $id_tr = "tr_$i";
             ?>
