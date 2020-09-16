@@ -1,9 +1,11 @@
 <?
 
 
-sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext4/resources/css/ext-all-neptune.css");
-sfContext::getInstance()->getResponse()->removeJavascript("ext4/ext-all.js");
-sfContext::getInstance()->getResponse()->removeJavascript("ext4/ux/multiupload/swfobject.js");
+sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext6/build/classic/theme-crisp/resources/theme-crisp-all-debug.css");
+sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext6/build/classic/theme-crisp/resources/theme-crisp-all-debug_1.css");
+sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext6/build/classic/theme-crisp/resources/theme-crisp-all-debug_2.css");
+sfContext::getInstance()->getResponse()->removeJavascript("/js/ext6/ext-all.js");
+//sfContext::getInstance()->getResponse()->removeJavascript("ext4/ux/multiupload/swfobject.js");
 use_stylesheet('ext/css/ext-all.css');
 use_javascript('ext/adapter/ext/ext-base.js');
 use_javascript('ext/ext-all.js');
@@ -31,7 +33,7 @@ var crearTicket = function(){
 		<div align="center">
 			<select name="opcion" id="opcion" size="4" onchange="cambiarCriterios(this)">
 				<option value="numero" selected="selected">Numero de ticket</option>				
-				
+				<option value="criterio">Entre los textos</option>				
 			</select>
 		</div></td>
   	<td width="317">
@@ -78,4 +80,3 @@ var crearTicket = function(){
 <h3>&nbsp;</h3>
 
 </div>
-
