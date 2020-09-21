@@ -1,5 +1,6 @@
 var win_comodato = null;
 var contextMenu=null;
+var win_importar = null;
 
 
 
@@ -20,6 +21,7 @@ Ext.define('Colsys.Ino.GridContenedores', {
         },
         afterrender: function (ct, position) {
             idmaster=this.idmaster;
+            var me = this;
             this.getStore().reload({
                 params: {
                     idmaster: this.idmaster
@@ -184,7 +186,7 @@ Ext.define('Colsys.Ino.GridContenedores', {
                                 id: 'winControlComodato',
                                 title: 'Control Comodatos',
                                 width: 800,
-                                height: 310,
+                                height: 350,
                                 closeAction: 'destroy',
                                 listeners: {
                                     destroy: function (obj, eOpts)
@@ -346,8 +348,79 @@ Ext.define('Colsys.Ino.GridContenedores', {
                         });
                     }
                 });
-            }
+            if (!(this.idtransporte == "Terrestre" && this.idimpoexpo == "INTERNO")) {
+                tb.add({
+                    xtype: 'button',
+                    text: 'Importar Equipos',
+                    height: 30,
+                    iconCls: 'add',
+                    handler: function () {
+                        Ext.MessageBox.confirm('Confirmaci&oacute;n de Actualizaci&oacute;n', 'Est&aacute; opci&oacute;n borrar&aacute y cargar&aacute; la informaci&oacute;n de contenedores guardada en los status. Est&aacute; seguro que desea importar los registros?', function (choice) {
+                            if (choice == 'yes') {
+                                win_importar = new Ext.Window({
+                                    title: 'Importar Contenedores',
+                                    id: 'winexportar-'+me.idmaster,                                    
+                                    margin: '10 10 10 10',
+                                    bodyPadding: 5,
+                                    closeAction: 'destroy',
+                                    items: [
+                                        Ext.create('Ext.form.Panel', {                                            
+                                            id: 'form-importar-'+idmaster,
+                                            bodyPadding: 5,
+                                            url: '/inoF2/importarContenedores',
+                                            layout: 'anchor',
+                                            defaults: {
+                                                anchor: '100%'
+                                            },                    
+                                            items: [    
+                                                Ext.create('Colsys.Widgets.wgHouse', {
+                                                    fieldLabel: 'House',
+                                                    id: 'idhouse'+idmaster,
+                                                    name: 'idhouse',
+                                                    queryMode: 'local',
+                                                    displayField: 'name',
+                                                    valueField: 'id',
+                                                    idmaster: idmaster,
+                                                    allowBlank: false
+                                                })
+                                            ],
+                                            buttons: [{
+                                                text: 'Importar',
+                                                formBind: true, //only enabled once the form is valid
+                                                disabled: true,
+                                                id: 'btn-save-'+me.idmaster,
+                                                handler: function() {
+                                                    var form = this.up('form').getForm();
 
+                                                    if (form.isValid()) {
+                                                        form.submit({
+                                                            success: function(form, action) {                                                            
+                                                                Ext.Msg.alert('Success', action.result.msg);
+                                                                me.getStore().reload();
+                                                            },
+                                                            failure: function(form, action) {
+                                                                Ext.Msg.alert('Failed', action.result.errorInfo);
+                                                            }
+                                                        });
+                                                    }
+                                                }
+                                            }]
+                                        })
+                                    ],
+                                    listeners: {                                        
+                                        close: function (win, eOpts) {
+                                            win_importar = null;
+                                        }
+                                    }
+
+                                });
+                                win_importar.show();
+                            }
+                        });
+                    }
+                });
+            }
+            }
             tb.add({
                 xtype: 'button',
                 text: 'Refrescar',
