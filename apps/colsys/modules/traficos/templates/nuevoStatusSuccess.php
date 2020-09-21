@@ -8,6 +8,20 @@ $archivos = $sf_data->getRaw("archivos");
 $att = $sf_data->getRaw("att");
 $reporte_incompleto = $sf_data->getRaw("reporte_incompleto");
 
+//equipos
+$tipoequipos = $sf_data->getRaw("tipoequipos");
+$vehiculos = $sf_data->getRaw("vehiculos");
+$choices = $sf_data->getRaw("choices");
+
+$repequipos = $reporte->getRepEquipos();
+$numequipos = count($repequipos>0)?count($repequipos):null;
+$valores = $sf_data->getRaw("values"); // Valores cargados después del Post
+
+if($valores)
+    $num_equipos = $valores["num_equipos"];
+else
+    $num_equipos = 0;
+
 if ($reporte->getCaImpoexpo() == Constantes::OTMDTA) {
     if ($reporte->getCaTransporte() == Constantes::TERRESTRE)
         $reporte->setCaTransporte(Constantes::MARITIMO);
@@ -388,6 +402,147 @@ $folder = $reporte->getDirectorioBase();
         } else{
             $("#row_operativo").hide();
         }
+    }
+    
+    /*Funcion para retornar los valores devueltos por post cuando hay una validación*/
+    var obtenerValores = function(){
+        var values = new Object();
+        <?
+        foreach($valores as $key => $value){            
+            if(strstr($key, "equipo")!=""){
+                if($value){
+                    ?>
+                    key = '<?=$key?>';
+                    valor = '<?=$value?>';
+                    eval("values."+key+" = '"+valor+"';")
+                    <?
+                }
+            }
+        }
+        ?>
+        return values;        
+    }
+    
+    var crearFilasEquipos = function(inicio, nfilas, post){
+        
+        var idvehiculo = "",
+            placa = "",
+            idtipo = "",
+            serial = "",
+            cantidad = "";
+        
+        nfilas = inicio + nfilas;
+        console.log(inicio, nfilas);     
+        if(post){
+            values = this.obtenerValores(inicio, nfilas);            
+            console.log(values);
+        }
+                
+        for(i=inicio;i < nfilas; i++){
+            if(post){
+                eval("idvehiculo= parseInt(values.equipos_idvehiculo_"+i+");")
+                eval("placa     = values.equipos_placa_"+i+";")
+                eval("idtipo    = parseInt(values.equipos_tipo_"+i+");")
+                eval("serial    = values.equipos_serial_"+i+";")
+                eval("cantidad  = values.equipos_cant_"+i+";")
+                
+                idvehiculo = idvehiculo?idvehiculo:"";
+                placa = placa?placa:"";
+                idtipo = idtipo?idtipo:"";
+                serial = serial?serial:"";
+                cantidad = cantidad?cantidad:"";
+                
+            }
+                
+            var row = $('<tr />');            
+
+            $("#tabla_equipos").append(row);                
+            row.append($('<td />').append(i+1));
+            <?
+            if ($reporte->getCaTiporep() == "5") {                
+                ?>
+                                                                        
+                comboVehiculo  = $('<select>').attr({id:"equipos_idvehiculo_"+i, name:"equipos_idvehiculo_"+i}),
+                valores = [                        
+                    <?
+                    foreach($vehiculos as $vehiculo){
+                        ?>
+                        {val : '<?=$vehiculo->getCaIdentificacion()?>', text: "<?=$vehiculo->getCaValor()?>"},
+                        <?            
+                    }        
+                    ?>                        
+                ];
+
+                $(valores).each(function() {
+                    comboVehiculo
+                    .append($('<option>')
+                            .attr('value',this.val)
+                            .text(this.text));
+                });
+                
+                comboVehiculo
+                    .append('<option value="" selected="selected"></option>');
+                
+                comboVehiculo.val(idvehiculo);                
+
+                row.append($('<td />').append(comboVehiculo));
+                row.append($('<td />').append('<input size="14" value="'+placa+'" style="margin-bottom:3px" type="text" name="equipos_placa_'+i+'" id="equipos_placa_'+i+'">'));                        
+                <?
+            }
+            ?>
+
+            selectEl  = $('<select>').attr({id:"equipos_tipo_"+i, name:"equipos_tipo_"+i}),
+            selectVal = [                        
+                <?
+                foreach($tipoequipos as $tipo){
+                    ?>
+                    {val : '<?=$tipo->getCaIdconcepto()?>', text: "<?=$tipo->getCaConcepto()?>"},
+                    <?            
+                }        
+                ?>                        
+            ];
+
+            $(selectVal).each(function() {
+                selectEl
+                .append($('<option>')
+                        .attr('value',this.val)
+                        .text(this.text));
+            });
+            
+            selectEl
+                    .append('<option value="" selected="selected"></option>');
+            
+            selectEl.val(idtipo);            
+
+            row.append($('<td />').append(selectEl));
+            row.append($('<td />').append('<input size="14" value="'+serial+'" style="margin-bottom:3px" type="text" name="equipos_serial_'+i+'" id="equipos_serial_'+i+'">'));
+            row.append($('<td />').append('<input size="14" value="'+cantidad+'" style="margin-bottom:3px" type="text" name="equipos_cant_'+i+'" id="equipos_cant_'+i+'">'));            
+        }
+    }
+    
+    var renderEquipos = function(){        
+        
+        var nfilas = $("#tabla_equipos tr").length-1;
+        var cantidad = document.getElementById("num_equipos").value;
+        var filasAdic = cantidad -nfilas;
+        var num_equipos = <?=$num_equipos?>; /*Si este valor no es vacio es porque despues del POST se diligenciaron algunos equipos*/
+        
+        console.log(cantidad);
+        console.log(nfilas);
+        console.log(filasAdic);
+        
+        if(filasAdic>0){
+            crearFilasEquipos(nfilas, filasAdic);            
+        }
+        
+        if(num_equipos > 0){
+            filasAdic = num_equipos - nfilas;
+            post = true;
+            this.crearFilasEquipos(nfilas, filasAdic, post);            
+        }else{
+            
+        }
+        document.getElementById("num_equipos").value = $("#tabla_equipos tr").length-1;
     }
 </script>
 
@@ -935,6 +1090,13 @@ $folder = $reporte->getDirectorioBase();
                             }
                         }
                         if ($reporte->getCaModalidad() == "FCL") {
+                            $nequipos = NuevoStatusForm::NUM_EQUIPOS;
+                            if( count($repequipos)> $nequipos ){
+                                $nequipos=count($repequipos);
+                            }
+                            if(count($repequipos) == 0 && $reporte->getCaImpoexpo()== Constantes::EXPO){
+                                $nequipos = NuevoStatusForm::NUM_EQUIPOS_EXPO; // Ticket 87461
+                            }
                             ?>
                             <tr>
                                 <td valign="top"><b>No. Master:</b>
@@ -948,78 +1110,76 @@ $folder = $reporte->getDirectorioBase();
                                 </td>
                                 <td colspan="2">
                                     <b> Equipos para el embarque :&nbsp;</b><br />
-                                    <table  width="100%" border="1" class="tableList">
+                                    <label for="num_equipos">Seleccione el n&uacute;mero de equipos:</label>
+
+                                    <select name="num_equipos" id="num_equipos" onchange="renderEquipos()">                                        
+                                        <?
+                                        for ($i = 1; $i <= 50; $i++) {
+                                           ?>
+                                           <option value='<?=$i?>'><?=$i?></option>
+                                           <?
+                                        }
+                                        ?>
+                                    </select> 
+                                    <table  width="100%" border="1" class="tableList" id="tabla_equipos">
                                         <tbody>
                                             <tr>
-                                        <?
-                                        if ($reporte->getCaTiporep() == "5") {                                                                                    
-                                        ?>    
-                                                <th>Vehiculo</th>
-                                                <th>Placa</th>
-                                        <?
-                                        }
-                                        ?>
-                                                <th width="34%">Tipo</th>
-                                        <?
-                                        if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
-                                            ?>
-                                                    <th width="21%">Serial</th>
-                                            <?
-                                        } else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::INTERNO) {
-                                            ?>
-                                                    <th width="21%">No.Contenedor</th>
-                                            <?
-                                        }
-                                        ?>
-                                                <th width="45%">Cantidad</th>
+                                                <th width="10%">#</th>
+                                                <?if ($reporte->getCaTiporep() == "5") {
+                                                    ?>    
+                                                        <th>Vehiculo</th>
+                                                        <th>Placa</th>
+                                                    <?
+                                                    }
+                                                    ?>
+                                                <th width="45%">Tipo</th>
+                                                <?if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+                                                    ?>
+                                                        <th width="35%">Serial</th>
+                                                    <?
+                                                } else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::INTERNO) {
+                                                    ?>
+                                                        <th width="35%">No.Contenedor</th>
+                                                    <?
+                                                }
+                                                ?>
+                                                <th width="10%">Cantidad</th>
+                                                <th width="5%"></th>
                                             </tr>
-                                    <?
-                                    $repequipos = $reporte->getRepEquipos();
-                                    $nequipos = NuevoStatusForm::NUM_EQUIPOS;
-                                    if( count($repequipos)> $nequipos )
-                                    {
-                                        $nequipos=count($repequipos);
-                                    }
-                                    if(count($repequipos) == 0 && $reporte->getCaImpoexpo()== Constantes::EXPO){
-                                        $nequipos = NuevoStatusForm::NUM_EQUIPOS_EXPO; // Ticket 87461
-                                    }
-                                    //echo "<br>972::".$nequipos;
-                                    //exit;
-                                    for ($i = 0; $i < $nequipos+2; $i++) {
-                                        if (count($repequipos) > 0 && isset($repequipos[$i])) {
-                                            $repequipo = $repequipos[$i];
-                                        } else {
-                                            $repequipo = null;
-                                        }
-                                        ?>
+                                            <?
+                                            for ($i = 0; $i < $nequipos; $i++) {
+                                                if (count($repequipos) > 0 && isset($repequipos[$i])) {
+                                                    $repequipo = $repequipos[$i];
+                                                } else {
+                                                    $repequipo = null;
+                                                }
+                                                ?>
                                                 <tr>
-                                        <?
-                                        if ($reporte->getCaTiporep() == "5") {                                                                                
-                                        ?>    
-                                                    <td>
+                                                    <td><?=$i+1?></td>
                                                     <?
-                                                    echo $form['equipos_idvehiculo_' . $i]->renderError();
-                                                    if ($repequipo) {
-                                                        $form->setDefault('equipos_idvehiculo_' . $i, $repequipo->getCaIdvehiculo());
+                                                    if ($reporte->getCaTiporep() == "5") {                                                                                
+                                                        ?>    
+                                                        <td>
+                                                        <?
+                                                        echo $form['equipos_idvehiculo_' . $i]->renderError();
+                                                        if ($repequipo) {
+                                                            $form->setDefault('equipos_idvehiculo_' . $i, $repequipo->getCaIdvehiculo());
+                                                        }
+                                                        echo $form['equipos_idvehiculo_' . $i]->render();
+                                                        ?>
+                                                        </td>
+                                                        <td>
+                                                        <?
+                                                        echo $form['equipos_placa_' . $i]->renderError();
+                                                        if ($repequipo) {
+                                                            $form->setDefault('equipos_placa_' . $i,  $repequipo->getDatosJson("placa"));
+                                                        }
+                                                        echo $form['equipos_placa_' . $i]->render();
+                                                        ?>
+                                                        </td>
+                                                        <?
                                                     }
-                                                    echo $form['equipos_idvehiculo_' . $i]
-                                                            ->render();
                                                     ?>
-                                                                                            
-                                                    </td>
-                                                    
-                                                    <td>
-                                                    <?
-                                                    echo $form['equipos_placa_' . $i]->renderError();
-                                                    if ($repequipo) {
-                                                        $form->setDefault('equipos_placa_' . $i,  $repequipo->getDatosJson("placa"));
-                                                    }
-                                                    echo $form['equipos_placa_' . $i]->render();
-                                                    ?>
-                                                    </td>
-                                        <?
-                                        }
-                                        ?>
                                                     <td>
                                                     <?
                                                     echo $form['equipos_tipo_' . $i]->renderError();
@@ -1027,7 +1187,8 @@ $folder = $reporte->getDirectorioBase();
                                                         $form->setDefault('equipos_tipo_' . $i, $repequipo->getCaIdconcepto());
                                                     }
                                                     echo $form['equipos_tipo_' . $i]->render();
-                                                    ?>								</td>
+                                                        ?>
+                                                    </td>
                                                     <?
                                                     if ($reporte->getCaImpoexpo() == Constantes::EXPO || $reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::INTERNO) {
                                                         ?>
@@ -1038,22 +1199,24 @@ $folder = $reporte->getDirectorioBase();
                                                             $form->setDefault('equipos_serial_' . $i, $repequipo->getCaIdequipo());
                                                         }
                                                         echo $form['equipos_serial_' . $i]->render();
-                                                        ?>									</td>	
+                                                            ?>									
+                                                        </td>	
                                                     <?
                                                 }
                                                 ?>
-                                                    <td>
+                                                <td>
                                                 <?
                                                 echo $form['equipos_cant_' . $i]->renderError();
                                                 if ($repequipo) {
                                                     $form->setDefault('equipos_cant_' . $i, $repequipo->getCaCantidad());
                                                 }
                                                 echo $form['equipos_cant_' . $i]->render();
-                                                ?>								</td>											
-                                                </tr>
-                                                        <?
-                                                    }
                                                     ?>
+                                                </td>											
+                                            </tr>
+                                            <?
+                                            }
+                                        ?>
                                         </tbody>
                                     </table>				
                                 </td>
@@ -1480,6 +1643,7 @@ $folder = $reporte->getDirectorioBase();
 <script language="javascript" type="text/javascript">
     mostrar(1);
     crearSeguimiento();
+    renderEquipos();    
     <?
     if ($reporte_incompleto != "") {
         $c++;
