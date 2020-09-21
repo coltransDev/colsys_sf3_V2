@@ -3254,6 +3254,67 @@ class inoF2Actions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeImportarContenedores(sfWebRequest $request){
+        
+        $conn = Doctrine::getTable("InoEquipo")->getConnection();
+        
+        try {
+            $conn->beginTransaction();            
+            
+            $idhouse = $request->getParameter("idhouse");            
+            $house = Doctrine::getTable("InoHouse")->find($idhouse);
+            
+            $ms = $house->getInoMaster()->getInoMasterSea();
+            
+            if($ms->getCaFchmuisca() == null && $ms->getCaUsumuisca() == null){                
+                
+                Doctrine_Manager::getInstance()->setCurrentConnection('master');
+                $con = Doctrine_Manager::getInstance()->connection();
+                $sql = "SELECT (ca_datos)::json->'equipos' as idequipo FROM ino.tb_house_sea WHERE ca_idhouse = $idhouse order by ca_idhouse DESC";
+                $rs = $con->execute($sql);
+                $eqs = $rs->fetchAll();
+                
+                if ($eqs[0]["idequipo"]== "null" || $eqs[0]["idequipo"]== ""){                    
+                    $inoEquipos = $house->getInoMaster()->getInoEquipo();                    
+                    foreach($inoEquipos as $equipo){                    
+                        $equipo->delete($conn);                    
+                    }
+
+                    $reporte = $house->getReporte();                    
+                    $repequipos = $reporte->getRepEquipos();
+                    if(count($repequipos) > 0){
+                        foreach($repequipos as $equipo){
+                            $inoequipo = new InoEquipo();
+                            $inoequipo->setCaIdmaster($house->getCaIdmaster());
+                            $inoequipo->setCaIdconcepto($equipo->getCaIdconcepto());
+                            $inoequipo->setCaSerial($equipo->getCaIdequipo()?$equipo->getCaIdequipo():'');
+                            $inoequipo->setCaCantidad($equipo->getCaCantidad());
+                            $inoequipo->setCaIdvehiculo($equipo->getCaIdvehiculo());
+                            $inoequipo->save($conn);
+                        }
+
+                        $conn->commit();                    
+                        $this->responseArray = array("success" => true, "msg" => utf8_encode("Los datos se han importado con &eacutexito!"));                    
+                    }else{
+                        $conn->rollBack();
+                        $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("El reporte # ".$reporte->getCaConsecutivo()."no tiene contanedores registrado!"));
+                    }
+                }else{
+                    $conn->rollBack();
+                    $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("No se puede importar los contenedores dado que estos ya fueron prorateados en el house!"));
+                }
+            }else{
+                $conn->rollBack();
+                $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("No se puede eliminar importar los contenedores dado que ésta referencia ya ha sido radicada.!"));
+            }
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()), "debug"=>$sql);
+        }
+        $this->setTemplate("responseTemplate");
+        
+    }
+
     public function executeDatosfacturasporreferenciaycliente(sfWebRequest $request) {
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idmaster = $request->getParameter("idmaster");
@@ -3854,6 +3915,7 @@ class inoF2Actions extends sfActions {
     public function executeGuardarControlMandato($request) {
         $idequipo = $request->getParameter("idequipo");
         $datos = $request->getParameter("datos");
+        $copiar = $request->getParameter("copiar");
 
         $conn = Doctrine::getTable("InoEquipo")->getConnection();
 
@@ -3864,8 +3926,17 @@ class inoF2Actions extends sfActions {
             try {
                 $conn->beginTransaction();
 
-                $inoEquipo->setCaDatos($datos);
-                $inoEquipo->save();
+                if($copiar == "on"){
+                    $inoEquipos = Doctrine::getTable("InoEquipo")->findBy("ca_idmaster", $inoEquipo->getCaIdmaster());
+                    
+                    foreach($inoEquipos as $inoEquipo){
+                        $inoEquipo->setCaDatos($datos);
+                        $inoEquipo->save($conn);                        
+                    }
+                }else{
+                    $inoEquipo->setCaDatos($datos);
+                    $inoEquipo->save($conn);
+                }
                 $conn->commit();
                 $this->responseArray = array("success" => true);
             } catch (Exception $e) {
