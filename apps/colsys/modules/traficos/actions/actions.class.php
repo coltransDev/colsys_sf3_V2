@@ -457,6 +457,8 @@ class traficosActions extends sfActions {
       $q = Doctrine_Query::create()->from("Concepto c")->where("c.ca_modalidad = ? ", "FCL");
       
       $this->form->setQueryConceptos($q);
+      $this->tipoequipos = $q->execute();
+      $this->vehiculos = ParametroTable::retrieveByCaso( "CU020" );
 
       //Busca los parametros definidos en CU059 
       //Campos personalizados por cliente			
@@ -471,14 +473,6 @@ class traficosActions extends sfActions {
       $this->form->setQueryExclusiones($exclusiones);
       
       
-      $repequipos = $reporte->getRepEquipos();
-      $this->form->setNumEquipos(count($repequipos));
-      if(count($repequipos) <= 0 && $reporte->getCaImpoexpo()== Constantes::EXPO){
-          $this->form->setNumEquipos(NuevoStatusForm::NUM_EQUIPOS_EXPO); // Ticket 87461
-      }
-//      echo "<br>478::".count($repequipos)."--".$this->form->getNumEquipos();
-//      exit;
-//      echo "<br>ssrrr::".$this->form->getNumEquipos();
       $this->form->configure();
       /*
        * Fin de la configuración
@@ -570,7 +564,11 @@ class traficosActions extends sfActions {
          $bindValues["observaciones_idg"] = $request->getParameter("observaciones_idg");
          $bindValues["exclusiones_idg"] = $request->getParameter("exclusiones_idg");
 
-         for ($i = 0; $i < $this->form->getNumEquipos(); $i++) {
+         $bindValues["num_equipos"] = $request->getParameter("num_equipos");
+
+         for ($i = 0; $i <= $request->getParameter("num_equipos"); $i++) {
+            $bindValues["equipos_idvehiculo_" . $i] = $request->getParameter("equipos_idvehiculo_" . $i);
+            $bindValues["equipos_placa_" . $i] = $request->getParameter("equipos_placa_" . $i);
             $bindValues["equipos_tipo_" . $i] = $request->getParameter("equipos_tipo_" . $i);
             $bindValues["equipos_serial_" . $i] = $request->getParameter("equipos_serial_" . $i);
             $bindValues["equipos_cant_" . $i] = $request->getParameter("equipos_cant_" . $i);
@@ -714,8 +712,7 @@ class traficosActions extends sfActions {
             }
         }    
         
-        //echo "<br>ssss::".$this->form->getNumEquipos();
-        
+        $this->values = $bindValues;//      
         $this->form->bind($bindValues);
         if ($this->form->isValid()) {
            $this->executeGuardarStatus($request);
@@ -943,11 +940,10 @@ class traficosActions extends sfActions {
         }
 
          //borra los equipos viejos
-         $repequipos = $reporte->getRepEquipos();         
+        $repequipos = $reporte->getRepEquipos();         
          
-         $nequipos = NuevoStatusForm::NUM_EQUIPOS;
-        if( count($repequipos)> $nequipos )
-        {
+        $nequipos = $request->getParameter("num_equipos");
+        if( count($repequipos)> $nequipos ){
             $nequipos=count($repequipos);
         } 
          
@@ -955,7 +951,7 @@ class traficosActions extends sfActions {
            $equipo->delete($conn);
         }
         
-        for ($i = 0; $i < $nequipos+2; $i++) {
+        for ($i = 0; $i < $nequipos; $i++) {
 
             if ($request->getParameter("equipos_tipo_" . $i) && $request->getParameter("equipos_cant_" . $i)) {
                 $repequipo = new RepEquipo();
@@ -966,12 +962,9 @@ class traficosActions extends sfActions {
                 }
 
                 $repequipo->setCaIdconcepto($request->getParameter("equipos_tipo_" . $i)); 
-                $repequipo->setCaCantidad($request->getParameter("equipos_cant_" . $i));
-                if ($reporte->getCaImpoexpo() == Constantes::EXPO || $reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaTiporep()=="5" ) 
-                {                    
-                    if($request->getParameter("equipos_serial_" . $i)!="")
-                        $repequipo->setCaIdequipo($request->getParameter("equipos_serial_" . $i));
-                }
+                $repequipo->setCaCantidad($request->getParameter("equipos_cant_" . $i));                                    
+                if($request->getParameter("equipos_serial_" . $i)!="")
+                    $repequipo->setCaIdequipo($request->getParameter("equipos_serial_" . $i));                
                 $repequipo->save($conn);
             }
         }
