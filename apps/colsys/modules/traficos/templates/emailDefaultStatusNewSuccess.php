@@ -350,11 +350,11 @@ $modo = $sf_data->getRaw("modo");
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Concepto</th>
                                         <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Cantidad</th>
                                         <?
-                                        if ($reporte->getCaImpoexpo() == Constantes::EXPO) {
+                                        if ($reporte->getCaImpoexpo() == Constantes::EXPO || $reporte->getCaTiporep()=="4") {
                                             ?>
                                                 <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">Serial</th>
                                                 <?
-                                            } else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaTiporep()=="5") {
+                                            } else if ($reporte->getCaImpoexpo() == Constantes::IMPO || $reporte->getCaImpoexpo() == Constantes::OTMDTA ||  $reporte->getCaTiporep()=="5") {
                                                 ?>
                                                 <th style="background-color: #F8F8F8; padding: 2px; font-weight: bold; font-size: 11px;font-family: Arial,Helvetica,sans-serif;">No.Contenedor</th>
                                                 <?
