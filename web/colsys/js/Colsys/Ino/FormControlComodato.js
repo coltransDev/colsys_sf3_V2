@@ -160,6 +160,17 @@ Ext.define('Colsys.Ino.FormControlComodato', {
                     anchor: '100%'
                 }]
 
+        },
+        {
+            xtype: 'checkboxfield',
+            boxLabel: 'Copiar datos a los dem&aacute;s contenedores',
+            name: 'copiar',            
+            id: 'copiar',
+            margin: '0 0 5 0',
+            layout: 'anchor',
+            defaults: {
+                anchor: '100%'
+            },
         }
     ],
     calculaLimite: function () {
@@ -216,6 +227,7 @@ Ext.define('Colsys.Ino.FormControlComodato', {
                     data["devolucion_fch"] = null;
                 }
                 data["patio"] = Ext.getCmp("idpatio").getRawValue();
+                data["copiar"] = Ext.getCmp("copiar").getRawValue();
                 var str = JSON.stringify(data);
 
                 if (form.isValid()) {
