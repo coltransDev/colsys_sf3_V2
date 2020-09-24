@@ -3,7 +3,7 @@
     if ($nivel == 1) {
         echo link_to(image_tag("new.png"), "noticias/formNoticia")."<br />";
     }     
-    $noticias = $sf_data->getRaw("noticias");
+    $noticias = $sf_data->getRaw("noticias");    
     foreach ($noticias as $noticia) {
         if($idsucursal == $noticia->getCaIdsucursal() || $noticia->getCaIdsucursal()==null){
         ?>
@@ -13,8 +13,8 @@
                 </h2>
                 <p class="meta"><?= $noticia->getCaFchpublicacion("Y-m-d") ?></p>
                 <div style="overflow: hidden;">
-                    <img src="<?= $noticia->getCaIcon() ?>" class="post-icon">
-                    <div class="excerpt">
+                    <img src="<?= $noticia->getCaIcon() ?>" class="post-icon" style="width: 50px; height: 50px;">
+                    <div class="excerpt" style="margin-left: 50px;">
                         <?= nl2br($noticia->getCaDetalle()) ?>
                     </div>
                     <p class="readmore">
