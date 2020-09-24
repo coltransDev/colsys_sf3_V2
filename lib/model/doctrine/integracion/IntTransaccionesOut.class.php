@@ -193,10 +193,10 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 "ItemCode"=> utf8_encode($linea->getCaIdconcepto()),
                 "Quantity" => 1,
                 "UnitPrice" => $linea->getCaCr(),
-                "OcrCode" => $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap(),//$reg->getInoTipoComprobante()->getCaIdsucursal(), //Código de la sucursal
-                "OcrCode2" => $ccosto_sap->idarea, // Código del área
-                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Código del departamento
-                "OcrCode4" => $ccosto_sap->idlinea, // Código de la línea
+                "OcrCode" => $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap(),//$reg->getInoTipoComprobante()->getCaIdsucursal(), //Cï¿½digo de la sucursal
+                "OcrCode2" => $ccosto_sap->idarea, // Cï¿½digo del ï¿½rea
+                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Cï¿½digo del departamento
+                "OcrCode4" => $ccosto_sap->idlinea, // Cï¿½digo de la lï¿½nea
                 "OcrCode5" => "",
                 "PrjCode" => ($reg->getCaIdhouse()>0)?$reg->getInoHouse()->getInoMaster()->getCaReferencia():$datosjson->ca_referencia                
             );
@@ -246,7 +246,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["DocDueDate"] = date('Y/m/d', strtotime($reg->getCaFchcomprobante(). ' + '.($plazo).' days')); // Pendiente asociar el plazo con el asignado al proveedor
         
         $datos["NumAtCard"] = $reg->getCaConsecutivo();
-        $datos["SlpCode"] = "-1"; // Código empleado de ventas
+        $datos["SlpCode"] = "-1"; // Cï¿½digo empleado de ventas
         $datos["DocCur"] = $reg->getCaIdmoneda();
         $datos["DocRate"] = $reg->getCaTcambio();
         $datos["Sucursal"] = $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap();
@@ -270,9 +270,9 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 "Quantity" => $linea->getCaCr()<0?-1:1,
                 "UnitPrice" => $linea->getCaCr()<0?$linea->getCaCr()*-1:$linea->getCaCr(),
                 "OcrCode" => $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap(),
-                "OcrCode2" => $ccosto_sap->idarea, // Código del área
-                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Código del departamento
-                "OcrCode4" => $ccosto_sap->idlinea, // Código de la línea
+                "OcrCode2" => $ccosto_sap->idarea, // Cï¿½digo del ï¿½rea
+                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Cï¿½digo del departamento
+                "OcrCode4" => $ccosto_sap->idlinea, // Cï¿½digo de la lï¿½nea
                 "OcrCode5" => "",
                 "PrjCode" => $linea->getInoMaster()->getCaReferencia()                
             );
@@ -387,17 +387,17 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["CardName"]=utf8_encode(substr($reg->getCaCompania(),0,99));
         $datos["CardFName"]=utf8_encode(substr($reg->getCaCompania(),0,99)); // Nombre Extranjero
         $datos["CardType"]="0";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
-        $datos["GroupCode"]="2";  // Código de grupo de socios de negocio
+        $datos["GroupCode"]="2";  // Cï¿½digo de grupo de socios de negocio
         $datos["CreditLimit"]=$CreditLimit;
         $datos["Fax"]="";
         
         $datos["Phone1"]=substr(htmlentities($reg->getCaTelefonos(), ENT_IGNORE | ENT_SUBSTITUTE, "UTF-8"), 0, 20);
-        $datos["GroupNum"]=$ndias; //Condición de pago. Revisar tabla de condiciones de pago
-        $LicTradNum = $reg->getCaIdalterno();   // Sep14-2017 Si no es Persona N debe llevar digito de verificación separado por guión
+        $datos["GroupNum"]=$ndias; //Condiciï¿½n de pago. Revisar tabla de condiciones de pago
+        $LicTradNum = $reg->getCaIdalterno();   // Sep14-2017 Si no es Persona N debe llevar digito de verificaciï¿½n separado por guiï¿½n
         if ($reg->getCaDigito() !== null) {
             $LicTradNum.= "-".$reg->getCaDigito();
         }
-        $datos["LicTradNum"]=$LicTradNum; //Número de indentificación fiscal
+        $datos["LicTradNum"]=$LicTradNum; //Nï¿½mero de indentificaciï¿½n fiscal
         $datos["Country"]=substr($reg->getIds()->getSucursalPrincipal()->getCiudad()->getCaIdtrafico(), 0, 2);   // Sep14-2017 se implementa el pais para idenficar los extranjeros
         $datos["SlpCode"]=($reg->getUsuario()->getCaDocidentidad()!="")?$reg->getUsuario()->getCaDocidentidad():"-1";
         $datos["E_Mail"]=$reg->getCaEmail();
@@ -449,14 +449,14 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["CreditLimit"]="0";
         $datos["Fax"]="";
         $datos["Phone1"]=$reg->getSucursalPrincipal()->getCaTelefonos()?substr($reg->getSucursalPrincipal()->getCaTelefonos(), 0, 20):"";
-        $datos["GroupNum"]="0"; //Condición de pago. Revisar tabla de condiciones de pago
-        $LicTradNum = $reg->getCaIdalterno();   // Sep14-2017 Si no es Persona N debe llevar digito de verificación separado por guión
+        $datos["GroupNum"]="0"; //Condiciï¿½n de pago. Revisar tabla de condiciones de pago
+        $LicTradNum = $reg->getCaIdalterno();   // Sep14-2017 Si no es Persona N debe llevar digito de verificaciï¿½n separado por guiï¿½n
         if ($reg->getCaDv() !== null) {
             $LicTradNum.= "-".$reg->getCaDv();
         }
         $datos["LicTradNum"]=$LicTradNum;
         $datos["Country"]=substr($reg->getSucursalPrincipal()->getCiudad()->getCaIdtrafico(), 0, 2);   // Sep14-2017 se implementa el pais para idenficar los extranjeros
-        $datos["SlpCode"]="-1"; //Número de empleado de ventas
+        $datos["SlpCode"]="-1"; //Nï¿½mero de empleado de ventas
         $datos["E_Mail"]="";
 
         $conn = Doctrine_Manager::getInstance()->connection();
@@ -506,7 +506,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["CardName"]=utf8_encode(substr($reg->getCaNombre(),0,99));
         $datos["CardFName"]=utf8_encode(substr($reg->getCaNombre(),0,99));
         $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead  
-        $datos["GroupCode"]=($reg->getIdsProveedor()->getCaIdclasificacion()!="")?$reg->getIdsProveedor()->getCaIdclasificacion():"1";  // Código de grupo de socios de negocio
+        $datos["GroupCode"]=($reg->getIdsProveedor()->getCaIdclasificacion()!="")?$reg->getIdsProveedor()->getCaIdclasificacion():"1";  // Cï¿½digo de grupo de socios de negocio
         
         $datos["CreditLimit"]="0";
         $datos["Fax"]="";                
@@ -521,14 +521,14 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
             $country=substr($reg->getSucursalPrincipal()->getCiudad()->getCaIdtrafico(), 0, 2);
         }
         $datos["Phone1"]=$phone1;
-        $datos["GroupNum"]="0"; //Condición de pago. Revisar tabla de condiciones de pago
-        $LicTradNum = $reg->getCaIdalterno();   // Sep14-2017 Si no es Persona N debe llevar digito de verificación separado por guión
+        $datos["GroupNum"]="0"; //Condiciï¿½n de pago. Revisar tabla de condiciones de pago
+        $LicTradNum = $reg->getCaIdalterno();   // Sep14-2017 Si no es Persona N debe llevar digito de verificaciï¿½n separado por guiï¿½n
         if ($reg->getCaDv() !== null) {
             $LicTradNum.= "-".$reg->getCaDv();
         }
         $datos["LicTradNum"]=$LicTradNum;
         $datos["Country"]=$country;   // Sep14-2017 se implementa el pais para idenficar los extranjeros
-        $datos["SlpCode"]="-1"; //Número de empleado de ventas
+        $datos["SlpCode"]="-1"; //Nï¿½mero de empleado de ventas
         $datos["E_Mail"]="";
 
         $conn = Doctrine_Manager::getInstance()->connection();
@@ -576,13 +576,13 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["CardName"]=utf8_encode(substr($reg->getCaApellidos()." ". $reg->getCaNombres(),0,99));
         $datos["CardFName"]=utf8_encode(substr($reg->getCaApellidos()." ". $reg->getCaNombres(),0,99));
         $datos["CardType"]="1";  // Tipo SN 0: Cliente 1: Proveedor 2: Lead      
-        $datos["GroupCode"]="144";  // Código de grupo de socios de negocio
+        $datos["GroupCode"]="144";  // Cï¿½digo de grupo de socios de negocio
         $datos["CreditLimit"]="0";
         $datos["Fax"]="";
         $datos["Phone1"]=utf8_encode(substr($reg->getSucursal()->getCaTelefono(),0,20) );
         $datos["GroupNum"]="0"; 
         $datos["LicTradNum"]=utf8_encode($reg->getCaDocidentidad());
-        $datos["SlpCode"]="-1"; //Número de empleado de ventas
+        $datos["SlpCode"]="-1"; //Nï¿½mero de empleado de ventas
         $datos["E_Mail"]=utf8_encode($reg->getCaEmail());
         $datos["frozenFor"]="1"; //Activo 0: No 1: Si        
         
@@ -797,7 +797,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         
         $datos["User"]=self::userSap;
         $datos["Password"]=self::passSap;
-        $datos["Company"]= $empresa->getCaPathsap(); // Se obtiene de la empresa a la que pertenece el usuario que la creó
+        $datos["Company"]= $empresa->getCaPathsap(); // Se obtiene de la empresa a la que pertenece el usuario que la creï¿½
         $datos["System"]="2";
         
         $datos["CodReferencia"] = $master->getCaReferencia();
@@ -923,7 +923,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
             $clientes = array();
 
             foreach($lineas as $linea){            
-                $peso[$linea["ca_id"]]+= $master->getCaTransporte()=="Marítimo"?$linea["ca_volumen"]:$linea["ca_peso"];
+                $peso[$linea["ca_id"]]+= $master->getCaTransporte()=="MarÃ­timo"?$linea["ca_volumen"]:$linea["ca_peso"];
                 if(!in_array($linea["ca_id"], $clientes))
                     $clientes[] = $linea["ca_id"];
             }
@@ -1031,10 +1031,10 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         else
             $datos["Destino"] = "";
         
-        $datosJson=json_decode($reg->getCaDatos());
+        //$datosJson=json_decode($reg->getCaDatos());
         
         
-        $datos["BaseEntry"]=($datosJson->baseentry>0)?$datosJson->baseentry:"";
+        $datos["BaseEntry"]=($datosjson->baseentry>0)?$datosjson->baseentry:"";
         
         $lineas=$reg->getInoDetalle();
         
@@ -1046,10 +1046,10 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 "ItemCode"=> utf8_encode($linea->getCaIdconcepto()),
                 "Quantity" => 1,
                 "UnitPrice" => $linea->getCaDb(),
-                "OcrCode" => $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap(),//$reg->getInoTipoComprobante()->getCaIdsucursal(), //Código de la sucursal
-                "OcrCode2" => $ccosto_sap->idarea, // Código del área
-                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Código del departamento
-                "OcrCode4" => $ccosto_sap->idlinea, // Código de la línea
+                "OcrCode" => $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap(),//$reg->getInoTipoComprobante()->getCaIdsucursal(), //Cï¿½digo de la sucursal
+                "OcrCode2" => $ccosto_sap->idarea, // Cï¿½digo del ï¿½rea
+                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Cï¿½digo del departamento
+                "OcrCode4" => $ccosto_sap->idlinea, // Cï¿½digo de la lï¿½nea
                 "OcrCode5" => "",
                 "PrjCode"=>$tipoDoc=="RV"?(($reg->getCaIdhouse()>0)?$reg->getInoHouse()->getInoMaster()->getCaReferencia():$datosjson->ca_referencia):$linea->getInoMaster()->getCaReferencia()
             );
@@ -1073,9 +1073,19 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 ->select("*")          
                 ->where("tr.ca_estado=? and tr.ca_datos is not null and tr.ca_fchcreado>?", array("E",Utils::addDate(date("Y-m-d"), "-1")))
                 ->addWhere("ca_idtipo NOT IN (7,8,13,20,10)  ")
-                ->orderBy("ca_idtransaccion ASC")
-                ->limit(100);
+                ->orderBy("ca_idtransaccion DESC")
+                ->limit(200);
         }
+//        if($reenvio=="si")
+//        {
+//            $q = Doctrine::getTable("IntTransaccionesOut")
+//                ->createQuery("tr")
+//                ->select("*")          
+//                ->where("tr.ca_estado=? and tr.ca_datos is not null", array("E"))
+//                ->addWhere("ca_idtipo IN (9)  ")
+//                ->orderBy("ca_idtransaccion DESC")
+//                ->limit(200);
+//        }
         else
         {
             $q = Doctrine::getTable("IntTransaccionesOut")
@@ -1157,7 +1167,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
 
                             $total=0;
                             $total2=(($neto-$imp)*$trm);
-
+                            $top_codigo="10";
                             foreach($resComp->Lineas as $l)
                             {
                                 $v=floatval($l->VlrArticulo);
@@ -1169,6 +1179,10 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                                     ->where("ca_idcomprobante=? and ca_idconcepto=?",array($comp->getCaIdcomprobante(), $l->ItemCode ))
                                     ->fetchOne();
                                 $inodetalle->setCaIdcuenta($l->AcctCode);
+                                if(substr($l->AcctCode, 0,2)=="28")
+                                {
+                                    $top_codigo="11";
+                                }
                                 $inodetalle->save();                                
                             }
 
@@ -1180,6 +1194,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                             $datosjson->rtefuente=$resComp->ReteFuente;
                             $datosjson->autoretencion=$resComp->AutoRetencion;
                             $datosjson->idtransaccion=$tr->getCaIdtransaccion();                        
+                            $datosjson->top_codigo=$top_codigo;
 
                             $options["fecha"] = $resComp->DocDate;
                             $idg = $comp->calcularIdg($options);
@@ -1207,7 +1222,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                             $con1 = Doctrine_Manager::getInstance()->getConnection('master');
                             $sql="update ino.tb_comprobantes set ca_estado=5, ca_docentry='".$respuesta1->DocEntry."',
                                 ca_consecutivo='".$conse."',ca_fchcomprobante='".$resComp->DocDate."' ,
-                                ca_valor='".$total."',ca_valor2='".$neto."' ,
+                                ca_tcambio='".$trm."', ca_valor='".$total."',ca_valor2='".$neto."' ,
                                 ca_datos='".json_encode($datosjson)."',ca_fchgenero='".date("Y-m-d H:i:s")."' , ca_usugenero='{$user}'
                                 where ca_idcomprobante='".$tr->getCaIndice1()."'";
                             $st = $con1->execute($sql);
@@ -1501,7 +1516,8 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
 
         foreach($transacciones as $tr)
         {
-            
+//            echo "Linea 1504. Transaccion Indice1: ".$tr->getCaIndice1()."<br>";
+//            echo "Linea 1505. Transaccion Idtransaccion: ".$tr->getCaIdtransaccion()."<br>";
             $comprobante = Doctrine::getTable("InoComprobante")->find($tr->getCaIndice1());
             $tipoComprobante = $comprobante->getInoTipoComprobante();
             $datos["User"] = self::userSap;
@@ -1533,7 +1549,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                     where ca_idcomprobante='".$comprobante->getCaIdcomprobante()."'";
                 $st = $con1->execute($sql);
 
-                $errorInfo = "Este comprobante aún NO ha sido registrado en SAP. Se habilita para que se intente generar nuevamente!";                                
+                $errorInfo = "Este comprobante NO ha sido registrado en SAP. Se habilita para que se intente generar nuevamente!";                                
                 $transaccion->setCaFchenvio(date("Y-m-d H:i:s"));
                 $transaccion->setCaRespuesta('{"Status":1, "Message":"'.$errorInfo.'"}');
                 $transaccion->save($conn);
@@ -1597,7 +1613,8 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["NumeroReferencia"]=$params["NumeroReferencia"];
         
         $datos["TipoDoc"]=$params["TipoDoc"];
-        
+//        echo json_encode($datos);
+//        exit;
         $resComp=$client->getDocuments(array('jsonDoc' =>json_encode($datos)));
         $respuesta1=json_decode($resComp->getDocumentsResult);
         
@@ -1640,15 +1657,15 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $transacciones = $st->fetchAll();
 
         $html = "<p>" . chr(13)
-                . "Alerta en Integración: " . chr(13)
-                . "Existente Registros en módulo de integración Colsys - SAP BO, que han retornado error. A continuación se relacionan los eventos:" . chr(13)
+                . "Alerta en IntegraciÃ³n: " . chr(13)
+                . "Existente Registros en mÃ³dulo de integraciÃ³n Colsys - SAP BO, que han retornado error. A continuaciÃ³n se relacionan los eventos:" . chr(13)
                 . "<br />" . chr(13)
                 . "<table>" . chr(13);
         foreach ($transacciones as $tr) {
             $html .= "<tr>" . chr(13);
             $html .= "  <th>Indice 1<th>" . chr(13);
             $html .= "  <th>Detalle<th>" . chr(13);
-            $html .= "  <th>Fecha Envío<th>" . chr(13);
+            $html .= "  <th>Fecha EnvÃ­o<th>" . chr(13);
             $html .= "  <th>Datos<th>" . chr(13);
             $html .= "  <th>Respuesta<th>" . chr(13);
             $html .= "</tr>" . chr(13);
@@ -1670,7 +1687,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 $st = $con->execute($sql);
                 $usuario = $st->fetchAll();
                 if ($usuario) {
-                    $html .= "<td><strong>Empleado :<strong><br />" . $usuario[0]["ca_nombre"] . " Identificación :" . $usuario[0]["ca_docidentidad"] . "</td>" . chr(13);
+                    $html .= "<td><strong>Empleado :<strong><br />" . $usuario[0]["ca_nombre"] . " IdentificaciÃ³n :" . $usuario[0]["ca_docidentidad"] . "</td>" . chr(13);
                 } else {
                     $html .= "<td><strong>Indice:<strong><br />" . $tr["ca_indice1"] . "</td>" . chr(13);
                 }
@@ -1755,7 +1772,7 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
         $datos["DocDueDate"] = date('Y/m/d', strtotime($reg->getCaFchcomprobante(). ' + '.($plazo).' days')); // Pendiente asociar el plazo con el asignado al proveedor        
         $datos["NumAtCard"] = $reg->getCaConsecutivo();        
         $datos["Comments"] = ($reg->getCaObservaciones()!="")?$reg->getCaObservaciones():"";        
-        $datos["SlpCode"] = $reg->getInoHouse()->getVendedor()->getCaDocidentidad();//"-1"; // Código empleado de ventas        
+        $datos["SlpCode"] = $reg->getInoHouse()->getVendedor()->getCaDocidentidad();//"-1"; // Cï¿½digo empleado de ventas        
         $datos["DocCur"] = $reg->getCaIdmoneda();
         $datos["DocRate"] = $reg->getCaTcambio();
         $datos["PrjCode"] = $reg->getInoHouse()->getInoMaster()->getCaReferencia();
@@ -1777,10 +1794,10 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
                 "ItemCode"=> utf8_encode($linea->getCaIdconcepto()),
                 "Quantity" => $linea->getCaDb()<0?-1:1,
                 "UnitPrice" => $linea->getCaDb()<0?$linea->getCaDb()*-1:$linea->getCaDb(),
-                "OcrCode" => $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap(),//$reg->getInoTipoComprobante()->getCaIdsucursal(), //Código de la sucursal
-                "OcrCode2" => $ccosto_sap->idarea, // Código del área
-                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Código del departamento
-                "OcrCode4" => $ccosto_sap->idlinea, // Código de la línea
+                "OcrCode" => $reg->getInoTipoComprobante()->getSucursal()->getCaIdsap(),//$reg->getInoTipoComprobante()->getCaIdsucursal(), //Cï¿½digo de la sucursal
+                "OcrCode2" => $ccosto_sap->idarea, // Cï¿½digo del ï¿½rea
+                "OcrCode3" => str_pad($reg->getUsuCreado()->getDepartamento()->getCaIdsap(),2,"0",STR_PAD_LEFT), // Cï¿½digo del departamento
+                "OcrCode4" => $ccosto_sap->idlinea, // Cï¿½digo de la lï¿½nea
                 "OcrCode5" => "",
                 "PrjCode"=>$tipoDoc=="V"?$reg->getInoHouse()->getInoMaster()->getCaReferencia():$linea->getInoMaster()->getCaReferencia()                
             );
@@ -1788,5 +1805,505 @@ class IntTransaccionesOut extends BaseIntTransaccionesOut
 
         $datos["DocumentLines"]=$lin;    
          return  $datos;
+    }
+    
+    public static function documentoFE($idcomprobante) {
+        
+ 
+        $datos=array();
+        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+        $tipoComprobante = $comprobante->getInoTipoComprobante();
+ 
+        $sucursal = $tipoComprobante->getSucursal();
+        $ids = $sucursal->getEmpresa()->getIds(); 
+        
+        $inoCliente = $comprobante->getInoHouse();
+        $inoMaestra = $inoCliente->getInoMaster();
+                 
+        if($comprobante->getCaIdsucursal()=="")
+        {
+            $suc_cli=$comprobante->getIds()->getIdsCliente();            
+        }
+        else
+        {
+            $suc_cli = Doctrine::getTable("IdsSucursal")->find($comprobante->getCaIdsucursal());            
+        }
+        
+        $datos["tde_codigo"]=$tipoComprobante->getDatosJson("tde_codigo");
+        $datos["top_codigo"]=$comprobante->getDatosJson("top_codigo");
+        $datos["ofe_identificacion"]=$ids->getCaIdalterno();
+        $datos["adq_identificacion"]=$comprobante->getIds()->getCaIdalterno();
+        $datos["adq_identificacion_autorizado"]="";        
+        $datos["rfa_resolucion"]="18760000001";//$tipoComprobante->getCaNoautorizacion();
+        $datos["rfa_prefijo"]="SETT";//strtoupper($tipoComprobante->getCaTitulo());
+        $datos["cdo_consecutivo"]=$comprobante->getCaConsecutivo();
+        $datos["cdo_fecha"]=Utils::parseDate($comprobante->getCaFchcomprobante(), "Y-m-d");
+        $datos["cdo_hora"]=Utils::parseDate($comprobante->getCaFchgenero(), "H:i:s");
+        
+        $idsCreditos=$comprobante->getIds()->getIdsCredito();
+        $plazo=0;
+
+        if(($comprobante->getCaPlazo()>=0))
+            $plazo=$comprobante->getCaPlazo();
+        else
+        {
+            foreach($idsCreditos as $idsc)
+            {
+                if($idsc->getCaIdempresa()==$comprobante->getInoTipoComprobante()->getCaIdempresa())
+                    $plazo=$idsc->getCaDias();
+            }
+
+        }
+    
+        $datos["cdo_vencimiento"]=Utils::agregarDias($comprobante->getCaFchcomprobante(), $plazo,  "Y-m-d");
+        $datos["cdo_observacion"]="";
+        $datos["cdo_representacion_grafica_documento"]="1";
+        $datos["cdo_representacion_grafica_acuse"]="1";
+        
+        $datos["cdo_medios_pago"]=array(array(
+            "fpa_codigo"=> "2",//credito
+            "mpa_codigo"=> "42",//consignacion bancaria
+            "men_fecha_vencimiento"=> Utils::agregarDias($comprobante->getCaFchcomprobante(), $plazo,  "Y-m-d"),
+            "men_identificador_pago"=> array( array(
+                "id"=> "idcomprobante:".$comprobante->getCaIdcomprobante()
+            ))
+        ));
+         
+        $ca_referencia=($inoMaestra->getCaReferencia()!="")?$inoMaestra->getCaReferencia():$datos->ca_referencia;
+        if($sucursal->getEmpresa()->getCaIdempresa()=="12" || $sucursal->getEmpresa()->getCaIdempresa()=="11")
+            $doctransporte=$datos->ca_doctransporte;
+        else
+        {        
+            $doctransporte=($inoCliente->getCaDoctransporte()!=""?$inoCliente->getCaDoctransporte():$datos->ca_doctransporte);
+        }
+        
+        $bancos=$tipoComprobante->getDatosJson("Bancos");
+        /*foreach($bancos as $b)
+        {
+            $banco1=$bancos->banco;
+            $cuenta1=$bancos->cuenta;
+        }*/
+        
+        $datos["cdo_informacion_adicional"]=
+            array(
+                "cdo_procesar_documento"=> "SI",
+                "atencion"=> $comprobante->getProperty("idcontacto"),
+                "plazo"=> $plazo,
+                "no_referencia"=> $ca_referencia,
+                "sucursal"=> utf8_encode($suc_cli->getCiudad()->getCaCiudad()),
+                "campo_1"=> "Bienes: ".utf8_encode($comprobante->getProperty("bienestrans")),
+                "campo_2"=>"Servicio: ".$comprobante->getInoCentroCosto()->getCaNombre(),                
+                "campo_3"=> "Detalle: ".$comprobante->getProperty("detalle"),                
+                "campo_4"=>"Doc.transporte : ".$doctransporte,
+                "campo_5"=>"",
+                "campo_6"=>"Nave: ".($comprobante->getCaIdhouse()>0)?$comprobante->getInoHouse()->getInoMaster()->getCaMotonave():"",
+                "campo_7"=>"",
+                "campo_8"=>"Piezas: ".($inoCliente->getCaNumpiezas()!=""?$inoCliente->getCaNumpiezas():$datos->ca_piezas),
+                "campo_9"=>"Peso: ".($inoCliente->getCaPeso()!=""?$inoCliente->getCaPeso():$datos->ca_peso),
+                "campo_10"=>"Cmb: ".($inoCliente->getCaVolumen()!=""?$inoCliente->getCaVolumen():$datos->ca_volumen),
+                "campo_11"=>"Trayecto : ".utf8_encode($comprobante->getInoHouse()->getInoMaster()->getOrigen()->getCaCiudad()." - ".$comprobante->getInoHouse()->getInoMaster()->getDestino()->getCaCiudad()),
+                "campo_15"=>"Anexos: ".$comprobante->getProperty("anexos"),                
+                "campo_16"=>$bancos[0]["banco"],
+                "campo_17"=>$bancos[0]["cuenta"],
+                "campo_18"=>(count($bancos)>1)?$bancos[1]["banco"]:"",
+                "campo_19"=>(count($bancos)>1)?$bancos[1]["cuenta"]:"",
+                "campo_20"=>"",
+                "campo_21"=>"",
+                "campo_22"=>$tipoComprobante->getDatosJson("soporteFactura"),
+                "campo_23"=>""
+                
+                
+                
+                //"bodega"=> "ZONA FRANCA DE LA CANDELARIA CARTAGENA",                
+                //"anticipo _real_cliente"=> "800.000.000.00",
+                //"saldo_favor_cliente"=> "8.608.776.00"
+            );
+                 
+        $datos["mon_codigo"]="COP";//$comprobante->getCaIdmoneda();
+        $datos["mon_codigo_extranjera"]=($comprobante->getCaIdmoneda()!="COP")?$comprobante->getCaIdmoneda():"";
+        $datos["cdo_trm"]=$comprobante->getCaTcambio();
+        $datos["cdo_trm_fecha"]=Utils::parseDate($comprobante->getCaFchgenero(), "Y-m-d");
+        
+        $datos["cdo_valor_sin_impuestos"]=$comprobante->getCaValor2();        
+        $datos["cdo_impuestos"]=(($comprobante->getCaValor()-$comprobante->getCaValor2()>=0)?($comprobante->getCaValor()-$comprobante->getCaValor2()):"0.00");
+        $datos["cdo_retenciones"]="0.00";//$comprobante->getDatosJson("rteica")+$comprobante->getDatosJson("reteiva")+$comprobante->getDatosJson("rtefuente");
+        $datos["cdo_total"]=$comprobante->getCaValor();
+        $datos["cdo_cargos"]="";
+        $datos["cdo_cargos_moneda_extranjera"]="";
+        $datos["cdo_descuentos"]="";
+        $datos["cdo_descuentos_moneda_extranjera"]="";
+        $datos["cdo_retenciones_sugeridas"]="0.00";//$comprobante->getDatosJson("rteica")+$comprobante->getDatosJson("reteiva")+$comprobante->getDatosJson("rtefuente");
+        $datos["cdo_envio_dian_moneda_extranjera"]="NO";
+        
+        if($comprobante->getCaIdmoneda()!="COP")
+        {
+            $datos["cdo_envio_dian_moneda_extranjera"]="SI";
+            $datos["cdo_valor_sin_impuestos_moneda_extranjera"]=$comprobante->getCaValor2()*$comprobante->getCaTcambio();
+            $datos["cdo_impuestos_moneda_extranjera"]=$datos["cdo_impuestos"]*$comprobante->getCaTcambio();
+            $datos["cdo_retenciones_moneda_extranjera"]="0.00";//$datos["cdo_retenciones"]*$comprobante->getCaTcambio();
+            $datos["cdo_total_moneda_extranjera"]=$comprobante->getCaValor()*$comprobante->getCaTcambio();
+            $datos["cdo_retenciones_sugeridas_moneda_extranjera"]="0.00";//$datos["cdo_retenciones_sugeridas"]*$comprobante->getCaTcambio();
+        }
+        
+        
+        
+        $datos["cdo_anticipo"]="";
+        $datos["cdo_anticipo_moneda_extranjera"]="";
+        $datos["cdo_redondeo"]="";
+        $datos["cdo_redondeo_moneda_extranjera"]="";
+        
+        /*$datos["cdo_detalle_anticipos"]=array(array(
+            "ant_identificacion"=> "",
+            "ant_valor"=> "",
+            "ant_valor_moneda_extranjera"=> "",
+            "ant_fecha_recibido"=> "",
+            "ant_fecha_realizado"=> "",
+            "ant_hora_realizado"=> "",
+            "ant_instrucciones"=> ""                
+        ));*/ //Verificar con un caso que tenga anticipo
+        
+        /*
+         En colsys no tenemos la parametrizacion de las retenciones
+        */ 
+         /*$datos["cdo_detalle_retenciones_sugeridas"]=
+            array(
+                "tipo"=> "RETEFUENTE",
+                "razon"=> "MOTIVO",
+                "porcentaje"=> "0",
+                "valor_moneda_nacional"=> array(
+                    "base"=> "0",
+                    "valor"=> "0"
+                ),
+                "valor_moneda_extranjera"=> array(
+                    "base"=> "0",
+                    "valor"=> "0"
+                )
+            );
+        */
+        $transacciones= Doctrine::getTable("InoDetalle")
+            ->createQuery("det")
+            ->select("det.*,s.*")
+            ->innerJoin("det.InoComprobante comp")
+            ->innerJoin("comp.InoTipoComprobante tcomp")
+            ->leftJoin('det.InoMaestraConceptos s  ')
+            ->addWhere("det.ca_idconcepto IS NOT NULL")
+            ->addWhere("det.ca_idcomprobante = ? ", $comprobante->getCaIdcomprobante())
+            ->addOrderBy("det.ca_idcuenta,s.ca_concepto_esp")
+            ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
+            ->execute();
+        
+        foreach($transacciones as $key=>$t)
+        {
+            $datos["items"][]=array(
+                "ddo_tipo_item"=> "IP",//que es cada tipo
+                "ddo_secuencia"=> "\"".$key."\"",
+                "cpr_codigo"=> "999",
+                "ddo_codigo"=> "'".$t["s_ca_idconcepto"]."'",
+                "ddo_descripcion_uno"=> utf8_encode(strtoupper($t["s_ca_concepto_esp"])),
+                "ddo_cantidad"=> "1.00",
+                "und_codigo"=> "94",//unidad
+                "ddo_valor_unitario"=> $t["det_ca_cr"]."00",
+                "ddo_valor_unitario_moneda_extranjera"=> "0.00",
+                "ddo_total"=> $t["det_ca_cr"],
+                "ddo_total_moneda_extranjera"=> "0.00",
+                "ddo_indicador_muestra" => "false"
+            );
+        }
+        
+/*        $datos["tributos"]=array(
+            "ddo_secuencia"=> "1",
+            "tri_codigo"=> "01",
+            "iid_valor"=> "32566475.00",
+            "iid_valor_moneda_extranjera"=> "9500.00",
+            "iid_motivo_exencion"=> "",
+            "iid_porcentaje"=> array(
+                "iid_base"=> "171402500.00",
+                "iid_base_moneda_extranjera"=> "50000.00",
+                "iid_porcentaje"=> "19.00"
+            )
+        );
+   */     
+        return $datos;
+    }
+    
+    public static function documentoFE1($idcomprobante) {
+       
+        $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);
+        $tipoComprobante = $comprobante->getInoTipoComprobante();
+ 
+        $sucursal = $tipoComprobante->getSucursal();
+        $ids = $sucursal->getEmpresa()->getIds(); 
+        
+        $inoCliente = $comprobante->getInoHouse();
+        $inoMaestra = $inoCliente->getInoMaster();
+                 
+        if($comprobante->getCaIdsucursal()=="")
+        {
+            $suc_cli=$comprobante->getIds()->getIdsCliente();            
+        }
+        else
+        {
+            $suc_cli = Doctrine::getTable("IdsSucursal")->find($comprobante->getCaIdsucursal());            
+        }
+        
+        $datos["tde_codigo"]=$tipoComprobante->getDatosJson("tde_codigo");
+        $datos["top_codigo"]=$comprobante->getDatosJson("top_codigo");
+        $datos["ofe_identificacion"]=$ids->getCaIdalterno();
+        $datos["adq_identificacion"]=$comprobante->getIds()->getCaIdalterno();
+        $datos["adq_identificacion_autorizado"]="";        
+        $datos["rfa_resolucion"]=$tipoComprobante->getCaNoautorizacion();
+        $datos["rfa_prefijo"]=strtoupper($tipoComprobante->getCaTitulo());
+        $datos["cdo_consecutivo"]=$comprobante->getCaConsecutivo();
+        $datos["cdo_fecha"]=Utils::parseDate($comprobante->getCaFchcomprobante(), "Y-m-d");
+        $datos["cdo_hora"]=Utils::parseDate($comprobante->getCaFchgenero(), "H:i:s");
+        
+        $idsCreditos=$comprobante->getIds()->getIdsCredito();
+        $plazo=0;
+
+        if(($comprobante->getCaPlazo()>=0))
+            $plazo=$comprobante->getCaPlazo();
+        else
+        {
+            foreach($idsCreditos as $idsc)
+            {
+                if($idsc->getCaIdempresa()==$comprobante->getInoTipoComprobante()->getCaIdempresa())
+                    $plazo=$idsc->getCaDias();
+            }
+
+        }
+    
+        $datos["cdo_vencimiento"]=Utils::agregarDias($comprobante->getCaFchcomprobante(), $plazo,  "Y-m-d");
+        $datos["cdo_observacion"]="";//texto TRM maritimo
+        $datos["cdo_representacion_grafica_documento"]="1";
+        $datos["cdo_representacion_grafica_acuse"]="1";
+        
+        $datos["cdo_medios_pago"]=array(
+            "fpa_codigo"=> "2",//credito
+            "mpa_codigo"=> "42",//consignacion bancaria
+            "men_fecha_vencimiento"=> Utils::agregarDias($comprobante->getCaFchcomprobante(), $plazo,  "Y-m-d"),
+            "men_identificador_pago"=> array(
+                "id"=> ""
+            )
+        );
+        
+        $datos["cdo_informacion_adicional"]=
+        array(
+            "cdo_procesar_documento"=> "SI",
+            "atencion"=> $comprobante->getProperty("idcontacto"),
+            "plazo"=> $plazo,
+            "no_referecnia"=> $ca_referencia,
+            "sucursal"=> $suc_cli->getCiudad()->getCaCiudad(),
+            "bienes"=> utf8_decode($comprobante->getProperty("bienestrans")),            
+            "Detalle"=> $comprobante->getProperty("detalle"),
+            "Doc.transporte"=>$doctransporte,
+            "Nave"=> "NYK LYRA",//AGREGAR
+            "piezas"=> ($inoCliente->getCaNumpiezas()!=""?$inoCliente->getCaNumpiezas():$datos->ca_piezas),
+            "peso"=> ($inoCliente->getCaPeso()!=""?$inoCliente->getCaPeso():$datos->ca_peso),
+            "cmb"=> ($inoCliente->getCaVolumen()!=""?$inoCliente->getCaVolumen():$datos->ca_volumen),
+            //"bodega"=> "ZONA FRANCA DE LA CANDELARIA CARTAGENA",
+            "servicio"=> $comprobante->getInoCentroCosto()->getCaNombre(),//NO APARECE EN COLTRANS
+            "Trayecto"=> "Callao, PerÃº - Buenaventura-Colombia",// AGREGAR
+            "anexos"=> "Copia HBL // CERTIFICACIÃ“N DE FLETES",// AGREGAR
+            "interes_mora"=> "2,56",// AGREGAR
+            "anticipo _real_cliente"=> "800.000.000.00",// AGREGAR
+            "saldo_favor_cliente"=> "8.608.776.00"// AGREGAR
+            
+        );
+        
+        
+        $datos["mon_codigo"]=$comprobante->getCaIdmoneda();
+        $datos["mon_codigo_extranjera"]=($comprobante->getCaIdmoneda()!="COP")?$comprobante->getCaIdmoneda():"";
+        $datos["cdo_trm"]=$comprobante->getCaTcambio();
+        $datos["cdo_trm_fecha"]=Utils::parseDate($comprobante->getCaFchgenero(), "Y-m-d");
+        $datos["cdo_envio_dian_moneda_extranjera"]="NO";
+        $datos["cdo_valor_sin_impuestos"]=$comprobante->getCaValor2();
+        $datos["cdo_valor_sin_impuestos_moneda_extranjera"]=$comprobante->getCaValor2()*$comprobante->getCaTcambio();
+        $datos["cdo_impuestos"]="\"".$comprobante->getCaValor()-$comprobante->getCaValor2()."\"";        
+        $datos["cdo_retenciones"]=$comprobante->getDatosJson("rteica")+$comprobante->getDatosJson("reteiva")+$comprobante->getDatosJson("rtefuente");
+        $datos["cdo_retenciones_moneda_extranjera"]=$datos["cdo_retenciones"]*$comprobante->getCaTcambio();
+        $datos["cdo_total"]=$comprobante->getCaValor();
+        $datos["cdo_total_moneda_extranjera"]=$comprobante->getCaValor()*$comprobante->getCaTcambio();
+        $datos["cdo_cargos"]="";
+        $datos["cdo_cargos_moneda_extranjera"]="";
+        $datos["cdo_descuentos"]="";
+        $datos["cdo_descuentos_moneda_extranjera"]="";
+        $datos["cdo_retenciones_sugeridas"]=$comprobante->getDatosJson("rteica")+$comprobante->getDatosJson("reteiva")+$comprobante->getDatosJson("rtefuente");
+        $datos["cdo_retenciones_sugeridas_moneda_extranjera"]=$datos["cdo_retenciones_sugeridas"]*$comprobante->getCaTcambio();
+        $datos["cdo_anticipo"]="";//AGREGAR
+        $datos["cdo_anticipo_moneda_extranjera"]="";//AGREGAR
+        $datos["cdo_redondeo"]="";//AGREGAR
+
+        $datos["cdo_redondeo_moneda_extranjera"]="";
+        
+        $datos["cdo_detalle_anticipos"]=array(
+            "ant_identificacion"=> "",
+            "ant_valor"=> "",
+            "ant_valor_moneda_extranjera"=> "",
+            "ant_fecha_recibido"=> "",
+            "ant_fecha_realizado"=> "",
+            "ant_hora_realizado"=> "",
+            "ant_instrucciones"=> ""                
+        );
+        
+        
+        //AQUI VAN LAS RETENCIONES
+        
+        /*
+        "cdo_detalle_retenciones_sugeridas": [
+                    {
+                        "tipo": "RETEIVA",
+                        "razon": "MOTIVO",
+                        "porcentaje": "15",
+                        "valor_moneda_nacional": {
+                            "base": "165431.10",
+                            "valor": "24814.67"
+                        },
+                        "valor_moneda_extranjera": {
+                            "base": "48.26",
+                            "valor": "7.24"
+                        }
+                    },
+                    {
+                        "tipo": "RETEICA",
+                        "razon": "MOTIVO",
+                        "porcentaje": "100",
+                        "valor_moneda_nacional": {
+                            "base": "8399.00",
+                            "valor": "8399.00"
+                        },
+                        "valor_moneda_extranjera": {
+                            "base": "2.45",
+                            "valor": "2.45"
+                        }
+                    }
+                ],
+         */
+         foreach($transacciones as $t)
+        {
+            $datos["items"][]=array(
+                "ddo_tipo_item"=> "IP",//PCC //que es cada tipo
+                "ddo_secuencia"=> "1",
+                "cpr_codigo"=> "999",
+                "ddo_codigo"=> $t["s_ca_idconcepto"],
+                "ddo_descripcion_uno"=> strtoupper($t["s_ca_concepto_esp"]),
+                "ddo_cantidad"=> "1.00",
+                "und_codigo"=> "94",//unidad
+                "ddo_valor_unitario"=> $t["det_ca_cr"],
+                "ddo_valor_unitario_moneda_extranjera"=> "",
+                "ddo_total"=> $t["det_ca_cr"],
+                "ddo_total_moneda_extranjera"=> ""            
+            );
+        }
+        
+        /*
+"tributos": [
+                    {
+                        "ddo_secuencia": "9",
+                        "tri_codigo": "01",
+                        "iid_valor": "29309.78",
+                        "iid_valor_moneda_extranjera": "8.55",
+                        "iid_motivo_exencion": "",
+                        "iid_porcentaje": {
+                            "iid_base": "154262.00",
+                            "iid_base_moneda_extranjera": "45.00",
+                            "iid_porcentaje": "19.00"
+                        }
+                    },
+                    {
+                        "ddo_secuencia": "10",
+                        "tri_codigo": "01",
+                        "iid_valor": "65126.49",
+                        "iid_valor_moneda_extranjera": "18.99",
+                        "iid_motivo_exencion": "",
+                        "iid_porcentaje": {
+                            "iid_base": "342771.00",
+                            "iid_base_moneda_extranjera": "99.99",
+                            "iid_porcentaje": "19.00"
+                        }
+                    },
+                    {
+                        "ddo_secuencia": "11",
+                        "tri_codigo": "01",
+                        "iid_valor": "70994.83",
+                        "iid_valor_moneda_extranjera": "20.71",
+                        "iid_motivo_exencion": "",
+                        "iid_porcentaje": {
+                            "iid_base": "373657.00",
+                            "iid_base_moneda_extranjera": "109.00",
+                            "iid_porcentaje": "19.00"
+                        }
+                    }
+                ]
+         */
+        
+                
+                
+        
+    }
+    
+    
+    public static function documentoFECliente($ids) {
+       
+       
+        $reg = Doctrine::getTable("Cliente")->find($ids);
+        
+        $datos["ofe_identificacion"]="800024075";
+        $datos["adq_identificacion"]=$reg->getCaIdalterno();
+        $datos["adq_razon_social"]=utf8_encode($reg->getCaCompania());
+        $datos["adq_nombre_comercial"]=utf8_encode($reg->getCaCompania());
+        $datos["adq_primer_apellido"]="";
+        $datos["adq_segundo_apellido"]="";
+        $datos["adq_primer_nombre"]="";
+        $datos["adq_primer_nombre"]="";
+        $datos["adq_otros_nombres"]="";
+        /*Registro civil
+12	Tarjeta de identidad
+13	CeÌ?dula de ciudadaniÌ?a
+21	Tarjeta de extranjeriÌ?a
+22	CeÌ?dula de extranjeriÌ?a
+31	NIT
+41	Pasaporte
+42	Documento de identificacioÌ?n extranjero
+50	NIT de otro paiÌ?s
+91	NUIP **/
+        $datos["tdo_codigo"]="31";
+        /*1	Persona JuriÌ?dica y asimiladas
+2	Persona Natural y asimiladas
+        */
+        $datos["toj_codigo"]="1";
+        $datos["pai_codigo"]=substr($reg->getIds()->getSucursalPrincipal()->getCiudad()->getCaIdtrafico(), 0, 2);
+        $datos["dep_codigo"]=substr($reg->getCiudad()->getCaDivipola(),0,2);
+        $datos["mun_codigo"]=substr($reg->getCiudad()->getCaDivipola(),-3);
+        $datos["cpo_codigo"]="000000";//codigo postal
+        $datos["adq_direccion"]=utf8_encode($reg->getDireccion());
+        $datos["adq_telefono"]=htmlentities($reg->getCaTelefonos(), ENT_IGNORE | ENT_SUBSTITUTE, "UTF-8");
+        $datos["adq_correo"]=$reg->getCaEmail();
+        $datos["adq_matricula_mercantil"]="";//No obligatorio
+        $datos["adq_correos_notificacion"]=$reg->getCaEmail();//correos de facturacion electronica, separado por coma
+        $datos["rfi_codigo"]="";
+        //$datos["rfi_codigo"]=array();
+        //$datos["responsable_tributos"]=array();
+       
+        /*echo "<pre>";
+        print_r($reg->getContactoFE());
+        echo "</pre>";
+        exit;*/
+        $contactos=$reg->getContactoFE();//$reg->getContacto();
+        foreach($contactos as $c)
+        {
+        
+            $datos["contactos"]=array(
+                "con_nombre"=> utf8_encode($c["ca_nombres"]." ".$c["ca_papellido"]." ".$c["ca_sapellido"]),
+                "con_direccion"=> utf8_encode($c["ca_direccion"]),
+                "con_telefono"=> $c["ca_telefonos"],
+                "con_correo"=> $c["ca_email"],
+                "con_observaciones"=> "",
+                "con_tipo"=> ""
+            );
+            $datos["adq_correo"]=$c["ca_email"];
+            $datos["adq_correos_notificacion"]=$c["ca_email"];
+        }
+        
+        return $datos;
     }
 }
