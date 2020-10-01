@@ -215,7 +215,6 @@ class reportesNegActions extends sfActions {
      */
 
     public function executeBusquedaReporte() {
-        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->opcion = $this->getRequestParameter("opcion");
         $this->modo = $this->getRequestParameter("modo");
         $this->impoexpo = $this->getRequestParameter("impoexpo");
@@ -2624,6 +2623,7 @@ class reportesNegActions extends sfActions {
                     ->distinct()
                     ->fetchOne();
             $data["cliente2"] = utf8_encode($cliente2->getCaCompania());
+            $data["idcliente2"] = utf8_encode($cliente2->getCaIdcliente());
 
             $data["idconcliente"] = $reporte->getCaIdconcliente();
             
@@ -4544,6 +4544,40 @@ class reportesNegActions extends sfActions {
 
         foreach ($contactos as $c) {
             $c1[] = $c->getCaEmail();
+        }
+        
+        $this->enviar=true;
+        if($reporte->getCaTiporep()=="5" && $reporte->getCaModalidad()=="FCL")
+        {
+            
+            if( $reporte->getDatosJson("idlineaadu")=="830003960" && $user->getIdempresa() == "1" )
+            {            
+                $q = Doctrine::getTable("RepEquipo")
+                        ->createQuery("e")
+                        ->addWhere("e.ca_idreporte = ?", $idreporte);
+                $equipos= $q->execute();
+
+                if(count($equipos)<1)
+                {
+                    //$this->enviar=false;
+                }
+                foreach($equipos as $k=>$e)
+                {
+                    if(is_numeric($e->getDatosJson("dias_libres")))
+                    {
+                        if($e->getDatosJson("dias_libres")<0)
+                        {
+                            $this->enviar=false;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        $this->enviar=false;
+                        break;
+                    }
+                }
+            }
         }
 
 
