@@ -68,6 +68,19 @@ include_component("widgets", "widgetContactoCliente");
                                                   });
 
         this.wgContactoCliente.addListener("select", this.onSelectContactoCliente, this);
+        
+        this.wgCliente = new WidgetTercero({
+                            fieldLabel:"Cliente",
+                            tipo: 'Consolcargo',
+                            width: 600,
+                            hiddenName: "idcliente",
+                            id:"cliente",
+                            name:"cliente",
+                            tabIndex:19
+                        });
+        
+        this.wgCliente.addListener("select", this.onSelectContactoCliente2, this);        
+        
         var bodyStyle = 'padding:5px 5px 5px 5px;';
         this.res="";
         this.buttons = [];
@@ -449,14 +462,7 @@ include_component("widgets", "widgetContactoCliente");
                     title: 'Información del Cliente y/o Importador',
                     autoHeight:true,
                     items: [
-                        new WidgetTercero({fieldLabel:"Cliente",
-                                            tipo: 'Consolcargo',
-                                            width: 600,
-                                            hiddenName: "idcliente",
-                                            id:"cliente",
-                                            name:"cliente",
-                                            tabIndex:19
-                                           }),
+                        this.wgCliente,
                         {
                             xtype: "textfield",
                             fieldLabel: "Orden Cliente",
@@ -673,23 +679,10 @@ include_component("widgets", "widgetContactoCliente");
         onSelectContactoCliente: function( combo, record, index){ 
             store=combo.store;
             j=0;
+            Ext.getCmp("idconcliente").idclienteotm = record.get("idcliente");
+            
             confirmacionesF=new Array();
             
-        /*{
-                store.each( function( r ){
-                    if(r.data.compania==record.get("compania") && r.data.fijo && r.data.email!="")
-                    {
-                        if( Ext.getCmp("contacto_fijos"+j) ){
-                            Ext.getCmp("contacto_fijos"+j).setValue(r.data.email);
-                            Ext.getCmp("contacto_fijos"+j).setReadOnly( false );
-                            Ext.getCmp("chkcontacto_fijos"+j).setValue( true );
-                            confirmacionesF.push(r.data.email);
-                            j++;
-                        }
-                    }
-                });
-            }*/
-
             if(record.get("cg"))
                 $("#img_cli").html('<img src="/images/CG30.png" />');
             else
@@ -697,7 +690,8 @@ include_component("widgets", "widgetContactoCliente");
             Ext.getCmp("idconcliente").setValue(record.get("idcontacto"));
             Ext.getCmp("contacto").setValue(record.get("nombre")+' '+record.get("papellido")+' '+record.get("sapellido"));
             
-            if(Ext.getCmp("contacto_0").getValue()=="")
+            /*Solo actualiza los contactos cuando se está creado el RN y el cliente es diferente a COLTRANS Y CONSOLCARGO*/
+            if(Ext.getCmp("contacto_0").getValue()=="" && record.get("idcliente") != 800024075 && record.get("idcliente") != 319)
             {            
                 var confirmar=record.get("confirmar") ;
                 var brokenconfirmar="";
@@ -745,6 +739,53 @@ include_component("widgets", "widgetContactoCliente");
             Ext.getCmp("vendedor").setValue(record.data.vendedor);
             $("#vendedor").val(record.data.nombre_ven);
             combo.alertaCliente(record);
+        },
+        onSelectContactoCliente2: function( combo, record, index){ 
+            
+            var idclienteotm = Ext.getCmp("idconcliente").idclienteotm;
+            var idcliente = Ext.getCmp("cliente").idcliente;
+            console.log("idclienteotm");
+            console.log(idclienteotm);            
+            console.log("idcliente");
+            console.log(idcliente);
+            console.log("record.data.idtercero");
+            console.log(record.data.idtercero);
+            
+            /*Si el Cliente OTM es COLTRANS*/
+            if(idclienteotm == '800024075' || idclienteotm == '319'){
+                var confirmar = record.data.confirmar;
+                
+                if(confirmar){
+                    if(Ext.getCmp("contacto_0").getValue()=="" || (idcliente != record.data.idtercero)){
+                        if(window.confirm("Esta seguro de cambiar los contactos del Reporte?")){
+                            if(confirmar){
+                                confirmacionesF=new Array();
+                                brokenconfirmar=confirmar.split(",");
+                                var i=0;
+                                var j=0;
+                                for(i=0; i<brokenconfirmar.length; i++){
+                                    if(brokenconfirmar[i] && jQuery.inArray(brokenconfirmar[i],confirmacionesF)<0 )
+                                    {
+                                        Ext.getCmp("contacto_"+j).setValue(brokenconfirmar[i]);
+                                        Ext.getCmp("contacto_"+j).setReadOnly( true );
+                                        Ext.getCmp("chkcontacto_"+j).setValue( true );
+                                        j++;
+                                    }
+                                }
+                            }
+                            for(i=j;i<20;i++){
+                                if( Ext.getCmp("contacto_"+i) ){
+                                    Ext.getCmp("contacto_"+i).setValue("");
+                                    Ext.getCmp("contacto_"+i).setReadOnly( false );
+                                    Ext.getCmp("chkcontacto_"+i).setValue( false );
+                                }
+                            }
+                        }
+                    }
+                }else{
+                    Ext.Msg.alert("Contactos","El cliente "+record.data.nombre + " no tiene contactos guardados. Por favor revise y actualice los contactos nuevamente en este reporte!");
+                }                
+            }
         },
         onFinalizar:function(){
             this.onSave("3");
@@ -870,12 +911,13 @@ include_component("widgets", "widgetContactoCliente");
                         
                         Ext.getCmp("cliente").setValue(res.data.idcliente);
                         $("#cliente").attr("value",res.data.cliente);
+                        Ext.getCmp("cliente").idcliente = res.data.idcliente;
                         
                         Ext.getCmp("vendedor").setValue(res.data.idvendedor);
                         $("#vendedor").attr("value",res.data.vendedor);
                         
-                        //Ext.getCmp("idconcliente").setValue(res.data.vendedor);
                         $("#idconcliente").attr("value",res.data.cliente2);
+                        Ext.getCmp("idconcliente").idclienteotm = res.data.idcliente2;
 
                         for(i=0;i<<?=($nprov>0)?$nprov:0?>;i++)
                         {
