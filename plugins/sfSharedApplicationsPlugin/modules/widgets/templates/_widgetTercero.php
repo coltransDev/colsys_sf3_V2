@@ -27,6 +27,7 @@ WidgetTercero = function( config ){
             {name: 'pais', mapping: 'p_ca_nombre'},
             {name: 'direccion', mapping: 't_ca_direccion'},
             {name: 'contacto', mapping: 't_ca_contacto'},
+            {name: 'confirmar', mapping: 'ca_confirmar'},
             {name: 'idreporte'}
 
         ])
