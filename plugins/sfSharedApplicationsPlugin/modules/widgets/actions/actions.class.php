@@ -459,9 +459,10 @@ class widgetsActions extends sfActions {
                                       v.ca_nombre, cl.ca_listaclinton, cl.ca_fchcircular,cl.ca_preferencias
                                       ,cl.ca_status, cl.ca_vendedor,cl.ca_propiedades")
                     ->from("Contacto c")
+                    ->innerJoin("c.IdsContacto i")
                     ->innerJoin("c.Cliente cl")
                     ->leftJoin("cl.Usuario v")
-                    ->where("UPPER(cl.ca_compania) like ? and c.ca_cargo!='Extrabajador'", "%" . strtoupper($criterio) . "%")
+                    ->where("UPPER(cl.ca_compania) like ? and c.ca_cargo!='Extrabajador' and i.ca_fcheliminado is null", "%" . strtoupper($criterio) . "%")
                     ->addOrderBy("cl.ca_compania ASC")
                     ->addOrderBy("c.ca_nombres ASC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
@@ -647,7 +648,7 @@ class widgetsActions extends sfActions {
         }
 
         $q = Doctrine_Query::create()
-                ->select("t.ca_idtercero, t.ca_nombre, c.ca_ciudad, p.ca_nombre,t.ca_direccion,t.ca_contacto")
+                ->select("t.ca_idtercero, t.ca_nombre, c.ca_ciudad, p.ca_nombre,t.ca_direccion,t.ca_contacto, t.ca_identificacion")
                 ->from("Tercero t")
                 ->innerJoin("t.Ciudad c")
                 ->innerJoin("c.Trafico p")
@@ -679,6 +680,17 @@ class widgetsActions extends sfActions {
         $name = null;
         if (count($rows) > 0) {
             foreach ($rows as $row) {
+                if($row["t_ca_identificacion"]){                    
+                    $idalterno = explode("-",$row["t_ca_identificacion"]);                                        
+                    $nit = str_replace(".", "", $idalterno[0]);                    
+                    if($nit){
+                        $ids = Doctrine::getTable("Ids")->findOneBy("ca_idalterno", $nit);
+                        if($ids){
+                            $cliente = $ids->getIdsCliente();
+                            $row["ca_confirmar"] = utf8_encode($cliente->getCaConfirmar());
+                        }
+                    }
+                }
                 $row["c_ca_ciudad"] = (trim($row["c_ca_ciudad"]) != "Todas las Ciudades" && $row["c_ca_ciudad"] != "") ? utf8_encode($row["c_ca_ciudad"]) : " ";
                 $row["p_ca_nombre"] = (trim($row["p_ca_nombre"]) == "Todos los Tráficos del Mundo" || $row["p_ca_nombre"] == "") ? "" : utf8_encode($row["p_ca_nombre"]);
                 $row["t_ca_contacto"] = utf8_encode($row["t_ca_contacto"]);
