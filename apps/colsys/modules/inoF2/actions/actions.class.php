@@ -411,13 +411,6 @@ class inoF2Actions extends sfActions {
             $row["equipos"] = $equipos;
             $data[] = $row;
         }
-        if($idmaster=="55857"){            
-//            //$row["equipos"] = array();
-//            //$data[] = $row;
-//            print_r($data);
-//            echo json_encode($data);
-//            exit;
-        }
         $this->responseArray = array("success" => true, "root" => $data, "total" => count($data), "ncomprobantes" => count($comprobantes));
 
         $this->setTemplate("responseTemplate");
@@ -3274,7 +3267,7 @@ class inoF2Actions extends sfActions {
                 $rs = $con->execute($sql);
                 $eqs = $rs->fetchAll();
                 
-                if ($eqs[0]["idequipo"]== "null" || $eqs[0]["idequipo"]== ""){                    
+                if ($eqs[0]["idequipo"]== "null" || $eqs[0]["idequipo"]== "" || $eqs[0]["idequipo"]== "[]"){                    
                     $inoEquipos = $house->getInoMaster()->getInoEquipo();                    
                     foreach($inoEquipos as $equipo){                    
                         $equipo->delete($conn);                    
@@ -5245,7 +5238,7 @@ class inoF2Actions extends sfActions {
     }
     
     public function executeDatosGridSeguros(sfWebRequest $request) {
-        $q = Doctrine_Manager::getInstance()->connection();
+        $conn = Doctrine_Manager::getInstance()->connection();
         $anio = $request->getParameter("anio");
         $mes = $request->getParameter("mes");
         $criterio = $request->getParameter("criterio");
@@ -5254,60 +5247,69 @@ class inoF2Actions extends sfActions {
         
         $idhouses = $idequipos = $idaduanas = $idseguros = null;
         if ($criterio != "Nro. Póliza") {
-            $referencia = array_fill(0, 5, '%');
             if ($criterio == "Referencia"){
-                $q->addWhere("m.ca_referencia = ?", $cadena);
-            } else if ($anio || $mes) {
-                $referencia[2] = $mes?$mes:$referencia[2];
-                $referencia[4] = $anio?substr($anio,-2):$referencia[4];
+                $referencia = $cadena;
+            } else {
+                $referencia = array_fill(0, 5, '%');
+                if (!$criterio && $anio && $mes) {
+                    $referencia[2] = $mes?$mes:$referencia[2];
+                    $referencia[4] = $anio?substr($anio,-2):$referencia[4];
+                }
                 $referencia = implode(".", $referencia);
             }
             
             /* Seguros por Agenciamiento de Carga */
-            $sql = "select h.ca_idhouse from ino.tb_house h inner join ino.tb_master m on h.ca_idmaster = m.ca_idmaster "
-                    . " where m.ca_referencia LIKE '$referencia'";
-            if ($criterio == "Doc.Transporte"){
-                $sql.= " and h.ca_doctransporte like '%$cadena%'";
+            $sql = "select h.ca_idhouse from ino.tb_house h inner join ino.tb_master m on h.ca_idmaster = m.ca_idmaster where";
+            if (!$criterio) {
+                $sql.= " m.ca_referencia LIKE '$referencia'";
+            } else if ($criterio == "Doc.Transporte"){
+                $sql.= " h.ca_doctransporte like '%$cadena%'";
+            } else if ($criterio == "Cliente"){
+                $sql.= " h.ca_idcliente in (select ca_idcliente from ids.tb_ids where LOWER(ca_nombre) like '%". strtolower($cadena) ."%')";
+            } else {
+                $sql.= " false"; // No lista ninguna referencia de Carga
             }
-            if ($criterio == "Cliente"){
-                $sql.= " and h.ca_idcliente in (select ca_idcliente from ids.tb_ids where LOWER(ca_nombre) like '%". strtolower($cadena) ."%')";
-            }
-            $stmt = $q->execute($sql);
+            $stmt = $conn->execute($sql);
             $idhouses = $stmt->fetchAll(PDO::FETCH_COLUMN);
             
-            
             /* Seguros por Contenedores */
-            $sql = "select e.ca_idequipo from ino.tb_equipos e inner join ino.tb_master m on e.ca_idmaster = m.ca_idmaster "
-                    . " where m.ca_referencia LIKE '$referencia'";
-            if ($criterio == "Nro. Equipo"){
-                $sql.= " and e.ca_serial like '%$cadena%'";
+            $sql = "select e.ca_idequipo from ino.tb_equipos e inner join ino.tb_master m on e.ca_idmaster = m.ca_idmaster where";
+            if (!$criterio) {
+                $sql.= " m.ca_referencia LIKE '$referencia'";
+            } else if ($criterio == "Nro. Equipo"){
+                $sql.= " e.ca_serial like '%$cadena%'";
+            } else if ($criterio == "Nro. Precinto"){
+                $sql.= " e.ca_numprecinto like '%$cadena%'";
+            } else {
+                $sql.= " false"; // No lista ninguna referencia de Contenedores
             }
-            if ($criterio == "Nro. Precinto"){
-                $sql.= " and e.ca_numprecinto like '%$cadena%'";
-            }
-            $stmt = $q->execute($sql);
+            $stmt = $conn->execute($sql);
             $idequipos = $stmt->fetchAll(PDO::FETCH_COLUMN);
             
-            
             /* Seguros por Aduana */
-            $sql = "select b.ca_referencia from tb_brk_maestra b where b.ca_referencia LIKE '$referencia'";
-            $stmt = $q->execute($sql);
+            $sql = "select b.ca_referencia from tb_brk_maestra b where";
+            if (!$criterio) {
+                $sql.= " b.ca_referencia LIKE '$referencia'";
+            } else {
+                $sql.= " false"; // No lista ninguna referencia de Aduana
+            }
+            $stmt = $conn->execute($sql);
             $idaduanas = $stmt->fetchAll(PDO::FETCH_COLUMN);
         } else {
             $sql = "select h.ca_idseguro where m.ca_poliza LIKE '%$cadena%'";
-            $stmt = $q->execute($sql);
+            $stmt = $conn->execute($sql);
             $idseguros = $stmt->fetchAll(PDO::FETCH_COLUMN);
         }
         
         $q = Doctrine::getTable("InoSeguro")
            ->createQuery("s");
-        if ($idhouses) 
+        if (count($idhouses)) 
            $q->whereIn("s.ca_idhouse", $idhouses);
-        if ($idequipos)
+        if (count($idequipos))
            $q->orWhereIn("s.ca_idequipo", $idequipos);
-        if ($idaduanas)
+        if (count($idaduanas))
            $q->orWhereIn("s.ca_refaduana", $idaduanas);
-        if ($idseguros)
+        if (count($idseguros))
            $q->orWhereIn("s.ca_idseguro", $idseguros);
         
         $q->orderby("s.ca_idseguro");
@@ -5368,7 +5370,8 @@ class inoF2Actions extends sfActions {
                 $row["doctransporte"] = null;
                 $row["numserial"] = null;
             }
-            $row["sucursal"] = utf8_encode(Doctrine::getTable("Usuario")->find($row["vendedor"])->getSucursal()->getCaNombre());
+            $sucursal = $row["vendedor"]?utf8_encode(Doctrine::getTable("Usuario")->find($row["vendedor"])->getSucursal()->getCaNombre()):"";
+            $row["sucursal"] = $sucursal;
             $row["nropoliza"]= $seguro->getCaNropoliza();
             $row["fchpoliza"]= $seguro->getCaFchpoliza();
             $row["vlrasegurado"]= $seguro->getCaVlrasegurado();
@@ -5398,10 +5401,25 @@ class inoF2Actions extends sfActions {
     
     public function executeCasosPorAsegurar(sfWebRequest $request) {
         $q = Doctrine_Manager::getInstance()->connection();
-        $sql = "select im.ca_idmaster, ih.ca_idhouse, im.ca_referencia, ih.ca_doctransporte, im.ca_impoexpo, im.ca_transporte, rp.ca_consecutivo, ih.ca_usucreado, ih.ca_fchcreado from ino.tb_house ih "
+        $sql = "select im.ca_idmaster, ih.ca_idhouse, null as ca_idequipo, null as ca_refaduana, im.ca_referencia, ih.ca_doctransporte, null as ca_serial, im.ca_impoexpo, im.ca_transporte, rp.ca_consecutivo, ih.ca_usucreado, ih.ca_fchcreado, 'Agenciamiento de Carga' as ca_unidad_neg from ino.tb_house ih "
                 . "left join ino.tb_master im on ih.ca_idmaster = im.ca_idmaster "
                 . "left join tb_reportes rp on ih.ca_idreporte = rp.ca_idreporte "
-                . "where rp.ca_seguro = 'Sí' and rp.ca_fchreporte > '2020-01-01' ";
+                . "where rp.ca_seguro = 'Sí' and rp.ca_fchreporte > '2020-01-01' "
+                . " and ih.ca_idhouse not in (select ca_idhouse from ino.tb_seguros where ca_idhouse is not null) ";
+        $sql.= "union ";
+        $sql.= "select im.ca_idmaster, ih.ca_idhouse, eq.ca_idequipo, null as ca_refaduana, im.ca_referencia, ih.ca_doctransporte, eq.ca_serial, im.ca_impoexpo, im.ca_transporte, rp.ca_consecutivo, ih.ca_usucreado, ih.ca_fchcreado, 'Contenedores' as ca_unidad_neg from tb_repgastos rg "
+                . "inner join tb_reportes rp on rp.ca_idreporte = rg.ca_idreporte "
+                . "inner join ino.tb_house ih on ih.ca_idreporte = rg.ca_idreporte "
+                . "inner join ino.tb_master im on im.ca_idmaster = ih.ca_idmaster "
+                . "left  join ino.tb_equipos eq on eq.ca_idmaster = im.ca_idmaster "
+                . "where rg.ca_idrecargo in (select cn.ca_idconcepto from ino.tb_conceptos cn where cn.ca_idpadre = 146) "
+                . " and rp.ca_modalidad = 'FCL' and rp.ca_fchreporte > '2020-01-01' "
+                . " and eq.ca_idequipo is not null and eq.ca_idequipo not in (select ca_idequipo from ino.tb_seguros where ca_idequipo is not null) ";
+        $sql.= "union ";
+        $sql.= "select distinct 0 as ca_idmaster, 0 as ca_idhouse, 0 as ca_idequipo, bc.ca_referencia as ca_refaduana, bc.ca_referencia, null as ca_doctransporte, null as ca_serial, 'Aduana' as ca_impoexpo, 'Aduana' as ca_transporte, null as ca_consecutivo, bc.ca_usucreado, bc.ca_fchcreado, 'Agenciamiento de Aduana' as ca_unidad_neg "
+                . "from tb_brk_costos bc inner join tb_brk_maestra bm on bm.ca_referencia = bc.ca_referencia "
+                . " where ca_idcosto in (SELECT ca_idcosto FROM public.tb_costos WHERE ca_impoexpo = 'Aduanas' AND lower(ca_costo) like '%seguro%') "
+                . "and bm.ca_fchreferencia > '2020-01-01' and bc.ca_referencia not in (select ca_refaduana from ino.tb_seguros where ca_refaduana is not null)";
         $stmt = $q->execute($sql);
         $casos = $stmt->fetchAll();
         
@@ -5411,8 +5429,8 @@ class inoF2Actions extends sfActions {
             $row["transporte"] = utf8_encode($caso['ca_transporte']);
             $row["referencia"] = $caso['ca_referencia'];
             $row["doctransporte"] = utf8_encode($caso['ca_doctransporte']);
-            $row["numserial"] = null;
-            $row["unidad_neg"] = "Agenciamiento de Carga";
+            $row["numserial"] = $caso['ca_serial'];
+            $row["unidad_neg"] = $caso['ca_unidad_neg'];
             $row["reporte"] = $caso['ca_consecutivo'];
         
             $datos[] = $row;
