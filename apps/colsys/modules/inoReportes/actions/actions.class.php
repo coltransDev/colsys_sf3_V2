@@ -45,7 +45,7 @@ class inoReportesActions extends sfActions {
         $aa = $request->getParameter("aa");
         $q = Doctrine::getTable("InoMaster")
                 ->createQuery("m")
-                ->innerJoin("m.InoHouse h")
+                ->leftJoin("m.InoHouse h")
                 ->innerJoin("m.Origen o")
                 ->innerJoin("m.Destino d")
                 ->innerJoin("m.IdsProveedor p")
@@ -54,14 +54,16 @@ class inoReportesActions extends sfActions {
                 ->leftJoin("m.IdsAgente a")
                 ->leftJoin("a.Ids ia")
                 ->leftJoin("m.InoViCosto cost")
-                ->leftJoin("m.InoViIngreso ing")
+                //->leftJoin("m.InoViIngreso ing")
                 ->leftJoin("m.InoViDeduccion ded")
                 ->leftJoin("m.InoViUtilidad uti")
                 ->leftJoin("m.InoViUnidadesMaster uni")
                 ->leftJoin("m.InoViTeus te")
                 ->select("m.ca_idmaster, m.ca_referencia, m.ca_modalidad, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
-                            o.ca_ciudad, d.ca_ciudad, h.ca_idhouse, r.ca_incoterms, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
-                            cost.ca_valor, cost.ca_venta, ing.ca_valor, ded.ca_valor, uti.ca_valor, m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones");
+                            o.ca_ciudad, d.ca_ciudad, h.ca_idhouse, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
+                            cost.ca_valor, cost.ca_venta, ing.ca_valor,
+                            (SELECT SUM(vi.ca_valor) FROM InoViIngreso AS vi WHERE vi.ca_idmaster=m.ca_idmaster) AS ingreso
+                            , ded.ca_valor, uti.ca_valor,  m.ca_usucreado,m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones");
                 
         $impoexpo = $request->getParameter("impoexpo");
         $transporte = $request->getParameter("transporte");
@@ -156,6 +158,8 @@ class inoReportesActions extends sfActions {
             }
         }
         
+        if($impoexpo==Constantes::OTMDTA)
+            $q->andWhereIn("SUBSTR(m.ca_referencia,1,1)","7");
         
 
         if ($aa) {
@@ -183,6 +187,7 @@ class inoReportesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeCuadroInoComplementoResult(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $aa = $request->getParameter("aa");
         $q = Doctrine::getTable("InoMaster")
@@ -284,6 +289,7 @@ class inoReportesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeListadoComprobantes(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
@@ -400,6 +406,7 @@ class inoReportesActions extends sfActions {
      * @param sfRequest $request A request object
      */
     public function executeGeneradorInformes(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');            
             
@@ -698,6 +705,7 @@ class inoReportesActions extends sfActions {
     
     
     public function executeReporteComisiones(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         
         //$this->permiso = $this->getUser()->getNivelAcceso( inoReportesActions::RUTINA_COMISIONES );
@@ -738,7 +746,7 @@ m.ca_fchcerrado,m.ca_usucerrado,cl.ca_fchcircular,cl.ca_stdcircular
 
 FROM ino.tb_master m
 INNER JOIN ino.tb_house h ON m.ca_idmaster = h.ca_idmaster
-INNER JOIN vi_clientes cl ON h.ca_idcliente = cl.ca_idcliente
+INNER JOIN vi_clientes_reduc cl ON h.ca_idcliente = cl.ca_idcliente
 INNER JOIN tb_ciudades o ON m.ca_origen = o.ca_idciudad
 INNER JOIN tb_ciudades d ON m.ca_destino = d.ca_idciudad
 INNER JOIN ids.tb_proveedores p ON m.ca_idlinea = p.ca_idproveedor
@@ -873,11 +881,11 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
 
            
 
-            if($this->getUser()->getUserId()=="maquinche")
+            if($this->getUser()->getUserId()=="alramirez")
             {
-                //echo "<pre>";print_r($this->refs);echo "</pre>";
-                //echo $sql;
-                //exit;
+//                echo "<pre>";print_r($this->refs);echo "</pre>";
+//                echo $sql;
+//                exit;
             }
             
             /*$databaseConf = sfYaml::load(sfConfig::get('sf_config_dir') . '/databases_replica.yml');
@@ -1071,7 +1079,13 @@ where ca_impoexpo='INTERNO' and ia.ca_reccaja!=''
  * 
  */
     public function executeLiquidarComisiones(sfWebRequest $request) {
-
+        
+    
+        /*if($this->getUser()->getUserId()!="maquinche")
+        {
+            echo "Modulo en actualizacion";
+            exit();
+        }*/
         $this->permiso = $this->getUser()->getNivelAcceso( inoReportesActions::RUTINA_COMISIONES );
         if($this->permiso==-1)
             $this->forward404();
@@ -1087,7 +1101,7 @@ where ca_impoexpo='INTERNO' and ia.ca_reccaja!=''
         $con = Doctrine_Manager::connection(new PDO("pgsql:dbname={$database};host={$host}", $userName, $userPass));
          * 
          */
-        Doctrine_Manager::getInstance()->setCurrentConnection('replica');            
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $con = Doctrine_Manager::getInstance()->connection();
         //$con = Doctrine_Manager::getInstance()->connection();
         $empresa=sfConfig::get('app_branding_name');
@@ -1103,7 +1117,7 @@ where ca_impoexpo='INTERNO' and ia.ca_reccaja!=''
                          inner join control.tb_sucursales s on s.ca_idsucursal=u.ca_idsucursal";
             }
             
-                $sql="Select (SELECT mo.ca_idmodo FROM tb_modos mo where mo.ca_modulo = 'INO' AND m.ca_impoexpo=mo.ca_impoexpo AND m.ca_transporte=mo.ca_transporte ) tipo,
+            /*$sql="Select (SELECT mo.ca_idmodo FROM tb_modos mo where mo.ca_modulo = 'INO' AND m.ca_impoexpo=mo.ca_impoexpo AND m.ca_transporte=mo.ca_transporte ) tipo,
 cl.ca_compania,m.ca_modalidad,h.ca_idhouse,h.ca_vendedor,h.ca_idcliente,h.ca_doctransporte,h.ca_numpiezas,
 h.ca_peso, h.ca_volumen,m.ca_idmaster, m.ca_referencia, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso,
 uni.ca_volumen, o.ca_ciudad o_ciudad, d.ca_ciudad d_ciudad, p.ca_idproveedor, i.ca_nombre p_nombre,
@@ -1127,6 +1141,62 @@ LEFT JOIN ids.tb_agentes a ON m.ca_idagente = a.ca_idagente
 LEFT JOIN ids.tb_ids ia ON a.ca_idagente = ia.ca_id
 LEFT JOIN ino.vi_costos cost ON m.ca_idmaster = cost.ca_idmaster
 LEFT JOIN ino.vi_ingresos ing ON m.ca_idmaster = ing.ca_idmaster
+LEFT JOIN ino.vi_deducciones ded ON m.ca_idmaster = ded.ca_idmaster
+LEFT JOIN ino.vi_utilidades uti ON m.ca_idmaster = uti.ca_idmaster
+LEFT JOIN ino.vi_unidades_master uni ON m.ca_idmaster = uni.ca_idmaster
+LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
+                    {$innerjoin}
+                    where m.ca_fchanulado IS NULL ";*/
+                    
+
+            $sql="SELECT cl.ca_compania,m.ca_modalidad,h.ca_vendedor,h.ca_idcliente,h.ca_doctransporte,
+	 m.ca_referencia, p.ca_idproveedor, i.ca_nombre p_nombre, 
+	cost.ca_valor cost_valor, cost.ca_venta cost_venta, 
+        (SELECT SUM(vi.ca_valor) FROM ino.vi_ingresos AS vi WHERE vi.ca_idmaster=m.ca_idmaster) AS ingreso,
+        
+	ded.ca_valor ded_valor, uti.ca_valor uti_valor, m.ca_fchcerrado, 
+	( COALESCE((SELECT SUM(vi.ca_valor) FROM ino.vi_ingresos AS vi WHERE vi.ca_idmaster=m.ca_idmaster),0) + COALESCE(uti.ca_valor,0) - COALESCE(cost.ca_valor,0) - COALESCE(ded.ca_valor,0) ) as ino , 	
+	array_to_string(ARRAY( SELECT ca_consecutivo FROM ino.tb_comprobantes WHERE ca_usuanulado is null AND ca_idhouse=h.ca_idhouse AND ca_idtipo IN(12)),',' ) as rccaja , 	
+	array_to_string(ARRAY( SELECT ca_consecutivo FROM ino.tb_comprobantes WHERE ca_usuanulado is null and ca_idhouse=h.ca_idhouse AND ca_idtipo NOT IN(11,12)),',' ) as facturas , 	
+        array_to_string(ARRAY( (SELECT (com.ca_consecutivo||'|'||det.ca_cr||'|'||com.ca_idcomprobante) FROM ino.tb_comprobantes com,ino.tb_detalles det WHERE com.ca_usuanulado is null and com.ca_idcomprobante=det.ca_idcomprobante and det.ca_idmaster=m.ca_idmaster AND det.ca_idhouse=h.ca_idhouse AND com.ca_idtipo IN(11) and det.ca_cr !=0 )),',' ) comision ,
+	( SELECT fun_getcomision(h.ca_idcliente::numeric, m.ca_referencia::text, 'Colmas'::text) AS fun_getcomision) AS ca_porcentaje, 
+	m.ca_fchcerrado,m.ca_usucerrado,cl.ca_fchcircular,cl.ca_stdcircular 
+
+FROM ino.tb_master m 
+INNER JOIN ino.tb_house h ON m.ca_idmaster = h.ca_idmaster 
+INNER JOIN vi_clientes_reduc cl ON h.ca_idcliente = cl.ca_idcliente 
+INNER JOIN ids.tb_proveedores p ON m.ca_idlinea = p.ca_idproveedor 
+INNER JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id 
+LEFT JOIN ino.vi_costos cost ON m.ca_idmaster = cost.ca_idmaster 
+LEFT JOIN ino.vi_deducciones ded ON m.ca_idmaster = ded.ca_idmaster 
+LEFT JOIN ino.vi_utilidades uti ON m.ca_idmaster = uti.ca_idmaster 
+                    {$innerjoin}
+                    where m.ca_fchanulado IS NULL ";
+                    
+                    
+            $sql="SELECT cl.ca_compania,m.ca_modalidad,h.ca_vendedor,h.ca_idcliente,h.ca_doctransporte,
+	 m.ca_referencia, p.ca_idproveedor, i.ca_nombre p_nombre, 
+	cost.ca_valor cost_valor, cost.ca_venta cost_venta,h.ca_idhouse, 
+        (SELECT SUM(vi.ca_valor) FROM ino.vi_ingresos AS vi WHERE vi.ca_idmaster=m.ca_idmaster) AS ingreso,
+        
+	ded.ca_valor ded_valor, uti.ca_valor uti_valor, m.ca_fchcerrado, 
+	( COALESCE((SELECT SUM(vi.ca_valor) FROM ino.vi_ingresos AS vi WHERE vi.ca_idmaster=m.ca_idmaster),0) + COALESCE(uti.ca_valor,0) - COALESCE(cost.ca_valor,0) - COALESCE(ded.ca_valor,0) ) as ino , 	
+	array_to_string(ARRAY( SELECT ca_consecutivo FROM ino.tb_comprobantes WHERE ca_usuanulado is null AND ca_idhouse=h.ca_idhouse AND ca_idtipo IN(12)),',' ) as rccaja , 	
+	array_to_string(ARRAY( SELECT ca_consecutivo FROM ino.tb_comprobantes WHERE ca_usuanulado is null and ca_idhouse=h.ca_idhouse AND ca_idtipo NOT IN(11,12)),',' ) as facturas , 	
+        array_to_string(ARRAY( (SELECT (com.ca_consecutivo||'|'||det.ca_cr||'|'||com.ca_idcomprobante) FROM ino.tb_comprobantes com,ino.tb_detalles det WHERE com.ca_usuanulado is null and com.ca_idcomprobante=det.ca_idcomprobante and det.ca_idmaster=m.ca_idmaster AND det.ca_idhouse=h.ca_idhouse AND com.ca_idtipo IN(11) and det.ca_cr !=0 )),',' ) comision ,
+	( SELECT fun_getcomision(h.ca_idcliente::numeric, m.ca_referencia::text, 'Colmas'::text) AS fun_getcomision) AS ca_porcentaje, 
+	m.ca_fchcerrado,m.ca_usucerrado,cl.ca_fchcircular,cl.ca_stdcircular 
+
+FROM ino.tb_master m
+INNER JOIN ino.tb_house h ON m.ca_idmaster = h.ca_idmaster
+INNER JOIN vi_clientes_reduc cl ON h.ca_idcliente = cl.ca_idcliente
+INNER JOIN tb_ciudades o ON m.ca_origen = o.ca_idciudad
+INNER JOIN tb_ciudades d ON m.ca_destino = d.ca_idciudad
+INNER JOIN ids.tb_proveedores p ON m.ca_idlinea = p.ca_idproveedor
+INNER JOIN ids.tb_ids i ON p.ca_idproveedor = i.ca_id
+LEFT JOIN ids.tb_agentes a ON m.ca_idagente = a.ca_idagente
+LEFT JOIN ids.tb_ids ia ON a.ca_idagente = ia.ca_id
+LEFT JOIN ino.vi_costos cost ON m.ca_idmaster = cost.ca_idmaster
 LEFT JOIN ino.vi_deducciones ded ON m.ca_idmaster = ded.ca_idmaster
 LEFT JOIN ino.vi_utilidades uti ON m.ca_idmaster = uti.ca_idmaster
 LEFT JOIN ino.vi_unidades_master uni ON m.ca_idmaster = uni.ca_idmaster
@@ -1188,7 +1258,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                 $sql.=" and m.ca_idagente ='{$idagente}'";                
             }
 
-            /*if ($aa!="") {
+            if ($aa!="") {
                 if($empresa!='TPLogistics')
                 {
                     $sql.=" and SUBSTR(m.ca_referencia,16,2) ='".($aa%100)."'";                    
@@ -1197,7 +1267,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                 {
                     $sql.=" and SUBSTR(m.ca_referencia,10,2) ='".($aa%100)."'";                    
                 }
-            }*/
+            }
             if ($mm!="") {
                 if($empresa!='TPLogistics')
                 {
@@ -1296,6 +1366,9 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
     
 
     public function executeComisionarCasos(sfWebRequest $request) {        
+         echo "opcion deshabilitada";
+        exit;
+        
         $house=new InoHouse();        
         $arrIdhouse=$request->getParameter("idhouse");
         $tipoComprobante = Doctrine::getTable("InoTipoComprobante")->find(InoComprobante::IDTIPO_V_INO);
@@ -1304,7 +1377,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
         $conn = $tipoComprobante->getTable()->getConnection();
         $conn->beginTransaction();        
         $tipoComprobante->save($conn);
-        try {
+        //try {
             $comprobante = new InoComprobante();
             $comprobante->setCaIdtipo( InoComprobante::IDTIPO_V_INO );
             $comprobante->setCaConsecutivo($consecutivo);
@@ -1339,13 +1412,13 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
             $comprobante->save($conn);
             $conn->commit();
             //$this->comprobante=$comprobante;
-        }
+        /*}
         catch (Exception $e)
         {
             $conn->rollBack();
             echo $e->getMessage();
             exit;
-        }
+        }*/
         
          $this->redirect( "inoReportes/verPdf?idcomprobante=".$comprobante->getCaIdcomprobante());
         
@@ -1522,7 +1595,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                 $addWhere.= " AND i.ca_idlinea = " . $this->idlinea;
             }
             
-            if($this->ntipo == 1 || $this->ntipo == 2){ // ESTADISTICAS Y ASEGURADORA
+            if($this->ntipo == 1 ){ // ESTADISTICAS Y ASEGURADORA
             
                 //$select = $this->nempresa==2?",ter.ca_nombre as importador,bdg.ca_nombre as ca_bodega":"";
                 $select = $this->ntipo==1?"'20'||SUBSTR(i.ca_referencia,16,2)  as ANO,SUBSTR(i.ca_referencia,8,2)  as MES,":"date_part('year', ro.ca_fcharribo) as ANO,date_part('month', ro.ca_fcharribo) as MES,";
@@ -1587,6 +1660,69 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                         LEFT JOIN tb_bodegas bdg ON bdg.ca_idbodega = r.ca_idbodega                        
                     WHERE   $where $addWhere  
                     ORDER BY $orderBy";
+            }
+            if( $this->ntipo == 2){ // ESTADISTICAS Y ASEGURADORA
+            
+                //$select = $this->nempresa==2?",ter.ca_nombre as importador,bdg.ca_nombre as ca_bodega":"";
+                $select = $this->ntipo==1?"'20'||SUBSTR(i.ca_referencia,16,2)  as ANO,SUBSTR(i.ca_referencia,8,2)  as MES,":"date_part('year', ro.ca_fcharribo) as ANO,date_part('month', ro.ca_fcharribo) as MES,";
+                $from = $this->nempresa==1?"ino.tb_house h":"tb_reportes r";
+                $inner1 = $this->nempresa==2?"
+                            LEFT JOIN (SELECT max(ca_idreporte) as ca_idreporte, ca_consecutivo FROM tb_repotm GROUP BY ca_consecutivo) rp on r.ca_idreporte=rp.ca_idreporte 
+                            LEFT JOIN tb_repotm ro ON ro.ca_idreporte = r.ca_idreporte
+                            LEFT JOIN ino.tb_house h ON h.ca_idreporte = rp.ca_idreporte":"";
+                $inner2 = $this->nempresa==1?"
+                            LEFT JOIN tb_repotm ro ON h.ca_idreporte = ro.ca_idreporte
+                            LEFT JOIN tb_reportes r ON r.ca_idreporte = ro.ca_idreporte":"";            
+                $where = $this->nempresa==1?"i.ca_fchanulado IS NULL AND i.ca_impoexpo = 'OTM-DTA'":"r.ca_tiporep = 4 and r.ca_login='consolcargo'";
+                $orderBy = $this->ntipo==1?"ano, mes, referencia":"ca_fcharribo, i.ca_referencia, dtm";
+                $sql ="
+                    SELECT 
+                        ro.ca_fcharribo, 
+                        $select
+                        i.ca_idmaster as ca_idmaster,
+                        i.ca_referencia as referencia,
+                        r.ca_idreporte as idreporte,
+                        r.ca_consecutivo as no_reporte, 
+                        (CASE WHEN i.ca_modalidad = 'DIRECTO' THEN 'FCL' ELSE I.ca_modalidad END) as modalidad,
+                        h.ca_doctransporte as doctransporte, 
+                        t.ca_ciudad AS origen, 
+                        t2.ca_ciudad AS destino, 
+                        i3.ca_nombre AS transportador, 
+                        i8.ca_numhijas AS numhijas, 
+                        h.ca_numpiezas as numpiezas , 
+                        round(h.ca_peso) as peso, 
+                        h.ca_volumen as volumen, 
+                        (CASE WHEN i.ca_modalidad = 'LCL' THEN round((h.ca_peso/25000),3) END) as contenedorlcl,
+                        ro.ca_contenedor as contenedor,
+                        ro.ca_valorfob as valorfob, 
+                        ro.ca_consecutivo as dtm,
+                        u.ca_nombre as ca_vendedor,
+                        s.ca_nombre as ca_sucursal,
+                        i.ca_motonave as ca_vehiculo,
+                        bdg.ca_nombre as ca_bodega,
+                        h.ca_idcliente, 
+                        ids.ca_nombre as ca_compania, 
+                        imp.ca_nombre as ca_importador
+                    FROM ino.tb_house h                        
+                        LEFT JOIN ino.tb_master i ON i.ca_idmaster = h.ca_idmaster
+                        LEFT JOIN tb_ciudades t ON i.ca_origen = t.ca_idciudad 
+                        LEFT JOIN tb_ciudades t2 ON i.ca_destino = t2.ca_idciudad 
+                        LEFT JOIN ids.tb_proveedores i2 ON i.ca_idlinea = i2.ca_idproveedor 
+                        LEFT JOIN ids.tb_ids i3 ON i2.ca_idproveedor = i3.ca_id
+                        LEFT JOIN tb_repotm ro ON h.ca_idreporte = ro.ca_idreporte
+                        LEFT JOIN tb_reportes r ON r.ca_idreporte = ro.ca_idreporte
+                        LEFT JOIN tb_terceros ter on ro.ca_idcliente = ter.ca_idtercero
+                        LEFT JOIN tb_terceros imp on ro.ca_idimportador = imp.ca_idtercero
+                        LEFT JOIN ids.tb_ids ids ON h.ca_idcliente = ids.ca_id
+                        LEFT JOIN tb_clientes cl ON ids.ca_id = cl.ca_idcliente
+                        LEFT JOIN control.tb_usuarios u ON cl.ca_vendedor = u.ca_login
+                        LEFT JOIN control.tb_sucursales s ON s.ca_idsucursal = u.ca_idsucursal                       	
+                        LEFT JOIN ino.vi_costos i4 ON i.ca_idmaster = i4.ca_idmaster                         
+                        LEFT JOIN ino.vi_unidades_master i8 ON i.ca_idmaster = i8.ca_idmaster 
+                        LEFT JOIN ino.vi_teus i9 ON i.ca_idmaster = i9.ca_idmaster
+                        LEFT JOIN tb_bodegas bdg ON bdg.ca_idbodega = r.ca_idbodega                        
+                    WHERE   $where $addWhere  
+                    ORDER BY $orderBy";
             } else if($this->ntipo == 3 ){ // INFORME MINISTERIO
             
             $from = $this->nempresa==1?"ino.tb_house h":"tb_reportes r";
@@ -1604,11 +1740,11 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                         SUBSTR(ro.ca_consecutivo,1,2),
                         '20'||SUBSTR(ro.ca_consecutivo,6,2)  as ANO,
                         SUBSTR(ro.ca_consecutivo,4,2) as MES,                                                
-                        SUBSTR(ro.ca_consecutivo,9,4),
+                        SUBSTR(ro.ca_consecutivo,9,5),
                         ro.ca_consecutivo as dtm,
-                        m.ca_referencia as referencia, 
+                        i.ca_referencia as referencia, 
                         h.ca_idreporte as idreporte,
-                        (CASE WHEN m.ca_modalidad = 'DIRECTO' THEN 'FCL' ELSE m.ca_modalidad END) as modalidad,
+                        (CASE WHEN i.ca_modalidad = 'DIRECTO' THEN 'FCL' ELSE i.ca_modalidad END) as modalidad,
                         COALESCE(imp.ca_nombre,clir.ca_nombre) as ca_importador,
                         h.ca_doctransporte as doctransporte,
                         t.ca_ciudad AS origen, 
@@ -1619,7 +1755,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                         h.ca_volumen as volumen,
                         ro.ca_valorfob as valorfob,
                         r.ca_fchanulado as fecharepanulado,
-                        m.ca_fchanulado as fecharefanulado
+                        i.ca_fchanulado as fecharefanulado
                     FROM tb_reportes r
                         INNER JOIN tb_repotm ro on (SELECT ca_idreporte 
                                                     FROM tb_reportes 
@@ -1629,16 +1765,17 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
                                                                             ORDER BY ca_idreporte DESC 
                                                                             LIMIT 1 ) = ro.ca_idreporte
                         INNER JOIN ino.tb_house h on r.ca_idreporte = h.ca_idreporte
-                        LEFT JOIN ino.tb_master m ON m.ca_idmaster = h.ca_idmaster
+                        LEFT JOIN ino.tb_master i ON i.ca_idmaster = h.ca_idmaster
                         LEFT JOIN tb_terceros clir on ro.ca_idcliente = clir.ca_idtercero
                         LEFT JOIN tb_terceros imp on ro.ca_idimportador = imp.ca_idtercero
-                        LEFT JOIN ids.tb_proveedores i2 ON m.ca_idlinea = i2.ca_idproveedor
+                        LEFT JOIN ids.tb_proveedores i2 ON i.ca_idlinea = i2.ca_idproveedor
                         LEFT JOIN ids.tb_ids i3 ON i2.ca_idproveedor = i3.ca_id
-                        LEFT JOIN tb_ciudades t ON m.ca_origen = t.ca_idciudad
-                        LEFT JOIN tb_ciudades t2 ON m.ca_destino = t2.ca_idciudad
+                        LEFT JOIN tb_ciudades t ON i.ca_origen = t.ca_idciudad
+                        LEFT JOIN tb_ciudades t2 ON i.ca_destino = t2.ca_idciudad
                     WHERE ro.ca_consecutivo IS NOT NULL and ca_tiporep = 4 $addWhere
                     ORDER BY 2,3,4,5";
             }
+            //echo $sql;
             $con = Doctrine_Manager::getInstance()->connection();            
             $st = $con->execute($sql);
             $this->resul = $st->fetchAll();
@@ -2033,7 +2170,7 @@ LEFT JOIN ino.vi_teus te ON m.ca_idmaster = te.ca_idmaster
     }
 
     public function executeReporteadorXls(sfWebRequest $request) {
-        
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         
         $datos=json_decode(utf8_encode($request->getParameter("datos")),true);        
         $style_titulo["alignment"]["horizontal"]=PHPExcel_Style_Alignment::HORIZONTAL_CENTER;
