@@ -15,8 +15,7 @@ $refs = $sf_data->getRaw("refs");
            <th>Referencia</th>
            <th>Origen</th>
            <th>Destino</th>
-           <th>Modalidad</th>
-           <th>Incoterms</th>
+           <th>Modalidad</th>           
            <th >Linea</th>
            <th >Agente</th>
            <th>TEUS</th>
@@ -31,6 +30,7 @@ $refs = $sf_data->getRaw("refs");
            <th>INO Consolidado: </th>
            <th>INO Total: </th>
            <th>Estado: </th>
+           <th>Usu Creado</th>
            <th>Observaciones: </th>
          </tr>         
          <?
@@ -45,8 +45,7 @@ $refs = $sf_data->getRaw("refs");
                  <td> <a href="/inoF2/indexExt5/idmaster/<?=$r["ca_idmaster"]?>" target='_blank'><?=$r["ca_referencia"]?></a>   </td>
                <td><?=$r["Origen"]["ca_ciudad"]?></td>
                <td><?=$r["Destino"]["ca_ciudad"]?></td>
-               <td><?=$r["ca_modalidad"]?></td>
-               <td><?=$r["InoHouse"]["0"]["Reporte"]["ca_incoterms"]?></td>
+               <td><?=$r["ca_modalidad"]?></td>               
                <td><?=$r["IdsProveedor"]["Ids"]["ca_nombre"]?></td>
                <td><?=$r["IdsAgente"]["Ids"]["ca_nombre"]?></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViTeus"]["ca_valor"])?></div></td>
@@ -54,12 +53,12 @@ $refs = $sf_data->getRaw("refs");
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_numpiezas"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_peso"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViUnidadesMaster"]["ca_volumen"])?></div></td>
-               <td><div align="right"><?=Utils::formatNumber($r["InoViIngreso"]["ca_valor"])?></div></td>
+               <td><div align="right"><?=Utils::formatNumber($r["ingreso"])?></div></td>
                <td><div align="right"><?=Utils::formatNumber($r["InoViCosto"]["ca_valor"])?></div></td>
 <!--               <td><div align="right"><?=Utils::formatNumber($r["InoViDeduccion"]["ca_valor"])?></div></td>-->
                <td><div align="right"><?=Utils::formatNumber($r["InoViUtilidad"]["ca_valor"])?> </div></td>
                <?
-               $inoCons = $r["InoViIngreso"]["ca_valor"] -$r["InoViDeduccion"]["ca_valor"] -$r["InoViCosto"]["ca_valor"]-$r["InoViUtilidad"]["ca_valor"];
+               $inoCons = $r["ingreso"] -$r["InoViDeduccion"]["ca_valor"] -$r["InoViCosto"]["ca_valor"]-$r["InoViUtilidad"]["ca_valor"];
                ?>           
                <td><div align="right"><?=Utils::formatNumber($inoCons)?> </div></td>
                <td><div align="right"><?=Utils::formatNumber($inoCons+$r["InoViUtilidad"]["ca_valor"])?></div> </td>
@@ -76,9 +75,10 @@ $refs = $sf_data->getRaw("refs");
                    ?>            
                     </div>
                </td>
+               <td><?=$r["ca_usucreado"]?></td>
                <td>
                    <div align="left">
-                   <?=$r["ca_observaciones"]?>            
+                   <?=$r["ca_observaciones"]?>
                     </div>
                </td>
              </tr>
@@ -111,7 +111,7 @@ $refs = $sf_data->getRaw("refs");
                 if( !isset($totales["ingresos"]) ){
                     $totales["ingresos"] = 0;
                 }
-                $totales["ingresos"] += $r["InoViIngreso"]["ca_valor"]; 
+                $totales["ingresos"] += $r["ingreso"]; 
 
                 if( !isset($totales["costos"]) ){
                     $totales["costos"] = 0;
