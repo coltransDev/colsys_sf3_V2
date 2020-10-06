@@ -1,4 +1,4 @@
-<?
+    <?
 if($app=="intranet"){
     sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext4/resources/css/ext-all-neptune.css");
     sfContext::getInstance()->getResponse()->removeJavascript("ext4/ext-all.js");
@@ -946,7 +946,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 <td>&nbsp;</td>
                                 <td width="40%">
                                     <div align="left">
-                                        <b>Activo</b>
+                                        <b><?=$usuario->getCaActivo()?"Activo":($usuario->getDatosJson("bloqueado")? (utf8_decode($usuario->getDatosJson("bloqueado"))):"Inactivo")?></b>
                                     </div>
                                 </td>
                                 <td>
@@ -990,13 +990,16 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <?
-                                    foreach($claves as $clave){
-                                        ?>
-                                        <div align="left">
-                                            <?=$clave->getCaFchcreado()?>
-                                        </div>
-                                        <?
-                                    }
+                                    if($usuario->getCaAuthmethod()=="sha1"){
+                                        foreach($claves as $clave){
+                                            ?>
+                                            <div align="left">
+                                                <?=$clave->getCaFchcreado()?>
+                                            </div>
+                                            <?
+                                        }
+                                    }else
+                                        echo "Administrado por LDAP";
                                     ?>
                                 </td>
                             </tr>
@@ -1009,7 +1012,12 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <?=$usuario->getCaFchvencimiento()?>
+                                        <?
+                                        if($usuario->getCaAuthmethod()=="sha1")
+                                            echo $usuario->getCaFchvencimiento();
+                                        else
+                                            echo "Administrado por LDAP";
+                                        ?>
                                     </div>
                                 </td>
                             </tr>

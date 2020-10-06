@@ -513,13 +513,16 @@ class adminUsersActions extends sfActions {
 
         if ($request->getParameter("passwd1") && $request->getParameter("passwd1") == $request->getParameter("passwd2")) {
             $usuario->setPasswd($request->getParameter("passwd1"));
-            $usuario->setCaFchvencimiento(Utils::calcularVencimientoClave());
+            $usuario->setCaFchvencimiento(TimeUtils::calcularVencimientoFecha(date("Y-m-d"), Constantes::PASSW_VIGE));
         }
         
         if(( $this->nivel>=2 && in_array($usuario->getSucursal()->getCaIdempresa(),$grupoEmp)) || $this->nivel>=3){
             
             if ($request->getParameter("activo")) {
                 $usuario->setCaActivo(true);
+                if($usuario->getDatosJson("bloqueado")){
+                    $usuario->setDatosJson("bloqueado", null);
+                }
             }else{
                 $usuario->setCaActivo(false);           
             }
@@ -785,8 +788,16 @@ class adminUsersActions extends sfActions {
 
     public function executeChangePasswd($request) {
         $this->form = new CambioClaveForm();
+        
+        session_start();
+
+        if($_SESSION["nintentos"])
+            $igual++;
+        else
+            $_SESSION["nintentos"] = 1;
 
         if ($request->isMethod('post')) {
+            $_SESSION["nintentos"]++;
 
             $this->form->bind(
                     array(
@@ -808,24 +819,13 @@ class adminUsersActions extends sfActions {
                 $passwd = $this->getRequestParameter("clave1");
                 $new_pass = sha1($passwd);
                 
-                $claves = Doctrine::getTable("UsuarioClave")
-                        ->createQuery("c")
-                        ->addWhere("c.ca_login = ? ", $user->getCaLogin())
-                        ->addOrderBy("c.ca_fchcreado DESC")
-                        ->limit(5)
-                        ->execute();
+                $validacion = $user->validarClave($passwd);
                 
-                foreach($claves as $clave){
-                    if($clave->getCaClave()== $new_pass){
-                        $igual = 1;
-                        $this->setTemplate("changePasswdError");
-                    }
-                }
                 
-                if($igual!=1){
-                    
-                    $fch_vencimiento = Utils::calcularVencimientoClave();
-                    
+                if($validacion == "OK" && $_SESSION["nintentos"] <= Constantes::PASSW_INTE){
+
+                    $fch_vencimiento = TimeUtils::calcularVencimientoFecha(date("Y-m-d"), Constantes::PASSW_VIGE);
+
                     $user->setCaPasswd(sha1($passwd . $salt));
                     $user->setCaSalt($salt);
                     $user->setCaForcechange(false);
@@ -835,9 +835,9 @@ class adminUsersActions extends sfActions {
                     $usr_clave = new UsuarioClave();
                     $usr_clave->setCaLogin($user->getCaLogin());
                     $usr_clave->setCaClave($new_pass);
-                    $usr_clave->save();
+                    $usr_clave->save($conn);
 
-                    $config = sfConfig::get("app_soap_adminUsers");
+//                    $config = sfConfig::get("app_soap_adminUsers");
 //                    if( $config["updateUser"] ){
 //                        ProjectConfiguration::registerZend();   
 //                        $wsdl_uri = $config["wsdl_uri"];            
@@ -852,9 +852,20 @@ class adminUsersActions extends sfActions {
                     $conn->commit();
                     $this->getUser()->setAttribute('forcechange', false);
                     $this->setTemplate("changePasswdOk");
+                }else{
+                    if($_SESSION["nintentos"] <= 5)
+                        $this->error = $validacion;
+                    else{
+                        $this->error = "El número de intentos ha acabado. El usuario ha sido inactivado, por favor consultar con el área de Soporte Técnico";
+                        $user->setCaActivo(false);                        
+                        $user->setDatosJson("bloqueado", utf8_encode("Inactivo por número de intentos fallidos. (".date("Y-m-d H:i:s").")"));
+                        $user->save($conn);
+                        $conn->commit();
+                    }
+                    $this->setTemplate("changePasswdError");
                 }
             }
-        }
+        }    
     }    
 
     /*
