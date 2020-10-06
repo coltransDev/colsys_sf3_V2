@@ -13,6 +13,12 @@ Ext.define('ComboIdg', {
     store: ['SI', 'NO', 'COLLECT','FACTURA AL AGENTE']
 });
 
+Ext.define('TipoServicio', {
+    extend: 'Ext.form.field.ComboBox',
+    alias: 'widget.combo-idg',
+    store: ['OTM', 'COORDINACION']
+});
+
 Ext.define('Colsys.Ino.FormMaster', {
     extend: 'Ext.form.Panel',
     alias: 'widget.Colsys.Ino.FormMaster',
@@ -100,6 +106,9 @@ Ext.define('Colsys.Ino.FormMaster', {
                                         }
                                         if (Ext.getCmp("tipovehiculo" + idmaster).getValue() == null || Ext.getCmp("tipovehiculo" + idmaster).getValue() == "") {
                                             Ext.getCmp("tipovehiculo" + idmaster).setValue(res.data.tipovehiculo);
+                                        }
+                                        if (Ext.getCmp("tiposervicio" + idmaster).getValue() == null || Ext.getCmp("tiposervicio" + idmaster).getValue() == "") {
+                                            Ext.getCmp("tiposervicio" + idmaster).setValue(res.data.tiposervicio);
                                         }
                                         if (Ext.getCmp("modalidad" + idmaster).getValue() == null || Ext.getCmp("modalidad" + idmaster).getValue() == "") {
                                             Ext.getCmp("modalidad" + idmaster).setValue(res.data.modalidad);
@@ -357,7 +366,18 @@ Ext.define('Colsys.Ino.FormMaster', {
                             width: 300,
                             hidden: true,
                             tabIndex: 12
-                        }, {
+                        }, 
+                        Ext.create('TipoServicio',{
+                            fieldLabel: 'Tipo Servicio',                            
+                            name: 'tiposervicio',
+                            id: 'tiposervicio' + this.idmaster,
+                            style: 'display:inline-block;text-align:center;font-weight:bold;',
+                            labelWidth: 100,
+                            value: 'OTM',
+                            width: 300,
+                            hidden: true,
+                            tabIndex: 12
+                        }), {
                             xtype: 'tbspacer',
                             height: 10,
                             columnWidth: 1
@@ -568,6 +588,7 @@ Ext.define('Colsys.Ino.FormMaster', {
         if (this.idimpoexpo == "OTM-DTA" && this.idtransporte == 'Terrestre') {
             Ext.getCmp('reporte' + this.idmaster).setVisible(true);
             Ext.getCmp("ca_master" + this.idmaster).readOnly = true;
+            Ext.getCmp('tiposervicio' + this.idmaster).hidden = false;
         } else if (this.idimpoexpo == "Importaci\u00F3n" && this.idtransporte == "A\u00E9reo") {
             Ext.getCmp('general' + this.idmaster).setVisible(false);
             Ext.getCmp('reporte' + this.idmaster).setVisible(false);
