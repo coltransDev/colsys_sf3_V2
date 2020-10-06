@@ -462,6 +462,22 @@ class TimeUtils{
         }
         return $start;
     }
+    
+    /*
+    * Calcula la fecha de vencimiento de acuerdo al número de dias indicados
+    * No tiene en cuenta los festivos
+    * @author: Andrea Ramírez
+    */
+    public static function calcularVencimientoFecha($date, $dias) {
+
+        $format = "Y-m-d";
+
+        $yy = Utils::parseDate($date, "Y");
+        $mm = Utils::parseDate($date, "m");
+        $dd = Utils::parseDate($date, "d");
+
+        return date($format, mktime(0, 0, 0, $mm, $dd + $dias, $yy));
+    }
 
     static function array_avg($array,$precision="2"){
 
