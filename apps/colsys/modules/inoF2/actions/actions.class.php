@@ -877,8 +877,10 @@ class inoF2Actions extends sfActions {
                     $ino->setCaIdagente($request->getParameter("agente"));
                 }
                 if ($impoexpo == Constantes::OTMDTA || ($impoexpo == Constantes::INTERNO && $transporte== Constantes::TERRESTRE)) {
-                    $datos = json_decode($ino->getCaDatos());
+                    //$datos = json_decode($ino->getCaDatos());
+                    $datos = json_decode(utf8_encode($ino->getCaDatos()));
                     $datos->tipovehiculo = $tipovehiculo;
+                    $datos->tiposervicio = $request->getParameter("tiposervicio");
                     if($idempresa!="" && $impoexpo == Constantes::OTMDTA)
                         $datos->idempresa = $idempresa;
                     $datos = json_encode($datos);
@@ -1105,6 +1107,7 @@ class inoF2Actions extends sfActions {
 
                 $datos = json_decode($ino->getCaDatos());
                 $data["tipovehiculo"] = $datos->tipovehiculo;
+                $data["tiposervicio"] = $datos->tiposervicio;
                 if ($datos->facturaUnica)
                     $data["factura_unica"] = $datos->facturaUnica;
 
