@@ -71,6 +71,14 @@ class Constantes{
     const IDCOLDEPLOG = 11;
     const IDCOLDEPBN = 12;
     
+    
+    /*Datos de Seguridad para autenticación en COLSYS sha1*/
+    
+    const PASSW_LONG = 8;
+    const PASSW_HIST = 24;
+    const PASSW_INTE = 5;
+    const PASSW_VIGE = 90;
+    
     private static $grupocoltrans = [self::IDCOLMAS, self::IDCOLTRANS, self::IDCOLTRANSUSA, self::IDFONEMCOL, self::IDHBINGENIERIA, self::IDCOLOTM, self::IDCOLDEPLOG, self::IDCOLDEPBN];
     
     public static function getGrupoColtrans() {
