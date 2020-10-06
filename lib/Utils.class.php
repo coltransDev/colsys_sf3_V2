@@ -132,19 +132,6 @@ class Utils {
         return date($format, mktime(0, 0, 0, $mm, $dd + $days, $yy));
     }
 
-    public static function calcularVencimientoClave() {
-
-        $date = date("Y-m-d");
-        $days = 120;
-        $format = "Y-m-d";
-
-        $yy = Utils::parseDate($date, "Y");
-        $mm = Utils::parseDate($date, "m");
-        $dd = Utils::parseDate($date, "d");
-
-        return date($format, mktime(0, 0, 0, $mm, $dd + $days, $yy));
-    }
-
     /**
       from php.net
       give the number of days from a date
@@ -225,44 +212,49 @@ class Utils {
         }
     }
 
-    public static function mesLargo($m) {
+    public static function mesLargo($m, $literal = false) {
         settype($m, "integer");
+        if ($literal) { // Se usa para efectos de ordenamiento alfabetico de los meses
+            $lit = array("", "a) ", "b) ", "c) ", "d) ", "e) ", "f) ", "g) ", "h) ", "i) ", "j) ", "k) ", "l) ");
+        } else {
+            $lit = array(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        }
         switch ($m) {
             case 1:
-                return "Enero";
+                return $lit[$m]."Enero";
                 break;
             case 2:
-                return "Febrero";
+                return $lit[$m]."Febrero";
                 break;
             case 3:
-                return "Marzo";
+                return $lit[$m]."Marzo";
                 break;
             case 4:
-                return "Abril";
+                return $lit[$m]."Abril";
                 break;
             case 5:
-                return "Mayo";
+                return $lit[$m]."Mayo";
                 break;
             case 6:
-                return "Junio";
+                return $lit[$m]."Junio";
                 break;
             case 7:
-                return "Julio";
+                return $lit[$m]."Julio";
                 break;
             case 8:
-                return "Agosto";
+                return $lit[$m]."Agosto";
                 break;
             case 9:
-                return "Septiembre";
+                return $lit[$m]."Septiembre";
                 break;
             case 10:
-                return "Octubre";
+                return $lit[$m]."Octubre";
                 break;
             case 11:
-                return "Noviembre";
+                return $lit[$m]."Noviembre";
                 break;
             case 12:
-                return "Diciembre";
+                return $lit[$m]."Diciembre";
                 break;
             default:
                 return"";
@@ -685,8 +677,145 @@ class Utils {
         return $letters;
     }
 
+    public static function camposArchivoPlanoHeinsohn() {
+        $campos = array();
+        
+        $campos[] = "Tipo Registro";
+        $campos[] = "Tipo de documento de identificación empleado";
+        $campos[] = "Número de documento de identificación empleado";
+        $campos[] = "Concepto";
+        $campos[] = "Tipo de novedad";
+        $campos[] = "Tipo de reporte";
+        $campos[] = "Valor/Total horas total dias";
+        $campos[] = "Incluye en pago";
+        $campos[] = "Suma o resta";
+        $campos[] = "Fecha inicial";
+        $campos[] = "Cantidad de días";
+        $campos[] = "Tipo incapacidad";
+        $campos[] = "Diagnostico";
+        $campos[] = "Numero incapacidad";
+        $campos[] = "Fecha de retiro";
+        $campos[] = "Motivo de retiro";
+        $campos[] = "Área Funcional";
+        $campos[] = "Rango día inicial";
+        $campos[] = "Rango hora inicial";
+        $campos[] = "Rango hora final";
+        $campos[] = "Número días";
+        $campos[] = "Número unidades";
+        $campos[] = "Número horas";
+        $campos[] = "Indemnizacion";
+        $campos[] = "Fecha novedad";
+        $campos[] = "Pago Total";
+        $campos[] = "Naturaleza Incapacidad";
+        $campos[] = "Fecha Inicial EPS";
+        $campos[] = "Proyecto";
+        $campos[] = "";
+        $campos[] = "Fecha Retiro Actual";
+
+        return $campos;
+    }
+
     public static function validacionBinaria($acceso_usuario, $acceso_total) {
         return str_pad( decbin($acceso_usuario) & decbin($acceso_total), 30, "0", STR_PAD_LEFT);
     }
+    
+    public static function buildColumns($column_name) {
+        switch ($column_name) {
+            case "Año":
+                return array("text" => utf8_encode("Año"), "sql" => "'20'||right(mst.ca_referencia, 2) AS numeric", "alias" => "mst_annio", "type" => "integer", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Mes":
+                return array("text" => utf8_encode("Mes"), "sql" => "substr(mst.ca_referencia, 8, 2)", "alias" => "mst_mes", "type" => "string", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Referencia":
+                return array("text" => utf8_encode("Referencia"), "sql" => "mst.ca_referencia", "alias" => "mst_ca_referencia", "type" => "string", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Tráfico Org.":
+                return array("text" => utf8_encode("Tráfico Org."), "sql" => "org.ca_idtrafico", "alias" => "trg_ca_nombre", "type" => "string", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Puerto Org.":
+                return array("text" => utf8_encode("Puerto Org."), "sql" => "mst.ca_origen", "alias" => "org_ca_ciudad", "type" => "string", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Tráfico Dst.":
+                return array("text" => utf8_encode("Tráfico Dst."), "sql" => "dst.ca_idtrafico", "alias" => "tds_ca_nombre", "type" => "string", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Puerto Dst.":
+                return array("text" => utf8_encode("Puerto Dst."), "sql" => "mst.ca_destino", "alias" => "dst_ca_ciudad", "type" => "string", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Agente":
+                return array("text" => utf8_encode("Agente"), "sql" => "agt.ca_nombre", "alias" => "agt_ca_nombre", "type" => "string", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Impo/Expo":
+                return array("text" => utf8_encode("Impo/Expo"), "sql" => "mst.ca_impoexpo", "alias" => "mst_ca_impoexpo", "type" => "string", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Transporte":
+                return array("text" => utf8_encode("Transporte"), "sql" => "mst.ca_transporte", "alias" => "mst_ca_transporte", "type" => "string", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Modalidad":
+                return array("text" => utf8_encode("Modalidad"), "sql" => "mst.ca_modalidad", "alias" => "mst_ca_modalidad", "type" => "string", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Transportista":
+                return array("text" => utf8_encode("Transportista"), "sql" => "prv.ca_nombre", "alias" => "prv_ca_nombre", "type" => "string", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Cliente":
+                return array("text" => utf8_encode("Cliente"), "sql" => "cli.ca_compania", "alias" => "cli_ca_compania", "type" => "string", "leaf" => true, "default" => false, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Circular0170":
+                return array("text" => utf8_encode("Circular0170"), "sql" => "cli.ca_stdcircular", "type" => "string", "alias" => "cli_ca_stdcircular", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "House":
+                return array("text" => utf8_encode("House"), "sql" => "hst.ca_doctransporte", "type" => "string", "alias" => "hst_ca_doctransporte", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "DTM Colotm":
+                return array("text" => utf8_encode("DTM Colotm"), "sql" => "rot.ca_consecutivo", "type" => "string", "alias" => "rot_ca_consecutivo", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Importador Colotm":
+                return array("text" => utf8_encode("Importador Colotm"), "sql" => "imp.ca_nombre", "type" => "string", "alias" => "imp_ca_nombre", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Vehiculo Colotm":
+                return array("text" => utf8_encode("Vehiculo Colotm"), "sql" => "", "type" => "string", "alias" => "mst_ca_vehiculo", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Ingresos":
+                return array("text" => utf8_encode("Ingresos"), "sql" => "", "alias" => "hst_ca_ingresos", "type" => "float", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Costos":
+                return array("text" => utf8_encode("Costos"), "sql" => "", "alias" => "hst_ca_costos", "type" => "float", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Deducciones":
+                return array("text" => utf8_encode("Deducciones"), "sql" => "", "type" => "float", "alias" => "hst_ca_deducciones", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Ino":
+                return array("text" => utf8_encode("Ino"), "sql" => "", "type" => "float", "alias" => "hst_ca_utilidad", "leaf" => true, "default" => true, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Datos/Carga":
+                return array("text" => utf8_encode("Datos/Carga"), "sql" => "", "type" => "string", "alias" => "datos_carga", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Incoterm":
+                return array("text" => utf8_encode("Incoterm"), "sql" => "hst.ca_idreporte", "type" => "string", "type" => "string", "type" => "string", "alias" => "rpn_ca_incoterms", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Vendedor":
+                return array("text" => utf8_encode("Vendedor"), "sql" => "usr.ca_nombre", "type" => "string", "alias" => "usr_ca_nombre", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Sucursal":
+                return array("text" => utf8_encode("Sucursal"), "sql" => "suc.ca_nombre", "type" => "string", "alias" => "suc_ca_nombre", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Estado":
+                return array("text" => utf8_encode("Estado"), "sql" => "", "type" => "string", "alias" => "mst_ca_estado", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Compra/Venta":
+                return array("text" => utf8_encode("Compra/Venta"), "sql" => "", "type" => "string", "alias" => "mst_ca_comven", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Fch.Cerrado":
+                return array("text" => utf8_encode("Fch.Cerrado"), "sql" => "mst.ca_fchcerrado", "type" => "string", "alias" => "mst_ca_fchcerrado", "leaf" => true, "default" => true, "groupBy" => true, "iconCls" => 'no-icon');
+                break;
+            case "Idmaster":
+                return array("text" => utf8_encode("Idmaster"), "sql" => "mst.ca_idmaster", "type" => "integer", "alias" => "mst_ca_idmaster", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+            case "Idhouse":
+                return array("text" => utf8_encode("Idhouse"), "sql" => "hst.ca_idhouse", "type" => "integer", "alias" => "hst_ca_idhouse", "leaf" => true, "default" => false, "groupBy" => false, "iconCls" => 'no-icon');
+                break;
+        }
+    }
+
 }
 ?>
