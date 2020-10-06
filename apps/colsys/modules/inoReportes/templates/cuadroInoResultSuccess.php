@@ -30,6 +30,7 @@ $refs = $sf_data->getRaw("refs");
            <th>INO Consolidado: </th>
            <th>INO Total: </th>
            <th>Estado: </th>
+           <?if($impoexpo){?><th>Tipo Servicio: </th><?}?>
            <th>Usu Creado</th>
            <th>Observaciones: </th>
          </tr>         
@@ -75,6 +76,7 @@ $refs = $sf_data->getRaw("refs");
                    ?>            
                     </div>
                </td>
+               <?if($r["ca_impoexpo"]== Constantes::OTMDTA){?><td><?= substr(substr($r["ca_tiposervicio"],0,-1),1)?></td><?}?>
                <td><?=$r["ca_usucreado"]?></td>
                <td>
                    <div align="left">
