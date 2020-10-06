@@ -602,4 +602,43 @@ class Usuario extends BaseUsuario {
             return null;
         }        
     }    
+
+    public function validarClave($passwd){
+        
+        $longitud = Constantes::PASSW_LONG;
+        $historico = Constantes::PASSW_HIST;
+        $intentos = Constantes::PASSW_INTE;
+        
+        $new_pass = sha1($passwd);
+        $claves = Doctrine::getTable("UsuarioClave")
+                        ->createQuery("c")
+                        ->addWhere("c.ca_login = ? ", $this->getCaLogin())
+                        ->addOrderBy("c.ca_fchcreado DESC")
+                        ->limit($historico)
+                        ->execute();        
+        
+        if($claves){
+            foreach($claves as $clave){
+                if($clave->getCaClave()== $new_pass){                    
+                    return "La clave digitada ya ha sido utilizada previamente.";                    
+                }
+            }
+        }
+        if(strlen($passwd) <= $longitud ){
+           return "La clave debe tener al menos 8 caracteres";           
+        }
+        if (!preg_match('`[a-z]`',$passwd)){
+           return "La clave debe tener al menos una letra minúscula";           
+        }
+        if (!preg_match('`[A-Z]`',$passwd)){
+           return "La clave debe tener al menos una letra mayúscula";           
+        }
+        if (!preg_match('`[0-9]`',$passwd)){
+           return "La clave debe tener al menos un carácter numérico";           
+        }
+        if (!preg_match('/^(?=.*[!@#$%^&*-])(?=.*[0-9])(?=.*[A-Z]).{8,20}$/',$passwd)){
+           return "La clave debe tener al menos un carácter especial";           
+        }
+        return "OK";
+    }
 }
