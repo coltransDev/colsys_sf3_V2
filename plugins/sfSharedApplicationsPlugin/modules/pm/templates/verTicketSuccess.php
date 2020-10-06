@@ -95,11 +95,13 @@ $ticket = $sf_data->getRaw("ticket");
                                         <ul style="margin-top: 0;">
                                         <?
                                         foreach ($files as $file) {
+                                            $fecha = new DateTime();
+                                            $fecha->setTimestamp(filectime(sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $ticket->getDirectorioBase() . "/" . basename($file)));
                                             ?>
                                             <li>
                                                 <a style="text-decoration:none;color:#0000FF;" href="https://www.colsys.com.co<?= url_for("gestDocumental/verArchivo?folder=" . base64_encode($ticket->getDirectorioBase()) . "&idarchivo=" . base64_encode(basename($file))) ?>">
                                                     <b><?= basename($file) ?></b>
-                                                </a>
+                                                </a> - (<?=$fecha->format('Y-m-d H:i:s')?>)                   
                                             </li>
                                             <?
                                         }
