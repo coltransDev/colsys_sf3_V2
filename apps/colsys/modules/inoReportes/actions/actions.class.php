@@ -59,11 +59,11 @@ class inoReportesActions extends sfActions {
                 ->leftJoin("m.InoViUtilidad uti")
                 ->leftJoin("m.InoViUnidadesMaster uni")
                 ->leftJoin("m.InoViTeus te")
-                ->select("m.ca_idmaster, m.ca_referencia, m.ca_modalidad, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
+                ->select("m.ca_idmaster, m.ca_impoexpo, m.ca_referencia, m.ca_modalidad, uni.ca_numhijas, uni.ca_numpiezas, uni.ca_peso, uni.ca_volumen, 
                             o.ca_ciudad, d.ca_ciudad, h.ca_idhouse, p.ca_idproveedor, i.ca_nombre,a.ca_idagente,ia.ca_nombre, te.ca_valor,
                             cost.ca_valor, cost.ca_venta, ing.ca_valor,
                             (SELECT SUM(vi.ca_valor) FROM InoViIngreso AS vi WHERE vi.ca_idmaster=m.ca_idmaster) AS ingreso
-                            , ded.ca_valor, uti.ca_valor,  m.ca_usucreado,m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones");
+                            , ded.ca_valor, uti.ca_valor,  m.ca_usucreado,m.ca_fchcerrado, m.ca_fchliquidado, m.ca_observaciones, m.ca_datos->'tiposervicio'::text as ca_tiposervicio");
                 
         $impoexpo = $request->getParameter("impoexpo");
         $transporte = $request->getParameter("transporte");
@@ -158,8 +158,10 @@ class inoReportesActions extends sfActions {
             }
         }
         
-        if($impoexpo==Constantes::OTMDTA)
+        if($impoexpo==Constantes::OTMDTA){
             $q->andWhereIn("SUBSTR(m.ca_referencia,1,1)","7");
+            $this->impoexpo = $impoexpo;
+        }
         
 
         if ($aa) {
