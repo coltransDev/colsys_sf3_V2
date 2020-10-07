@@ -608,7 +608,8 @@ class pmActions extends sfActions {
         } catch (Exception $e) {
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
-            Utils::writeLog($logFile, date('Y-m-d')."-".$e->getMessage());
+            $infoAdic = "Nivel=>".$this->nivel." Usuario=>".$user;
+            Utils::writeLog($logFile, date('Y-m-d')."-".$e->getMessage()." ".$infoAdic);
         }
         $this->setTemplate("responseTemplate");
     }
@@ -2754,7 +2755,7 @@ class pmActions extends sfActions {
         $trayectos = $datosTarifa["trayecto"];
         $ntrayectos = $datosTarifa["norigen"];
         
-        for($i=0; $i<$ntrayectos;$i++){
+        for($i=0; $i<$ntrayectos;$i++){            
             $modalidad = $trayectos["ruta"][$i]["modalidad"]?' - '.$trayectos["ruta"][$i]["modalidad"]:"";
             $linea = $trayectos["ruta"][$i]["linea"]?' - '.$trayectos["ruta"][$i]["linea"]:"";
             $trayectoStr[] = $trayectos["origen"]["ciudad"][$i] . " - " . $trayectos["destino"]["ciudad"][$i].$modalidad.$linea;
@@ -2765,14 +2766,34 @@ class pmActions extends sfActions {
         if($datos["datos"] && (!isset($borrar)|| $borrar==="false")){
             $gArray = $datos["datos"];
             foreach($gArray as $key => $gridData){
-                $row = array();
-                foreach($gridData as $item => $value){
-                    if(!in_array($item, $array)){
-                        $row[$item] = intval($value);
-                    }else
-                        $row[$item] = $value;
-                }
-                $data[] = $row;
+                    $row = array();                    
+                    foreach($gridData as $item => $value){
+                        if(!in_array($item, $array)){
+                            $row[$item] = intval($value);
+                        }else{
+                            $row[$item] = $value;
+                            if($item == "trayecto")
+                                $row[$item] = $trayectoStr[$gridData["idtrayecto"]]; 
+                        }
+                    }
+                    
+                    $data[] = $row;
+                    if(!in_array($row["idtrayecto"], $idstrayectos))
+                        $idstrayectos[] = $row["idtrayecto"];                
+            }
+            sort($idstrayectos);            
+            /*Trayectos que aún no tienen tarifas*/
+            for($i=0;$i<$ntrayectos;$i++){                
+                if(!in_array($i, $idstrayectos)){                    
+                    $row = array();
+                    $row["idticket"] = $idticket;
+                    $row["idtrayecto"] = $i;
+                    $row["trayecto"] = $trayectoStr[$i];
+                    $row["idconcepto"] = '999';
+                    $row["concepto"] = utf8_encode('Flete Marítimo');
+                    $row["tipo"] = 'flete';                
+                    $data[] = $row;
+                }                
             }
         }else{            
             for($i=0;$i<count($trayectoStr);$i++){
@@ -2871,6 +2892,22 @@ class pmActions extends sfActions {
         $datos = json_decode(utf8_encode($ticket->getCaDatos()),1);
         $datosTarifa = $datos[$tipo];
         
+        $datosCot = $datos["cotizacion"];
+
+        if($datosCot){
+            $dataEquipos = $datosCot["equipos"];
+            
+            foreach($dataEquipos as $idequipo => $equipo){
+                $idequipos[] = strval($idequipo);
+                $equipos[] = $equipo;
+            }
+            if($datosTarifa["fcl"]){
+                $columnasEquipos["fcl"]["equipo"] = $equipos;
+                $columnasEquipos["fcl"]["idequipo"] = $idequipos;
+            }
+        }else{
+            $columnasEquipos = $datosTarifa;
+        }
         $conceptos = Doctrine::getTable("Concepto")
                         ->createQuery("c")
                         ->where("c.ca_transporte = ? AND c.ca_modalidad = ?", array(Constantes::MARITIMO, Constantes::FCL))
@@ -2886,8 +2923,8 @@ class pmActions extends sfActions {
         $this->conceptos[] = array("idconcepto"=>"tm3", "concepto"=>"T/M3");
         $this->conceptos[] = array("idconcepto"=>"minima", "concepto"=>"MINIMA");
         
-        if($datosTarifa){
-            $this->responseArray = array("data" => $datosTarifa, "idticket"=>$idticket, "success" => true, "errorInfo"=>null, "conceptos"=>$this->conceptos);
+        if($datosTarifa){            
+            $this->responseArray = array("data" => $columnasEquipos, "data1" => $datosTarifa, "idticket"=>$idticket, "success" => true, "errorInfo"=>null, "conceptos"=>$this->conceptos);
         }else{
             $this->responseArray = array("success" => false, "errorInfo"=>"Los datos no cargaron correctamente");
         }
@@ -2935,6 +2972,14 @@ class pmActions extends sfActions {
             array_push($trayecto["destino"]["ciudad"], utf8_encode($request->getParameter("destino")));
         }else{
             $trayecto["ruta"][$idtrayecto] = $ruta;
+            if($trayecto["origen"]["ciudad"][$idtrayecto] != $request->getParameter("origen")){
+               $trayecto["origen"]["ciudad"][$idtrayecto] =  $request->getParameter("origen");
+               $ciudad = Doctrine::getTable("Ciudad")->find($request->getParameter("idorigen"));
+               $trayecto["origen"]["trafico"][$idtrayecto] =  $ciudad->getTrafico()->getCaNombre();  
+            }
+            if($trayecto["destino"]["ciudad"][$idtrayecto] != $request->getParameter("destino")){
+               $trayecto["destino"]["ciudad"][$idtrayecto] =  $request->getParameter("destino");               
+            }
         }
         $solicitud["trayecto"] = $trayecto;        
         $datos["solicitud"] = $solicitud;
