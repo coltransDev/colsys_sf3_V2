@@ -5,8 +5,24 @@ $cotizacion = $sf_data->getRaw("cotizacion");
 $ruta = $solicitud["trayecto"]["ruta"];
 
 $trayectos = $cotizacion["trayectos"];
-$equipos = $cotizacion["equipos"];
-
+//$equipos = $cotizacion["equipos"];
+//echo gettype($equipos);
+//print_r(sort($equipos));
+//echo "<pre>";print_r($equipos);echo "</pre>";
+foreach($trayectos as $idtrayecto => $gridTipos){
+    foreach($gridTipos as $tipo => $gridCantidad){            
+        foreach($gridCantidad as $gridConceptos ){
+            foreach($gridConceptos as $concepto => $gridEquipos ){
+                foreach($gridEquipos as $key => $equipoPropiedades ){
+                    $equipos[$equipoPropiedades["ca_idequipo"]] = $equipoPropiedades["ca_equipo"];
+                }
+            }
+        }
+    }
+}
+//echo gettype($equipos);
+//print_r($ruta);
+//echo utf8_decode(utf8_decode($ruta[0]["observaciones"]));
 
 $ncolumns = count($equipos)+3;
 $widthCol = (55/count($equipos))
@@ -90,6 +106,7 @@ $widthCol = (55/count($equipos))
                         foreach($gridTipos as $tipo => $gridCantidad){            
                             foreach($gridCantidad as $gridConceptos ){
                                 foreach($gridConceptos as $concepto => $gridEquipos ){
+//                                    echo "<pre>";print_r($gridEquipos);echo "</pre>";
                                     ?>
                                     <tr>
                                         <td style="border-bottom: 1px solid #e5e5e5; padding: 4px; color:#333333;"><?=utf8_decode($concepto)?></td>
@@ -106,7 +123,7 @@ $widthCol = (55/count($equipos))
                                         ?>
                                         <td style="text-align: right; border-bottom: 1px solid #e5e5e5; padding: 4px; color:#333333;"><?=$moneda?></td>
                                         <?
-                                        if($ruta[$i]["modalidad"]=="LCL"){
+                                        if($ruta[$i]["modalidad"]=="LCL"){$ruta
                                             ?>
                                             <td style="text-align: right; border-bottom: 1px solid #e5e5e5; padding: 4px; color:#333333;"><?=$aplicacion?></td>
                                             <?
@@ -174,7 +191,7 @@ $widthCol = (55/count($equipos))
                             <th colspan="<?=$ruta[$i]["modalidad"]=="LCL"?$ncolumns+1:$ncolumns?>" style="text-align: center; margin: 0px; padding: 6px 4px 2px 4px; background: transparent url(https://www.colsys.com.co/images/layout/panel/white-top-bottom.gif) repeat-x scroll 0 -1px; border: 1px solid #D0D0D0; color: #333333; font-weight: normal;">OBSERVACIONES</th>                    
                         </tr>
                         <tr>
-                            <td colspan="<?=$ruta[$i]["modalidad"]=="LCL"?$ncolumns+1:$ncolumns?>"><?=utf8_decode($ruta[$i]["observaciones"])?></td>
+                            <td colspan="<?=$ruta[$i]["modalidad"]=="LCL"?$ncolumns+1:$ncolumns?>"><?= utf8_decode(utf8_decode($ruta[$i]["observaciones"]))?></td>
                         </tr> 
                     </table>
                     <?
