@@ -55,6 +55,12 @@ widgetBusquedaTicket = Ext.extend(Ext.form.TwinTriggerField, {
         var storeGrid = Ext.getCmp("ticket-search-grid").store;
         storeGrid.setBaseParam("query", v);
         storeGrid.setBaseParam("option", Ext.getCmp("search-ticket-option").getValue());
+        if(Ext.getCmp("departamento_id").getValue())
+            storeGrid.setBaseParam("iddepartamento", Ext.getCmp("departamento_id").getValue());
+        if(Ext.getCmp("area_id").getValue())
+            storeGrid.setBaseParam("idarea", Ext.getCmp("area_id").getValue());
+        if(Ext.getCmp("proyecto_id").getValue())
+            storeGrid.setBaseParam("idproyecto", Ext.getCmp("proyecto_id").getValue());
         storeGrid.reload();
         
         this.hasSearch = true;

@@ -355,6 +355,24 @@ class pmComponents extends sfComponents {
 
     public function executeBusquedaTicketWindow() {
         
+        $usuario = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $this->grupoEmp = $usuario->getGrupoEmpresarial();
+        
+        $departamentos = Doctrine::getTable("Departamento")
+                ->createQuery("d")
+                ->where("d.ca_inhelpdesk = ?", true)
+                ->leftJoin("d.Empresa e")
+                ->orderBy("e.ca_nombre, d.ca_nombre")                
+                ->execute();
+        $this->departamentos = array();
+
+        foreach ($departamentos as $departamento) {
+            $this->departamentos[] = array( "iddepartamento" => $departamento->getCaIddepartamento(),
+                                            "nombre" => utf8_encode($departamento->getCaNombre()), 
+                                            "idempresa"=>$departamento->getCaIdempresa(),
+                                            "empresa"=>utf8_encode($departamento->getEmpresa()->getCaNombre())
+            );
+        }
     }
 
     /*

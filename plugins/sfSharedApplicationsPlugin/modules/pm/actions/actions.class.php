@@ -2019,6 +2019,15 @@ class pmActions extends sfActions {
                     ->orderBy("r.ca_createdat DESC")
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
 
+            if($request->getParameter("iddepartamento"))
+                $q->addWhere("d.ca_iddepartamento = ?", intval($request->getParameter("iddepartamento")));
+            
+            if($request->getParameter("idarea"))
+                $q->addWhere("g.ca_idgroup = ?", intval($request->getParameter("idarea")));
+            
+            if($request->getParameter("idproyecto"))
+                $q->addWhere("t.ca_idproject = ?", intval($request->getParameter("idproyecto")));
+            
             switch ($option) {
                 case "idticket":
                     $q->addWhere("t.ca_idticket = ?", intval($query));
@@ -2066,7 +2075,6 @@ class pmActions extends sfActions {
                     $q->addWhere("(LOWER(u.ca_nombre) LIKE ? OR LOWER(u.ca_login) LIKE ?)", array("%" . strtolower($query) . "%", "%" . strtolower($query) . "%"));
                     break;
                 default:                    
-                    $q->limit(200);
                     break;
             }
 
@@ -2090,7 +2098,7 @@ class pmActions extends sfActions {
                 break;
         }
 
-
+            $q->limit(200);
             $q->addOrderBy("t.ca_idticket DESC");
 
             $results = $q->execute();
