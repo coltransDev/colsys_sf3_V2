@@ -437,8 +437,8 @@ if (!isset($boton) and ! isset($buscar)) {
         $tm->MoveFirst();
         $ind_mem = 5;
         $add_cols = 7;
-        $ano = str_replace("ca_ano", "ca_ano_new", $ano);
-        $mes = str_replace("ca_mes", "ca_mes_new", $mes);
+        //$ano = str_replace("ca_ano", "ca_ano_new", $ano);
+        //$mes = str_replace("ca_mes", "ca_mes_new", $mes);
         $campos = str_replace("ca_ano", "ca_ano_new", $campos);
         $campos = str_replace("ca_mes", "ca_mes_new", $campos);
     } else if ($indicador == "Oportunidad de Primer Status") {
