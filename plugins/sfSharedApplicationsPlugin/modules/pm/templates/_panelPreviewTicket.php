@@ -197,7 +197,8 @@ PanelPreviewTicket = function( config ){
     }
     
     
-    if (this.department == "Auditoría" || this.department == 'Marítimo' || this.department == 'Pricing'){        // Habilita la pestaña de importación de documentos, para auditoría
+    if (this.department == "Auditoría" || this.department == 'Marítimo' || this.department == 'Pricing' || this.department == 'Aduanas'){        // Habilita la pestaña de importación de documentos, para auditoría
+        Ext.getCmp('docs-panel-'+idcomponent).department = this.department;
         panel.insert(index, this.docsPanel);
     }
     

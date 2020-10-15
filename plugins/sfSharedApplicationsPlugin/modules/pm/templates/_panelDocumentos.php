@@ -192,7 +192,8 @@ PanelDocumentos = function( config ){
        ],
        listeners:{            
            rowcontextmenu: this.onRowcontextMenu,
-           afterEdit: this.onAfterEdit
+           afterEdit: this.onAfterEdit,
+           afterrender: this.onAfterLoad
        }
     });
 }
@@ -370,6 +371,13 @@ Ext.extend(PanelDocumentos, Ext.grid.EditorGridPanel, {
 
     onAfterLoad : function(e) {
         //this.calcSum();
+        /*Ticket #93540 No mostrar Recuperación y Perdida para Aduana*/
+        if(this.department == "Aduanas"){
+            var mgrid= Ext.getCmp(this.id);;
+            var mycol = mgrid.getColumnModel();
+            mycol.setHidden(3, true);
+            mycol.setHidden(4, true);
+        }
     },
 
     onAfterEdit : function(e) {
