@@ -152,15 +152,13 @@ $i = 1;
             $fecha->setTimestamp(filectime(sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . "/" . $file["file"]));
             ?>
             <tr id="<?= $id_tr ?>" >
-                <td colspan="2">
+                <td colspan="3">
                     <div id="hbl_defs">
                         <b><?= $i++ ?>.</b>&nbsp;&nbsp;&nbsp;&nbsp;
                         <?= link_to("Archivo " . basename($folder . "/" . $file["file"]), "gestDocumental/verArchivo?idarchivo=" . base64_encode($folder . "/" . $file["file"])) ?> - (<?=$fecha->format('Y-m-d H:i:s')?>)
                     </div>                    
                 </td>
-                <td>
-                    &nbsp;
-                </td>
+                
             </tr>
             <?
         }
