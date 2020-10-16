@@ -517,32 +517,44 @@ class crmActions extends sfActions {
             $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
         }
 
-        if (!$ids) {
-            $sql = "select i.ca_id from ids.tb_ids i inner "
-                    . "join public.tb_clientes c on i.ca_id = c.ca_idcliente "
-                    . "where lower(c.ca_vendedor) like '%" . strtolower($request->getParameter("q")) . "%'";
-            $rs = $con->execute($sql);
-            $ids = $rs->fetchAll(PDO::FETCH_COLUMN);
-        }
-
-//        switch ($request->getParameter("buscarEn")):
-//            case "misCliente":
-//                $q->addWhere("ca_vendedor = ?", $this->user->getUserId());
-//                break;
-//        endswitch;
-
         $q = Doctrine::getTable("Ids")
                 ->createQuery("i")
                 ->innerJoin("i.IdsCliente id");
 
-        if (count($ids) > 0) {
-            $q->whereIn('i.ca_id', $ids);
-        }
-
         if ($request->getParameter("buscarEn") == "misCliente") {
             $q->addWhere("ca_vendedor = ?", $this->user->getUserId());
         }
+        if ($request->getParameter("loginVendedor")) {
+            $q->addWhere("ca_vendedor = ?", $request->getParameter("loginVendedor"));
+        }
+        if ($request->getParameter("nivel")) {
+            $nvlriesgo = array();
+            foreach ($request->getParameter("nivel") as $nivel) {
+                $nvlriesgo[] = utf8_decode($nivel);
+            }
+            $q->whereIn("ca_nvlriesgo", $nvlriesgo);
+        }
+        if ($request->getParameter("cumplimiento")) {
+            $q->whereIn("ca_entidad", $request->getParameter("cumplimiento"));
+        }
+        if ($request->getParameter("fchinicial")) {
+            $q->addWhere("ca_fchcreado >= ?", $request->getParameter("fchinicial"));
+        }
+        if ($request->getParameter("fchfinal")) {
+            $q->addWhere("ca_fchcreado <= ?", $request->getParameter("fchfinal"));
+        }
+        if ($request->getParameter("idSucursal")) {
+            $sql = "select ca_nombre from control.tb_sucursales where ca_idsucursal = '" . $request->getParameter("idSucursal") . "'";
+            $con = Doctrine_Manager::getInstance()->connection();
+            $stmt = $con->execute($sql);
 
+            $q->innerJoin("id.Usuario vn");
+            $q->innerJoin("vn.Sucursal sc");
+            if ($stmt) {
+                $q->whereIn("sc.ca_nombre", $stmt->fetchAll(PDO::FETCH_COLUMN));
+            }
+        }
+        
         if ($request->getParameter("estado")) {
             switch ($request->getParameter("idEmpresa")) {
                 case 1:
@@ -561,55 +573,23 @@ class crmActions extends sfActions {
             $sql = "select ca_idcliente as ca_column from vi_clientes where $field in ('" . implode("','", $request->getParameter("estado")) . "')";
             $con = Doctrine_Manager::getInstance()->connection();
             $stmt = $con->execute($sql);
-
-            if ($stmt) {
-                $q->whereIn("ca_idcliente", $stmt->fetchAll(PDO::FETCH_COLUMN));
-            }
+            $ids = array_intersect($ids, $stmt->fetchAll(PDO::FETCH_COLUMN));
         }
         if ($request->getParameter("circular")) {
             $sql = "select ca_idcliente as ca_column from vi_clientes where ca_stdcircular in ('" . implode("','", $request->getParameter("circular")) . "')";
             $con = Doctrine_Manager::getInstance()->connection();
             $stmt = $con->execute($sql);
-
-            if ($stmt) {
-                $q->whereIn("ca_idcliente", $stmt->fetchAll(PDO::FETCH_COLUMN));
-            }
+            $ids = array_intersect($ids, $stmt->fetchAll(PDO::FETCH_COLUMN));
         }
         if ($request->getParameter("tipo")) {
             $sql = "select ca_idcliente as ca_column from tb_clientes where ca_tipo in ('" . implode("','", $request->getParameter("tipo")) . "')";
             $con = Doctrine_Manager::getInstance()->connection();
             $stmt = $con->execute($sql);
-
-            if ($stmt) {
-                $q->whereIn("ca_idcliente", $stmt->fetchAll(PDO::FETCH_COLUMN));
-            }
+            $ids = array_intersect($ids, $stmt->fetchAll(PDO::FETCH_COLUMN));
         }
-        if ($request->getParameter("idSucursal")) {
-            $sql = "select ca_nombre from control.tb_sucursales where ca_idsucursal = '" . $request->getParameter("idSucursal") . "'";
-            $con = Doctrine_Manager::getInstance()->connection();
-            $stmt = $con->execute($sql);
-
-            $q->innerJoin("id.Usuario vn");
-            $q->innerJoin("vn.Sucursal sc");
-            if ($stmt) {
-                $q->whereIn("sc.ca_nombre", $stmt->fetchAll(PDO::FETCH_COLUMN));
-            }
-            // $q->addWhere("ca_idsucursal = ?", $request->getParameter("idSucursal"));
-        }
-        if ($request->getParameter("loginVendedor")) {
-            $q->addWhere("ca_vendedor = ?", $request->getParameter("loginVendedor"));
-        }
-        if ($request->getParameter("nivel")) {
-            $q->whereIn("ca_nvlriesgo", $request->getParameter("nivel"));
-        }
-        if ($request->getParameter("cumplimiento")) {
-            $q->whereIn("ca_entidad", $request->getParameter("cumplimiento"));
-        }
-        if ($request->getParameter("fchinicial")) {
-            $q->addWhere("ca_fchcreado >= ?", $request->getParameter("fchinicial"));
-        }
-        if ($request->getParameter("fchfinal")) {
-            $q->addWhere("ca_fchcreado <= ?", $request->getParameter("fchfinal"));
+        
+        if (count($ids) > 0) {
+            $q->whereIn('i.ca_id', $ids);
         }
 
         $clientes = array();
@@ -1110,6 +1090,8 @@ class crmActions extends sfActions {
             $posicion = $request->getParameter("tipo");
             $datomod = ParametroTable::retrieveByCaso($caso, null, null, null);
             $tipo = utf8_encode($datomod[($posicion - 1)]->getCaValor());
+            $tiposeg = json_decode($datomod[($posicion - 1)]->getCaValor2(),1);
+            
             $evento->setCaTipo(utf8_decode($tipo));
             if ($request->getParameter("asunto") != "")
                 $evento->setCaAsunto(utf8_decode($request->getParameter("asunto")));
@@ -1127,28 +1109,30 @@ class crmActions extends sfActions {
                 $evento->setCaDatos(json_encode($datos));
             }
             
-            $evento->save();
+            $evento->save($con);
 
-            list($ano, $mes, $dia) = sscanf($evento->getCaFchcompromiso(), "%d-%d-%d");
-            $fchVencimiento = date('Y-m-d H:i:s', mktime(23, 59, 59, $mes, $dia, $ano));
-            $tarea = new NotTarea();
-            $tarea->setCaUrl("/crm/indexExt5/idcliente/$idCliente");
-            $tarea->setCaIdlistatarea(9);
-            $tarea->setCaFchcreado($evento->getCaFchevento());
-            $tarea->setCaFchvisible($evento->getCaFchcompromiso());
-            $tarea->setCaFchvencimiento($fchVencimiento);
-            $tarea->setCaUsucreado($this->getUser()->getUserId());
-            $tarea->setCaTitulo($ids->getCaNombre(). " - ".utf8_decode($tipo). ' - '.$evento->getCaAsunto() . " - " . $evento->getCaFchevento());
-            $tarea->setCaTexto($evento->getCaDetalle());
-            $tarea->save();
+            if($tiposeg["seguimientos"]){
+                list($ano, $mes, $dia) = sscanf($evento->getCaFchcompromiso(), "%d-%d-%d");
+                $fchVencimiento = date('Y-m-d H:i:s', mktime(23, 59, 59, $mes, $dia, $ano));
+                $tarea = new NotTarea();
+                $tarea->setCaUrl("/crm/indexExt5/idcliente/$idCliente");
+                $tarea->setCaIdlistatarea(9);
+                $tarea->setCaFchcreado($evento->getCaFchevento());
+                $tarea->setCaFchvisible($evento->getCaFchcompromiso());
+                $tarea->setCaFchvencimiento($fchVencimiento);
+                $tarea->setCaUsucreado($this->getUser()->getUserId());
+                $tarea->setCaTitulo($ids->getCaNombre(). " - ".utf8_decode($tipo). ' - '.$evento->getCaAsunto() . " - " . $evento->getCaFchevento());
+                $tarea->setCaTexto($evento->getCaDetalle());
+                $tarea->save($con);
 
-            $asignacion = new NotTareaAsignacion();
-            $asignacion->setCaIdtarea($tarea->getCaIdtarea());
-            $asignacion->setCaLogin($tarea->getCaUsucreado());
-            $asignacion->save();
+                $asignacion = new NotTareaAsignacion();
+                $asignacion->setCaIdtarea($tarea->getCaIdtarea());
+                $asignacion->setCaLogin($tarea->getCaUsucreado());
+                $asignacion->save($con);
+            }
 
             $con->commit();
-            $this->responseArray = array("success" => true);
+            $this->responseArray = array("success" => true, $idevento=>$evento->getCaIdevento());
         } catch (Exception $e) {
             $con->rollBack();
             $this->responseArray = array("success" => false, "errorInfo" => utf8_decode($e->getMessage()));
@@ -1242,6 +1226,7 @@ class crmActions extends sfActions {
         $idCliente = $request->getParameter("idcliente");
         $idalterno_id = strtoupper($request->getParameter("idalterno_id"));
         $cliente_nuevo = false;
+        $sucursal_nueva = false;
         if ($idCliente) {
             $cliente = Doctrine::getTable("IdsCliente")
                     ->createQuery("i")
@@ -1262,8 +1247,13 @@ class crmActions extends sfActions {
             }
             $cliente_nuevo = true;
             $cliente = new IdsCliente();
-            $sucursal = new IdsSucursal();
             $cliente->setCaIdgrupo($idalterno_id);
+        }
+        
+        $sucursal = $ids->getSucursalPrincipal();   // Busca si el IDS tiene una sucursal principal
+        if (!$sucursal) {
+            $sucursal = new IdsSucursal();
+            $sucursal_nueva = true;
         }
         
         $consulta_listas = false;
@@ -1392,7 +1382,7 @@ class crmActions extends sfActions {
                 $ids->getNuevaConsulta("Id&Nombre");
             }
 
-            if ($sucursal) { /* Crea la Sucursal Principal Automáticamente */
+            if ($sucursal_nueva) { /* Crea la Sucursal Principal Automáticamente */
                 $sucursal->setCaId($ids->getCaId());
                 $sucursal->setCaNombre("Domicilio Principal");
                 $sucursal->setCaPrincipal(true);
@@ -1418,6 +1408,24 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeValidarInfolaft(sfWebRequest $request) {
+        $idCliente = $request->getParameter("idcliente");
+        
+        if ($idCliente) {
+            $cliente = Doctrine::getTable("IdsCliente")
+                    ->createQuery("i")
+                    ->addWhere('i.ca_idcliente = ?', $idCliente)
+                    ->fetchOne();
+
+            $ids = Doctrine::getTable("Ids")
+                    ->createQuery("i")
+                    ->addWhere('i.ca_id = ?', $idCliente)
+                    ->fetchOne();
+        }
+        IdsRestrictivasTable::lanzarConsultaInfolaft($ids->getCaId(), $cliente->getCaNumidentificacionRl(), $cliente->getRepresentanteLegal(), "Id&Nombre");
+        $this->setTemplate("responseTemplate");
+    }
+    
     public function executeValidarNITExistente(sfWebRequest $request) {
         $idalterno = $request->getParameter("idalterno");
         $ids = Doctrine::getTable("Ids")
@@ -1431,7 +1439,7 @@ class crmActions extends sfActions {
         $agente = array();
         if ($ids) {
             if ($ids->getIdsCliente()->getCaUsucreado()) {
-                $error = utf8_encode("El número de NIT ya se encuentra registrado como Cliente en CRM");
+                $error = utf8_encode("El número de NIT ya se encuentra registrado como Cliente en la maestra!");
             } else {
                 // $agente = ($ids->getIdsAgente())?true:false; /* Valida si se está creando un Agente como Cliente */
                 $agente = Doctrine::getTable("Ids")
@@ -1933,10 +1941,13 @@ class crmActions extends sfActions {
                 "oea" => utf8_encode($cliente->getCaOea()),
                 "comerciante" => utf8_encode($cliente->getCaComerciante()),
                 "forma_pago" => $ids_datos->forma_pago,
+                "responsabilidades" => implode(",", $ids_datos->responsabilidades),
                 "cod_ciiu_uno" => $cliente->getCaCiiuUno(),
                 "cod_ciiu_dos" => $cliente->getCaCiiuDos(),
                 "cod_ciiu_trs" => $cliente->getCaCiiuTrs(),
-                "cod_ciiu_ctr" => $cliente->getCaCiiuCtr()
+                "cod_ciiu_ctr" => $cliente->getCaCiiuCtr(),
+                "codigo_postal" => $cliente->getCaZipcode(),
+                "matricula_mercantil" => $ids_datos->matricula_mercantil
             );
             $this->responseArray = array("success" => true, "data" => $data);
             $this->setTemplate("responseTemplate");
@@ -2021,7 +2032,7 @@ class crmActions extends sfActions {
         $datos = json_decode($datos);
         $nuevo = false;
         $ids = array();
-
+        
         $con = Doctrine_Manager::getInstance()->connection();
 
         $idcliente = $datos->idcliente;
@@ -2161,6 +2172,11 @@ class crmActions extends sfActions {
                 } else {
                     $cliente->setCaCiiuCtr(null);
                 }
+                if ($datos->codigo_postal) {
+                    $cliente->setCaZipcode($datos->codigo_postal);
+                } else {
+                    $cliente->setCaZipcode(null);
+                }
                 if ($datos->numempleados) {
                     $cliente->setCaMenosxempleados($datos->numempleados);
                 }
@@ -2169,10 +2185,18 @@ class crmActions extends sfActions {
 
                 $cliente->save();
                 
-                if ($datos->forma_pago) {
+                if ($datos->forma_pago or $datos->respon or $datos->matricula_mercantil) {
                     $ids = $cliente->getIds();
                     $ids_datos = json_decode($ids->getCaDatos());
-                    $ids_datos->forma_pago = $datos->forma_pago;
+                    if ($datos->forma_pago) {
+                        $ids_datos->forma_pago = $datos->forma_pago;
+                    }
+                    if ($datos->respon) {
+                        $ids_datos->responsabilidades = explode(",", $datos->respon);
+                    }
+                    if ($datos->matricula_mercantil) {
+                        $ids_datos->matricula_mercantil = $datos->matricula_mercantil;
+                    }
                     $ids_datos = json_encode($ids_datos);
                     $ids->setCaDatos($ids_datos);
                     $ids->save();
@@ -2233,7 +2257,8 @@ class crmActions extends sfActions {
 
         // Permisos propios del Representante de Ventas Dueño de la Cuenta
         $permisosDueno = array(1, 2, 3, 4, 6, 7, 9, 10, 11, 13, 14, 16, 17, 18);
-        if ($cliente->getCaVendedor() == $this->getUser()->getUserId() or ( $cliente->getCaVendedor() == '' and UsuarioTable::getUsuariosxPerfilxUsuario('comercial', $this->getUser()->getUserId()))) {
+        $pefilComercial = UsuarioTable::getUsuariosxPerfilxUsuario('comercial', $this->getUser()->getUserId());
+        if ($cliente->getCaVendedor() == $this->getUser()->getUserId() or ( $cliente->getCaVendedor() == '' and count($pefilComercial)>0)) {
             $user = $this->getUser();
             $permisosRutinas = $user->getControlAcceso(self::RUTINA_CRM);
             $tipopermisos = $user->getAccesoTotalRutina(self::RUTINA_CRM);
