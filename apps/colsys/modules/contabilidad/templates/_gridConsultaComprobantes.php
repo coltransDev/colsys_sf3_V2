@@ -224,8 +224,10 @@ $permisos = $sf_data->getRaw("permisos");
                             { name: 'ca_valor2'+this.idgrid,        mapping: 'ca_valor2'        },
                             { name: 'ca_idfacturado'+this.idgrid,   mapping: 'ca_idfacturado'   },
                             { name: 'ca_nomfacturado'+this.idgrid,  mapping: 'ca_nomfacturado'  },
-                            { name: 'ca_idmoneda'+this.idgrid,      mapping: 'ca_idmoneda'  },
-                            { name: 'ca_fchllegada'+this.idgrid,    mapping: 'ca_fchllegada'  }
+                            { name: 'ca_idmoneda'+this.idgrid,      mapping: 'ca_idmoneda'      },
+                            { name: 'ca_fchllegada'+this.idgrid,    mapping: 'ca_fchllegada'    },
+                            { name: 'ca_usugenero'+this.idgrid,     mapping: 'ca_usugenero'     },
+                            { name: 'ca_fchgenero'+this.idgrid,     mapping: 'ca_fchgenero'     }
                         ],
                         autoLoad:false,
                         remoteSort: false,
@@ -262,8 +264,9 @@ $permisos = $sf_data->getRaw("permisos");
                         {text: "Tercero",       dataIndex: 'ca_idtercero'+this.idgrid,                              sortable: true},
                         {text: "Id",            dataIndex: 'ca_id'+this.idgrid,                                     sortable: true},
                         {text: "Fecha Comp",    dataIndex: 'ca_fchcomprobante'+this.idgrid,                         sortable: true},
-                        {text: "Fecha LLegada", dataIndex: 'ca_fchllegada'+this.idgrid,                         sortable: true},
-                        
+                        {text: "Fecha LLegada", dataIndex: 'ca_fchllegada'+this.idgrid,                             sortable: true},
+                        {text: "Usu. Genero",   dataIndex: 'ca_usugenero'+this.idgrid,                              sortable: true},
+                        {text: "Fch. Genero",   dataIndex: 'ca_fchgenero'+this.idgrid,                              sortable: true}                        
                     ]
                 )
         
