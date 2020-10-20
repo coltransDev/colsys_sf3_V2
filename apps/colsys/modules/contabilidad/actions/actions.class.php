@@ -78,7 +78,7 @@ class contabilidadActions extends sfActions {
                 $childrens1[] = array("text" => "Parametros Generales", "leaf" => true, "id" => "8");
                 $childrens1[] = array("text" => "Parametros Clientes", "leaf" => true, "id" => "9");
 
-                $childrens[] = array("text" => utf8_encode("Administración"), "leaf" => false, "children" => $childrens1);
+                $childrens[] = array("text" => utf8_encode("Administraci&oacute;n"), "leaf" => false, "children" => $childrens1);
             }
             $childrens1 = array();
             $childrens1[] = array("text" => "Consulta", "leaf" => true, "id" => "3");
@@ -88,11 +88,12 @@ class contabilidadActions extends sfActions {
             $childrens[] = array("text" => "Comprobantes", "leaf" => false, "children" => $childrens1);
 
             $childrens1 = array();
-            $childrens1[] = array("text" => utf8_encode("Facturación"), "leaf" => true, "id" => "4");
+            $childrens1[] = array("text" => utf8_encode("Facturaci&oacute;n"), "leaf" => true, "id" => "4");
             $childrens[] = array("text" => "Coldepositos", "leaf" => false, "children" => $childrens1);
             
             $childrens1 = array();
             $childrens1[] = array("text" => "Panel de Transacciones", "leaf" => true, "id" => "12");
+            $childrens1[] = array("text" => "Metodos FE", "leaf" => true, "id" => "14");
             $childrens[] = array("text" => "Integracion", "leaf" => false, "children" => $childrens1);
         }
 
@@ -301,6 +302,7 @@ class contabilidadActions extends sfActions {
         $no_comprobante2 = $request->getParameter("no_comprobante2");
         $ca_referencia = $request->getParameter("ca_referencia");
         $ca_estado = $request->getParameter("ca_estado");
+        $ca_idempresa = $request->getParameter("ca_idempresa");
 
         $q = Doctrine::getTable("InoViConsComprobante")
                 ->createQuery("s")
@@ -309,10 +311,10 @@ class contabilidadActions extends sfActions {
                 ->setHydrationMode(Doctrine::HYDRATE_ARRAY);
 
         if ($fecha_inicial != "") {
-            $q->addWhere("ca_fchgenero >= ?", $fecha_inicial);
+            $q->addWhere("ca_fchgenero >= ?", $fecha_inicial." 00:00:00");
         }
         if ($fecha_final != "") {
-            $q->addWhere("ca_fchgenero <= ?", $fecha_final);
+            $q->addWhere("ca_fchgenero <= ?", $fecha_final." 23:59:59");
         }
 
         if ($no_comprobante != "" && $no_comprobante2 == "") {
@@ -332,6 +334,9 @@ class contabilidadActions extends sfActions {
         if ($ca_estado != "") {
             $q->addWhere("ca_estado = ?", $ca_estado);
         }
+        if ($ca_idempresa != "") {
+            $q->addWhere("ca_idempresa = ?", $ca_idempresa);
+        }
 
         $comprobantes = $q->execute();
 
@@ -341,18 +346,22 @@ class contabilidadActions extends sfActions {
             $comprobantes[$k]["ca_impoexpo"] = utf8_encode($comprobantes[$k]["ca_impoexpo"]);
             $comprobantes[$k]["ca_ciuorigen"] = utf8_encode($comprobantes[$k]["ca_ciuorigen"]);
             $comprobantes[$k]["ca_ciudestino"] = utf8_encode($comprobantes[$k]["ca_ciudestino"]);
+            $comprobantes[$k]["ca_succliente"] = utf8_encode($comprobantes[$k]["ca_succliente"]);
             $comprobantes[$k]["ca_empresa"] = utf8_encode($comprobantes[$k]["ca_empresa"]);
             $comprobantes[$k]["ca_nomfacturado"] = utf8_encode($comprobantes[$k]["ca_nomfacturado"]);
             $comprobantes[$k]["ca_consecutivo"] = $comprobantes[$k]["ca_tipo"] . $comprobantes[$k]["ca_comprobante"] . "-" . $comprobantes[$k]["ca_consecutivo"];
             $comprobantes[$k]["ca_valor"] = round($comprobantes[$k]["ca_valor"]);
             $comprobantes[$k]["ca_valor2"] = round($comprobantes[$k]["ca_valor2"]);
             $comprobantes[$k]["ca_datos"] = utf8_encode($comprobantes[$k]["ca_datos"]);
+            $comprobantes[$k]["ca_usugenero"] = utf8_encode($comprobantes[$k]["ca_usugenero"]);
+            $comprobantes[$k]["ca_fchgenero"] = utf8_encode($comprobantes[$k]["ca_fchgenero"]);
             
             $file = "/inocomprobantes/generarComprobantePDF/id/" . $comprobantes[$k]["ca_idcomprobante"]."/sap/1";
             
             $comprobantes[$k]["file"] = $file;
         }
         //echo "<pre>";print_r($comprobantes);echo "</pre>";
+        
         $this->responseArray = array("root" => $comprobantes, "success" => true, "debug" => $q->getSqlQuery());
         $this->setTemplate("responseTemplate");
     }
@@ -893,7 +902,7 @@ class contabilidadActions extends sfActions {
                         $info.= "Comprobante #: ".$valor["idcomprobante"]."Referencia: ".$referencia." # ".$valor["consecutivo"]." Doc Transporte: ".$valor["doctransporte"]." Id concepto: ".$valor["concepto"]."\n";
                     }
                     
-                    $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("Ya existe un comprobante de costo con los mismos datos! Revise la información y vuelva a intentarlo. $info"));
+                    $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("Ya existe un comprobante de costo con los mismos datos! Revise la informaciï¿½n y vuelva a intentarlo. $info"));
                 }else{
                     $conn->commit();
 
@@ -1219,16 +1228,16 @@ class contabilidadActions extends sfActions {
                     $transacciones[$k]["it_ca_tipodet"] = "Factura de Compra";
                     break;
                 case 2:
-                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Cancelación de comprobantes");
+                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Cancelaciï¿½n de comprobantes");
                     break;
                 case 3:
                     $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Pagos Recibidos");
                     break;
                 case 4:
-                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Activación Cliente");
+                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Activaciï¿½n Cliente");
                     break;
                 case 5:
-                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Activación Conceptos");
+                    $transacciones[$k]["it_ca_tipodet"] = utf8_encode("Activaciï¿½n Conceptos");
                     break;
             }
         }
