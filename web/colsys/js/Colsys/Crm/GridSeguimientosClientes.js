@@ -99,6 +99,19 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                 }
             },
             {
+                xtype: 'button',
+                text: 'Exportar XLXS',
+                id: 'bar-exporter-'+ id,
+                iconCls: 'csv',
+                handler: function(){       
+                    this.cfg = {
+                        type: 'excel07',
+                        ext: 'xlsx'
+                    }
+                    this.addExporter(this.up("grid"), this.cfg, "Informe de Seguimientos", 15000);
+                }
+            },
+            {
                 xtype: "textfield",                    
                 labelAlign: 'right',
                 fieldLabel: 'B\u00fasqueda',
@@ -127,43 +140,58 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                         }
                     }
                 }
-            },             
+            },
             {
-                xtype:'fieldset',
-                id: 'bar-fieldset-'+ id,
-                title: 'Buscar x Fecha',
+                xtype: 'fieldset',
+                title: 'B&uacute;squeda Avanzada',
+                collapsible: true,
+                collapsed: true,
+                id: 'bar-fieldset-avanzada'+ id,
+                instructions: 'Tell us all about yourself',
                 layout: {
-                    type: 'hbox',
+                    type: 'vbox',
                     align: 'stretch'
                 },
-                defaults:{
-                    padding: 3
-                },
-                items:[
+                items: [
                     {
-                        xtype: 'datefield',                        
-                        labelAlign : 'right',
-                        flex: 1,                        
-                        fieldLabel: 'Desde',
-                        id: 'date-ini-'+id,
-                        format: "Y-m-d",
-                        altFormat: "Y-m-d",
-                        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-                        submitFormat: 'Y-m-d'
-                    },
-                    {
-                        xtype: 'datefield',                        
-                        labelAlign : 'right',
+                        xtype:'fieldset',
+                        id: 'bar-fieldset-'+ id,
+                        title: 'x Fecha',
                         flex: 1,
-                        fieldLabel: 'Hasta',
-                        id: 'date-end-'+id,
-                        format: "Y-m-d",
-                        altFormat: "Y-m-d",
-                        renderer: Ext.util.Format.dateRenderer('Y-m-d'),
-                        submitFormat: 'Y-m-d'
+                        layout: {
+                            type: 'vbox',
+                            align: 'stretch'
+                        },
+                        defaults:{
+                            padding: 3
+                        },
+                        items:[
+                            {
+                                xtype: 'datefield',                        
+                                labelAlign : 'right',
+                                flex: 1,                        
+                                fieldLabel: 'Desde',
+                                id: 'date-ini-'+id,
+                                format: "Y-m-d",
+                                altFormat: "Y-m-d",
+                                renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+                                submitFormat: 'Y-m-d'
+                            },
+                            {
+                                xtype: 'datefield',                        
+                                labelAlign : 'right',
+                                flex: 1,
+                                fieldLabel: 'Hasta',
+                                id: 'date-end-'+id,
+                                format: "Y-m-d",
+                                altFormat: "Y-m-d",
+                                renderer: Ext.util.Format.dateRenderer('Y-m-d'),
+                                submitFormat: 'Y-m-d'
+                            }
+                        ]
                     }
                 ]
-            },
+            },                        
             {
                 xtype: 'button',
                 hideLabel: false,
@@ -176,15 +204,23 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
 
                     var fchini = Ext.util.Format.date(Ext.getCmp("date-ini-"+id).getValue(),'Y-m-d');
                     var fchend = Ext.util.Format.date(Ext.getCmp("date-end-"+id).getValue(),'Y-m-d');
-
+                    
                     var store =  t.up('grid').getStore();                        
                     if(fchini != null && fchend != null){
                         store.getProxy().extraParams.login = me.login;
                         store.getProxy().extraParams.idsucursal = me.idsucursal;
                         store.getProxy().extraParams.fchini = fchini;
                         store.getProxy().extraParams.fchend = fchend;
+                        store.getProxy().extraParams.fchend = fchend;
                     }
-                    //store.load();
+                    
+                    if(Ext.getCmp("cliente"+id).getValue()){
+                        store.getProxy().extraParams.id = Ext.getCmp("cliente"+id).getValue();
+                    }
+                    if(Ext.getCmp("loginVendedor"+id).getValue()){
+                        store.getProxy().extraParams.vendedor = Ext.getCmp("loginVendedor"+id).getValue();
+                    }
+                    
                     store.load({
                         callback: function (records, operation, success) {                            
                             if(success == true){
@@ -208,22 +244,19 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                     
                     
                 }                    
-            }, {
-                xtype: 'button',
-                text: 'Exportar XLXS',
-                id: 'bar-exporter-'+ id,
-                iconCls: 'csv',
-                handler: function(){       
-                    this.cfg = {
-                        type: 'excel07',
-                        ext: 'xlsx'
-                    }
-                    this.addExporter(this.up("grid"), this.cfg, "Informe de Seguimientos", 15000);
-                }
             });            
             this.addDocked(obj);        
         },
         render: function (me, position) {
+            
+            if(this.login)
+                var id = me.login
+            
+            if(this.idcliente)
+                var id = me.idcliente
+            
+            if(this.idsucursal)
+                var id = me.idsucursal
             
             this.reconfigure(
                     store = Ext.create('Ext.data.Store', {
@@ -239,7 +272,11 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                             {name: 'empresas', type: 'string', mapping: 'empresas'},
                             {name: 'asunto', type: 'string', mapping: 'asunto'},
                             {name: 'detalle', type: 'string', mapping: 'detalle'},
-                            {name: 'compromisos', type: 'string', mapping: 'compromisos'}
+                            {name: 'compromisos', type: 'string', mapping: 'compromisos'},
+                            {name: 'estcoltrans', type: 'string', mapping: 'est_coltrans'},
+                            {name: 'estcolmas', type: 'string', mapping: 'est_colmas'},
+                            {name: 'estcolotm', type: 'string', mapping: 'est_colotm'},
+                            {name: 'estcoldepositos', type: 'string', mapping: 'est_coldepositos'}
                         ],
                         proxy: {
                             type: 'ajax',
@@ -283,10 +320,29 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                             dataIndex: 'detalle',
                             width: 350
                         }, {
-                            header: "Compromisos",
-                            dataIndex: 'compromisos',
-                            width: 250
-                        }
+                            header: "Est. Coltrans",
+                            dataIndex: 'estcoltrans',
+                            width: 120,
+                            hidden: true
+                        },
+                        {
+                            header: "Est. Colmas",
+                            dataIndex: 'estcolmas',
+                            width: 120,
+                            hidden: true
+                        },
+                        {
+                            header: "Est. Colotm",
+                            dataIndex: 'estcolotm',
+                            width: 120,
+                            hidden: true
+                        },
+                        {
+                            header: "Est. Coldepositos",
+                            dataIndex: 'estcoldepositos',
+                            width: 120,
+                            hidden: true
+                        }                        
                 ]
             );
             if(this.login){
@@ -381,8 +437,30 @@ Ext.define('Colsys.Crm.GridSeguimientosClientes', {
                 this.headerCt.insert(0, comercialColumn);
                 this.headerCt.insert(1, companiaColumn);
                 this.headerCt.insert(this.columns.length, openColumn1);
-                this.store.setGroupField(['comercial']);
-                this.getView().refresh();
+                this.store.setGroupField(['comercial']);                
+                
+                tbar = Ext.getCmp('bar-fieldset-avanzada'+ id);                
+                tbar.insert(1,{
+                    xtype: 'Colsys.Widgets.WgComerciales',
+                    fieldLabel: 'x Comercial',
+                    id: 'loginVendedor'+ id,
+                    name: 'loginVendedor',
+                    flex: 1
+                    });
+                tbar.insert(2,{
+                    xtype: 'Colsys.Widgets.WgClientes',
+                    fieldLabel: 'x Cliente',
+                    name: 'cliente',
+                    id: 'cliente'+ id,
+                    labelWidth: 100,  
+                    flex: 1,
+                    listeners: {
+                        beforerender: function (ct, position) {
+                            this.store.proxy.url = '/widgets5/listaClientesJSON';
+                        }
+                    }
+                });
+                this.getView().refresh();                
         }
     }
     },
