@@ -1102,3 +1102,40 @@ IdsEstadoSap:
       foreign: ca_login
       type: one
       class: Usuario
+
+ViClientesSeguimientos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: ids
+  tableName: vi_clientes_seguimientos
+  columns:
+    ca_idevento:
+     type: integer
+     primary: true
+     autoincrement: true
+    ca_idcliente: integer
+    ca_fchevento: timestamp
+    ca_tipo: string
+    ca_asunto: string
+    ca_detalle: string
+    ca_compromisos: string
+    ca_fchcompromiso: timestamp
+    ca_idantecedente: integer
+    ca_usuario: string
+    ca_datos: text
+    ca_vendedor: string
+    ca_coltrans_std: string
+    ca_colmas_std: string
+    ca_colotm_std: string
+    ca_coldepositos_std: string
+  relations:
+    IdsCliente:
+     local: ca_idcliente
+     foreign: ca_idcliente
+     type: one
+    Usuario:
+     local: ca_usuario
+     foreign: ca_login
+     type: one
