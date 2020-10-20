@@ -46,6 +46,13 @@ Ext.define('FormConsultaComprobantes', {
                                         this.up("form").SpecialKey(field, e);                                                    
                                 }
                             }
+                        },
+                        {
+                            xtype: 'Colsys.Widgets.wgEmpresas',
+                            fieldLabel: 'Empresa',
+                            name: 'ca_idempresa',
+                            allowBlank: false,
+                            id: 'ca_idempresa'+this.idpanel
                         }]
                     },
                     {            
@@ -167,6 +174,7 @@ Ext.define('FormConsultaComprobantes', {
             var ca_referencia = Ext.getCmp("ca_referencia"+idpanel).getValue();
             var no_comprobante2 = Ext.getCmp("no_comprobante2"+idpanel).getValue();
             var ca_estado = Ext.getCmp("ca_estado"+idpanel).getValue();
+            var ca_idempresa = Ext.getCmp("ca_idempresa"+idpanel).getValue();
             
             var storeTree = Ext.getCmp("grid-consulta-comprobantes").getStore();
             storeTree.load({
@@ -177,7 +185,8 @@ Ext.define('FormConsultaComprobantes', {
                     'no_comprobante' : no_comprobante,
                     'no_comprobante2' : no_comprobante2,
                     'idtipocomprobante' : idtipocomprobante,
-                    'ca_estado': ca_estado
+                    'ca_estado': ca_estado,
+                    'ca_idempresa': ca_idempresa
                 }
             });
     }
