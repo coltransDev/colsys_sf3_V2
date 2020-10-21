@@ -305,8 +305,25 @@ class IntegracionSoap {
                                 $success = false;
                             }
                         } else {
+                            $mensajeRepaso = "";
                             $estado = 0;
-                            $mensaje = 'El comprobante ya existe! Id comprobante: '. $comprobante->getCaIdcomprobante().'Id Tipo C:'. $tipoComprobante->getCaIdtipo().' Nro Doc:'. $nrodocumento.'-Id cliente:'. $ids->getCaId();
+                            if($codigo == "C"){
+                                $repasar = $this->repasarComprobante($comprobante, $detalles, $codigo, $conn);                            
+                            
+                                if($repasar["mensaje"] == "")
+                                    $mensajeRepaso.= "Se revisaron todos los registros OK";
+                                else{
+                                    $mensajeRepaso.= $repasar["mensaje"];
+                                    if($repasar["nregistros"] > 0){
+                                        $mensajeRepaso.= "Abrir todas las referencias pendientes para registrar";
+                                    }else{
+                                        $mensajeRepaso.= "Referencias registradas correctamente";
+                                        $estado = 1;
+                                    }
+                                }
+                            }                            
+                            
+                            $mensaje = 'El comprobante ya existe! Id comprobante: '. $comprobante->getCaIdcomprobante().'Id Tipo C:'. $tipoComprobante->getCaIdtipo().' Nro Doc:'. $nrodocumento.'-Id cliente:'. $ids->getCaId()."|".$mensajeRepaso;
                             $reenvio = "n";
                             $success = "false";
                         }
@@ -748,6 +765,65 @@ class IntegracionSoap {
         $this->responseArray = $respuesta;
 
         return $this->responseArray;
+    }
+    
+    /**
+     * activacionConcepto method
+     *     
+     * @param int $company     
+     * @param string $json
+     * @param string $transaccion
+     * @return array string
+     */
+    private function repasarComprobante($comprobante, $detalles, $codigo, $conn) {
+        $i = 0;
+        $mensaje = "";
+        foreach ($detalles as $dt) {
+            
+            $inoMaster = Doctrine::getTable("InoMaster")->findOneBy("ca_referencia", $dt->PrjCode);
+            $inoDetalle = Doctrine::getTable("InoDetalle")->findByDql('ca_idcomprobante = ? AND ca_idconcepto = ? and ca_idmaster = ? AND ca_id = ?', array($comprobante->getCaIdcomprobante(), $dt->ItemCode, $inoMaster->getCaIdmaster(), $comprobante->getCaId()))->getFirst();
+            if($inoDetalle){
+                //echo $i.". SI Existe. Referencia=>".$inoMaster->getCaReferencia()." - Idconcepto=>".$inoDetalle->getCaIdconcepto()."<br/>";
+            }else{                
+                if($inoMaster->getCaFchliquidado() == "" || $inoMaster->getCaFchliquidado() == null){                    
+                    $inodetalleF = new InoDetalle();
+                    $inodetalleF->setCaIdcomprobante($comprobante->getCaIdcomprobante());
+                    $inodetalleF->setCaIdconcepto($dt->ItemCode);
+                    $inodetalleF->setCaIdmaster($inoMaster->getCaIdmaster());
+                    $inodetalleF->setCaId($comprobante->getCaId());
+                    $inodetalleF->setCaDb($codigo == "RC" ?$dt->VlrArticulo:0);
+                    $inodetalleF->setCaCr($codigo == "RC" ?0:$dt->VlrArticulo);
+                    $inodetalleF->setCaUsucreado("sap");
+                    $inodetalleF->setCaFchcreado(date("Y-m-d H:i:s"));
+                    $inodetalleF->stopBlaming();
+                    $inodetalleF->save($conn);
+
+                    $costo = new InoCosto();
+                    $costo->setCaIdmaster($inoMaster->getCaIdmaster());
+                    $costo->setCaIdcosto($dt->ItemCode);
+                    $costo->setCaFactura($comprobante->getCaConsecutivo());
+                    $costo->setCaFchfactura($comprobante->getCaFchcomprobante());
+                    $costo->setCaIdproveedor($comprobante->getCaId());
+                    $costo->setCaIdmoneda($comprobante->getCaIdmoneda());
+                    $costo->setCaTcambio($comprobante->getCaTcambio());
+                    $costo->setCaTcambioUsd(1);
+                    $costo->setCaNeto($codigo == "RC" ? $dt->VlrArticulo * -1 : $dt->VlrArticulo);
+                    $costo->setCaVenta($codigo == "RC" ? $dt->VlrArticulo * -1 * $comprobante->getCaTcambio() : $dt->VlrArticulo * $comprobante->getCaTcambio());
+                    $costo->setCaIdcomprobante($comprobante->getCaIdcomprobante());
+                    $costo->setCaUsucreado("sap");
+                    $costo->setCaFchcreado(date("Y-m-d H:i:s"));
+                    $costo->stopBlaming();
+                    $costo->save($conn);
+                    
+                    $mensaje.=$i.".".$inoMaster->getCaReferencia()." OK ";
+
+                }else{                    
+                    $i++;
+                    $mensaje.=$i.".".$inoMaster->getCaReferencia()." CERRADA.";                    
+                }
+            }
+        }        
+        return array("nregistros"=>$i, "mensaje"=>$mensaje);
     }
 }
 ?>
