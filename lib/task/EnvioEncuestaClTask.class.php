@@ -28,8 +28,9 @@ EOF;
 	$databaseManager->loadConfiguration();
 
 	sfContext::createInstance($this->configuration)->dispatch();	
-	
-	echo sfContext::getInstance()->getController()->getPresentationFor( 'formulario', 'envioEmailsColtrans');
+	sfContext::getInstance()->getRequest()->setParameter("id", 25);
+        //sfContext::getInstance()->getRequest()->setParameter("tipoenvio", "encuesta");
+	echo sfContext::getInstance()->getController()->getPresentationFor( 'formulario', 'envioEmailsColmas');
   }
 }
 
