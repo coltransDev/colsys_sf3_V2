@@ -130,10 +130,8 @@
                                 </p>
                                 <table width="100%"><tr><td>
                                     <p align="justify">
-
-                                        <img src="https://www.colsys.com.co/images/pdf/iso.jpg" width="80" height="80">
-                                        <img src="https://www.colsys.com.co/images/pdf/basc.jpg" width="92" height="80">
-                                        <img src="https://www.colsys.com.co/images/pdf/iata.jpg" width="80" height="60">
+                                        <img src="https://www.colsys.com.co/images/pdf/iso_colmas.jpg" width="80" height="90">
+                                        <img src="https://www.colsys.com.co/images/pdf/basc.jpg" width="112" height="90">                                                                    
 
                                     </p>
                                     </td>

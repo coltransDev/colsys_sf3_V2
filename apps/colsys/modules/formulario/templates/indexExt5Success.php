@@ -172,7 +172,7 @@
                                                         icon: Ext.Msg.INFO,
                                                         fn: function(btn) {
                                                             if (btn === 'ok') {
-                                                                window.location.href = 'https://www.coltrans.com.co';
+                                                                window.location.href = 'http://www.colmas.com.co';
                                                             }
                                                         }
                                                     });
@@ -184,7 +184,7 @@
                                                         icon: Ext.Msg.WARNING,
                                                         fn: function(btn) {
                                                             if (btn === 'ok') {
-                                                                window.location.href = 'https://www.coltrans.com.co';
+                                                                window.location.href = 'http://www.colmas.com.co';
                                                             }
                                                         }
                                                     });  
