@@ -31,10 +31,17 @@ $modo = $sf_data->getRaw("modo");
                             <b><?= strtoupper($cliente->getCaCompania()) ?></b>
                             <?
                         } else {
-                            foreach ($inoClientes as $inoCliente) {
-                                ?>
-                                <b><?= strtoupper($inoCliente->getCliente()->getCaCompania()) ?></b>
-                                <?
+                            foreach ($inoClientes as $inoCliente) {                                
+                                if($user->getSucursal()->getCaIdempresa()== 8){/*USUARIO QUE ENVIA ES DE COLOTM*/
+                                    ?>
+                                    <b><?= strtoupper($cliente->getCaCompania()) ?></b>
+                                    <?
+                                }else{
+                                    ?>
+                                    <b><?= strtoupper($inoCliente->getCliente()->getCaCompania()) ?></b>
+                                    <?
+                                }
+                                break;
                             }
                         }
                     }
