@@ -427,14 +427,16 @@ Ext.extend(PanelPreviewTicket, Ext.TabPanel, {
     },
 
     openTab : function(){
-        var idticket = this.idticket;
+        var idticket = this.idticket;        
+        var department = this.department;
 
         var newComponent = new Ext.Panel({
                                             closable: true,
-                                            title: 'Ticket # '+idticket,
+                                            title: 'Ticket # '+idticket,                                            
                                             //autoHeight: true,
                                             items: new PanelPreviewTicket({
-                                                 idticket: idticket
+                                                 idticket: idticket,
+                                                 department: department,
                                                 })
                                           });
         Ext.getCmp('tab-panel').add(newComponent);
