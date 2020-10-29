@@ -2032,6 +2032,9 @@ class pmActions extends sfActions {
                 case "idticket":
                     $q->addWhere("t.ca_idticket = ?", intval($query));
                     break;
+                case "titulo":
+                    $q->addWhere("(LOWER(t.ca_title) LIKE ?)", array("%" . strtolower($query) . "%"));
+                    break;
                 case "texto":
                     $q->addWhere("(LOWER(t.ca_title) LIKE ? OR LOWER(t.ca_text) LIKE ? OR LOWER(r.ca_text) LIKE ?)", array("%" . strtolower($query) . "%", "%" . strtolower($query) . "%", "%" . strtolower($query) . "%"));
                     break;

@@ -170,6 +170,7 @@ BusquedaTicketWindow = function( config ) {
         value: "idticket",
         store : [
             ["idticket","# ticket"],        
+            ["titulo","Titulo del ticket"],
             ["texto","Entre los textos"],
             ["reportedBy","Reportado por"],
             ["documento","Documento"],
