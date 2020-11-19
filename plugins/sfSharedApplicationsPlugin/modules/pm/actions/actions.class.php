@@ -966,6 +966,9 @@ class pmActions extends sfActions {
                 $tarea->notificar($conn);
             }
             if ($changeDepto == true) {
+                $ticket->setCaAssignedto(null);
+                $ticket->save($conn);
+                
                 $email = new Email();
                 $email->setCaUsuenvio($this->getUser()->getUserId());
                 $email->setCaTipo("Notificación");
