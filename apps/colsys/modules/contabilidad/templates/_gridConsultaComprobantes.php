@@ -227,7 +227,9 @@ $permisos = $sf_data->getRaw("permisos");
                             { name: 'ca_idmoneda'+this.idgrid,      mapping: 'ca_idmoneda'      },
                             { name: 'ca_fchllegada'+this.idgrid,    mapping: 'ca_fchllegada'    },
                             { name: 'ca_usugenero'+this.idgrid,     mapping: 'ca_usugenero'     },
-                            { name: 'ca_fchgenero'+this.idgrid,     mapping: 'ca_fchgenero'     }
+                            { name: 'ca_fchgenero'+this.idgrid,     mapping: 'ca_fchgenero'     },
+                            { name: 'ca_estado'+this.idgrid,        mapping: 'ca_estado'        },
+                            { name: 'ca_tcambio'+this.idgrid,       mapping: 'ca_tcambio'       }
                         ],
                         autoLoad:false,
                         remoteSort: false,
@@ -248,8 +250,9 @@ $permisos = $sf_data->getRaw("permisos");
                         {text: "Referencia"    ,   dataIndex: 'ca_referencia'+this.idgrid,     xtype:'templatecolumn', sortable: true, width:130,  tpl:'<a href="/inoF2/indexExt5/idmaster/{ca_idmaster}" target="_blank">{ca_referencia}</a>'},
                         {text: "Comprobante #"   ,   dataIndex: 'ca_consecutivo'+this.idgrid,    xtype:'templatecolumn', sortable: true, 
                         tpl:'<a href="javascript:verComprobante(\'{ca_idmoneda}\',\'{file}\',\'{ca_idmaster}\')">{ca_consecutivo}</a>'},
-                        {text: "Moneda"      ,  dataIndex: 'ca_idmoneda'+this.idgrid,                                 sortable: true},
-                        {text: "Valor"      ,   dataIndex: 'ca_valor'+this.idgrid,                                  sortable: true},
+                        {text: "Moneda"      ,  dataIndex: 'ca_idmoneda'+this.idgrid,                               sortable: true},
+                        {text: "T. Cambio",     dataIndex: 'ca_tcambio'+this.idgrid,                                sortable: true},                        
+                        {text: "Valor"      ,   dataIndex: 'ca_valor'+this.idgrid,                                  sortable: true},                        
                         {text: "Valor + Imp",   dataIndex: 'ca_valor2'+this.idgrid,                                 sortable: true},                        
                         {text: "Empresa",       dataIndex: 'ca_empresa'+this.idgrid,                                sortable: true},
                         {text: "Transporte" ,   dataIndex: 'ca_transporte'+this.idgrid,                             sortable: true},            
@@ -266,7 +269,26 @@ $permisos = $sf_data->getRaw("permisos");
                         {text: "Fecha Comp",    dataIndex: 'ca_fchcomprobante'+this.idgrid,                         sortable: true},
                         {text: "Fecha LLegada", dataIndex: 'ca_fchllegada'+this.idgrid,                             sortable: true},
                         {text: "Usu. Genero",   dataIndex: 'ca_usugenero'+this.idgrid,                              sortable: true},
-                        {text: "Fch. Genero",   dataIndex: 'ca_fchgenero'+this.idgrid,                              sortable: true}                        
+                        {text: "Fch. Genero",   dataIndex: 'ca_fchgenero'+this.idgrid,                              sortable: true},
+                        {text: "Estado",        dataIndex: 'ca_estado'+this.idgrid,                                 sortable: true,
+                            renderer: function (val){
+                                switch (val) {
+                                    case 0:
+                                        return 'ABIERTO';
+                                    case 1:
+                                        return 'PARA TRANSFERIR';
+                                    case 5:
+                                        return 'TRANSFERIDO';
+                                    case 6:
+                                        return 'ERROR TRANSFERIDO';
+                                    case 8:
+                                        return 'ANULADO';
+                                    default:
+                                        return 'SIN DEFINIR';
+
+                                }                               
+                            }
+                        }
                     ]
                 )
         
