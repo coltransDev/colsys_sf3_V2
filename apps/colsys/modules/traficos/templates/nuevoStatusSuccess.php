@@ -240,6 +240,16 @@ $folder = $reporte->getDirectorioBase();
                 ?>
                     case '<?= $etapa->getCaIdetapa() ?>':
                         document.getElementById("asuntoIntro").innerHTML = "<?= $etapa->getIntroAsunto() ?>";
+                        <?
+                        if($reporte->getCaImpoexpo() == Constantes::EXPO){
+                            ?>
+                            var asunto = document.getElementById("asunto").value;                            
+                            var preasunto = document.getElementById("asuntoIntro").innerHTML=="Status"?"Status ":document.getElementById("asuntoIntro").innerHTML;
+                            var complemento = asunto.substr(asunto.indexOf("Id.:"));
+                            document.getElementById("asunto").value = preasunto + complemento;
+                            <?
+                        }
+                        ?>
                         break;
                 <?
                 }
