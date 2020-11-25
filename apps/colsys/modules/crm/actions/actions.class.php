@@ -455,6 +455,8 @@ class crmActions extends sfActions {
 
             $data["actividad_economica"] = utf8_encode($vista["ca_actividad"]);
             $data["preferencias"] = utf8_encode($vista["ca_preferencias"]);
+            $data["responTributaria"] = "ResponTributaria [".$cliente->getResponTributaria()."]";
+            $data["responFiscal"] = "ResponFiscal [".$cliente->getResponFiscal()."]";
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
@@ -907,31 +909,6 @@ class crmActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
-    public function executeDatosHistoricoClientes(sfWebRequest $request) {
-        $idCliente = $request->getParameter("idcliente");
-
-        $auditorias = Doctrine::getTable("IdsAuditoria")
-                ->createQuery("i")
-                ->addWhere('i.ca_idcliente = ?', $idCliente)
-                ->addOrderBy("i.ca_stamp DESC")
-                ->execute();
-
-        $data = array();
-        $operaciones = array("I" => "Nuevo Registro", "U" => "Actualización", "D" => "Borrado");
-        foreach ($auditorias as $auditoria) {
-            $data[] = array("operacion" => utf8_encode($operaciones[$auditoria->getCaOperation()]),
-                "fecha" => utf8_encode($auditoria->getCaStamp()),
-                "usuario" => utf8_encode($auditoria->getCaUserid()),
-                "tabla" => utf8_encode($auditoria->getCaTableName()),
-                "campo" => utf8_encode(($auditoria->getCaFieldName() == "ca_listaclinton") ? "ca_listavinculante" : $auditoria->getCaFieldName()),
-                "dato_anterior" => utf8_encode($auditoria->getCaValueOld()),
-                "dato_nuevo" => utf8_encode($auditoria->getCaValueNew()));
-        }
-
-        $this->responseArray = array("success" => true, "root" => $data);
-        $this->setTemplate("responseTemplate");
-    }
-
     public function executeDatosCambiosEstadoClientes(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
 
@@ -991,6 +968,7 @@ class crmActions extends sfActions {
         $vendedor = $request->getParameter("vendedor");
 
         try{
+            $searchByDate = false;
             $q = Doctrine::getTable("ViClientesSeguimientos")
                     ->createQuery("e")
                     ->select("e.*")
@@ -1000,6 +978,7 @@ class crmActions extends sfActions {
                 $q->addWhere('e.ca_idcliente = ?', $idCliente);
             
             if($fchini != null && $fchend != null){
+                $searchByDate = true;
                 list($year, $month, $day) = sscanf($fchini, "%d-%d-%d");                
                 $fchini = date('Y-m-d H:i:s', mktime(0, 0, 0, $month, $day, $year));
                 
@@ -1019,9 +998,23 @@ class crmActions extends sfActions {
                 $q->limit(5000);
             }
                 
-            if($login){
-                //$q->innerJoin("e.IdsCliente cl");
+            if($login){                
                 $q->addWhere("e.ca_vendedor = ?", $login);
+                
+                if(!$searchByDate){
+                    $ultseguimiento = Doctrine::getTable("ViClientesSeguimientos")->createQuery("e")->where("e.ca_vendedor = ?",$login)->orderBy("ca_fchevento DESC")->fetchOne();
+                    if($ultseguimiento){
+                        list($year, $month, $day) = sscanf($ultseguimiento->getCaFchevento(), "%d-%d-%d");                
+                        $fchfin = date('Y-m-d H:i:s', mktime(0, 0, 0, $month, $day, $year));
+                    }else
+                        $fchfin = date("Y-m-d");
+                    
+                    $dias = 30;
+
+                    $fchlimite = strtotime ( '-'.$dias.' day' , strtotime ($fchfin) ) ;
+                    $fchlimite = date('Y-m-d', $fchlimite);
+                    $q->addWhere ("e.ca_fchevento BETWEEN ? AND ?", array($fchlimite, $fchfin));                                        
+                }
             }
             
             if($idsucursal){
@@ -1237,7 +1230,7 @@ class crmActions extends sfActions {
     public function executeGuardarDatosCliente(sfWebRequest $request) {
         $idCliente = $request->getParameter("idcliente");
         $idalterno_id = strtoupper($request->getParameter("idalterno_id"));
-        $cliente_nuevo = false;
+        $cliente_nuevo = $consulta_rl = false;
         $sucursal_nueva = false;
         if ($idCliente) {
             $cliente = Doctrine::getTable("IdsCliente")
@@ -1288,9 +1281,11 @@ class crmActions extends sfActions {
 
             $cliente->setCaVendedor(utf8_decode($request->getParameter("comercial")));
             $cliente->setCaCoordinador(utf8_decode($request->getParameter("coord_aduana")));
+            if ($cliente->getCaNumidentificacionRl()!=$request->getParameter("idRepresentante") or $cliente->getCaNombres()!=utf8_decode($request->getParameter("nombre")) or $cliente->getCaPapellido()!=utf8_decode($request->getParameter("apellido1")) or $cliente->getCaSapellido()!=utf8_decode($request->getParameter("apellido2"))) {
+                $consulta_rl = true;
+            }
 
             $idtrafico = $ids->getIdsTipoIdentificacion()->getCaIdtrafico();
-
             if ($idtrafico == "CO-057") {
                 //Direccion
                 $direccion = "";
@@ -1406,7 +1401,7 @@ class crmActions extends sfActions {
             }
 
             /* Lanza una Consulta sobre el Representante Legal */
-            if ($cliente_nuevo or $cliente->getCaNumidentificacionRl()!=$request->getParameter("idRepresentante") or $cliente->getCaNombres()!=utf8_decode($request->getParameter("nombre")) or $cliente->getCaPapellido()!=utf8_decode($request->getParameter("apellido1")) or $cliente->getCaSapellido()!=utf8_decode($request->getParameter("apellido2"))) {
+            if ($cliente_nuevo or $consulta_rl) {
                 IdsRestrictivasTable::lanzarConsultaInfolaft($ids->getCaId(), $cliente->getCaNumidentificacionRl(), $cliente->getRepresentanteLegal(), "Id&Nombre");
             }
 
@@ -3097,143 +3092,203 @@ class crmActions extends sfActions {
         $begin = 0;
         $end = count($array) - 1;
         echo "cantidad:" . $end . "<br>";
+
+        try {
+            $conn = Doctrine_Manager::getInstance()->connection();
+            $conn->beginTransaction();
         
-        echo "<table border=1>";
-        $msj = null;
-        $msj .= "<tr>";
-        $msj .= "   <th>#</th>";
-        $msj .= "   <th>NIT</th>";
-        $msj .= "   <th>NOMBRE</th>";
-        $msj .= "   <th>Dirección Fiscal</th>";
-        $msj .= "   <th>Dirección Correspondencia</th>";
-        $msj .= "   <th>Responsabilidad Fiscal</th>";
-        $msj .= "   <th>Responsabilidad Tributo</th>";
-//        $msj .= "   <th>Correos de notificación</th>";
-//        $msj .= "   <th>Matricula Mercantil</th>";
-        $msj .= "   <th>Accion Requerida</th>";
-        $msj .= "</tr>";
-        echo $msj;
-        $procesados = array();
-        $noencontrados = $encontrados = $noprocesado = 0;
-        for ($pos = $begin; $pos < $end; $pos++) {
-            $ids_datos = $cli_datos = null;
-            $acciones = "<ul>";
-            $row = $array[$pos];
+            echo "<table border=1>";
+            $msj = null;
+            $msj .= "<tr>";
+            $msj .= "   <th>#</th>";
+            $msj .= "   <th>NIT</th>";
+            $msj .= "   <th>NOMBRE</th>";
+            $msj .= "   <th>Dirección Fiscal</th>";
+            $msj .= "   <th>Dirección Correspondencia</th>";
+            $msj .= "   <th>Responsabilidad Fiscal</th>";
+            $msj .= "   <th>Responsabilidad Tributo</th>";
+    //        $msj .= "   <th>Correos de notificación</th>";
+    //        $msj .= "   <th>Matricula Mercantil</th>";
+            $msj .= "   <th>Accion Requerida</th>";
+            $msj .= "</tr>";
+            echo $msj;
+            $procesados = array();
+            $noencontrados = $encontrados = $noprocesado = 0;
+            for ($pos = $begin; $pos < $end; $pos++) {
+                $ids_datos = $cli_datos = null;
+                $acciones = "<ul>";
+                $row = $array[$pos];
 
-            if ($pos < 2 || $row[0] == "NIT") {
-                continue;
-            }
-            
-            if ($row[4] == "ZZ" && $row[5] == "ZZ") {
-                $noprocesado++;
-                continue;
-            }
-            if (in_array($row[0], $procesados)) {
-                continue;
-            } else {
-                $procesados[] = $row[0];
-            }
-            $ids = Doctrine::getTable("Ids")->findOneBy("ca_idalterno", $row[0]);
-            if (!$ids) {
-                $noencontrados++;
-                continue;
-            }
-            $ids_datos = json_decode(utf8_encode($ids->getCaDatos()));
-            $ids_respo = implode(",", $ids_datos->responsabilidades);
-            $cliente = $ids->getIdsCliente();
-            $encontrados++;
-            if ($row[4] != "ZZ") {
-                $repon_fiscal = explode(";", $row[4]);
-                foreach ($repon_fiscal as $respon) {
-                    $fiscal = trim($respon);
-                    if ($fiscal == "O-13") {
-                        if ($ids->getCaRegimen() != 1) {
-                            $acciones.= "<li>Actualiza Gran contribuyente</li>";
-                        }
-                        if ($cliente && $cliente->getCaRegimen() != 1) {
-                            // $acciones.= "<li>Actualiza Gran contribuyente en Clientes</li>";
-                        }
-                        if (!in_array($ids_respo, 13)) {
-                            $acciones.= "<li>Actualiza Responsabilidades Gran contribuyente</li>";
-                        }
-                    }else if ($fiscal == "O-15") {
-                        if (!in_array($ids_respo, 15)) {
-                            $acciones.= "<li>Actualiza Responsabilidades Autorretenedor</li>";
-                        }
-                    }else if ($fiscal == "O-23") {
-                        if (!in_array($ids_respo, 23)) {
-                            $acciones.= "<li>Actualiza Responsabilidades Agente de retencion</li>";
-                        }
-                    }else if ($fiscal == "O-47") {
-                        if ($ids->getCaRegimen() != 4) {
-                            $acciones.= "<li>Actualiza Regimen simple de tributacion</li>";
-                        }
-                        if ($cliente && $cliente->getCaRegimen() != 4) {
-                            // $acciones.= "<li>Actualiza Regimen simple de tributacion en Clientes</li>";
-                        }
-                        if (!in_array($ids_respo, 47)) {
-                            $acciones.= "<li>Actualiza Responsabilidades Regimen simple de tributacion</li>";
-                        }
-                    }
-                }
-                $repon_tributa = explode(";", $row[5]);
-                foreach ($repon_tributa as $respon) {
-                    $tributa = trim($respon);
-                    if ($tributa == "1") {
-                        if (!in_array($ids_respo, 48)) {
-                            $acciones.= "<li>Actualiza Responsabilidades Impuesto de Valor Agregado</li>";
-                        }
-                    }
-                    if ($tributa == "3") {  /*FIX-ME */
-                        if (!in_array($ids_respo, 48) or true) {
-                            $acciones.= "<li>Actualiza Responsabilidades Impuesto de Industria, Comercio y Aviso</li>";
-                        }
-                    }
-                    if ($tributa == "4") {
-                        if (!in_array($ids_respo, 33)) {
-                            $acciones.= "<li>Actualiza Responsabilidades Impuesto Nacional al Consumo</li>";
-                        }
-                    }
-                    if ($tributa == "5") {
-                        if (!in_array($ids_respo, 9)) {
-                            $acciones.= "<li>Actualiza Responsabilidades Retencion sobre el IVA</li>";
-                        }
-                    }
-                    if ($tributa == "7") {  /*FIX-ME */
-                        if (!in_array($ids_respo, 7) or true) {
-                            $acciones.= "<li>Actualiza Responsabilidades Retencion sobre el ICA</li>";
-                        }
-                    }
-//                    if ($tributa == "21") {  /*FIX-ME */
-//                        if (!in_array($ids_respo, 8)) {
-//                            $acciones.= "<li>Actualiza Responsabilidades Impuesto de Timbre</li>";
-//                        }
-//                    }
-                }
-
-            }
-            $acciones.= "</ul>";
-            if ($acciones == "<ul></ul>") {
-                continue;
-            }
-            
-            print_r("<tr>");
-            print_r("<td>".$i++."</td>");
-            foreach ($row as $key => $col) {
-                if ($key > 5) {
+                if ($pos < 2 || $row[0] == "NIT") {
                     continue;
                 }
-                print_r("<td>".$col."</td>");
+
+                if ($row[4] == "ZZ" && $row[5] == "ZZ") {
+                    $noprocesado++;
+                    continue;
+                }
+                if (in_array($row[0], $procesados)) {
+                    continue;
+                } else {
+                    $procesados[] = $row[0];
+                }
+                $ids = Doctrine::getTable("Ids")->findOneBy("ca_idalterno", $row[0]);
+                if (!$ids) {
+                    $noencontrados++;
+                    continue;
+                }
+                $ids_datos = json_decode(utf8_encode($ids->getCaDatos()));
+                $ids_respo = $ids_datos->responsabilidades;
+                $cliente = Doctrine::getTable("IdsCliente")->findOneBy("ca_idcliente", $ids->getCaId());
+                $encontrados++;
+                if ($row[4] != "ZZ") {
+                    $ids_update = false;
+                    $cli_update = false;
+
+                    $repon_fiscal = explode(";", $row[4]);
+                    $repon_fiscal = $repon_fiscal[0]=="O-13O-23"?array("O-13","O-23"):$repon_fiscal;
+                    foreach ($repon_fiscal as $respon) {
+                        $fiscal = trim($respon);
+                        if ($fiscal == "O-13") {
+                            if ($ids->getCaRegimen() != 1) {
+                                $acciones.= "<li>Actualiza Gran contribuyente</li>";
+                                $ids->setCaRegimen(1);
+                                $ids_update = true;
+                            }
+                            if ($cliente && $cliente->getCaRegimen() != 1) {
+                                // $acciones.= "<li>Actualiza Gran contribuyente en Clientes</li>";
+                                $cliente->setCaRegimen(1);
+                                $cli_update = true;
+                            }
+                            if (!in_array(13, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Gran contribuyente</li>";
+                                $ids_respo[] = "13";
+                                $ids_update = true;
+                            }
+                        }else if ($fiscal == "O-15") {
+                            if (!in_array(15, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Autorretenedor</li>";
+                                $ids_respo[] = "15";
+                                $ids_update = true;
+                            }
+                        }else if ($fiscal == "O-23") {
+                            if (!in_array(9, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Agente de retencion</li>";
+                                $ids_respo[] = "9";
+                                $ids_update = true;
+                            }
+                        }else if ($fiscal == "O-47") {
+                            if ($ids->getCaRegimen() != 4) {
+                                $acciones.= "<li>Actualiza Regimen simple de tributacion</li>";
+                                $ids->setCaRegimen(4);
+                                $ids_update = true;
+                            }
+                            if ($cliente && $cliente->getCaRegimen() != 4) {
+                                // $acciones.= "<li>Actualiza Regimen simple de tributacion en Clientes</li>";
+                                $cliente->setCaRegimen(4);
+                                $cli_update = true;
+                            }
+                            if (!in_array(47, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Regimen simple de tributacion</li>";
+                                $ids_respo[] = "47";
+                                $ids_update = true;
+                            }
+                        }
+                    }
+                    $repon_tributa = explode(";", $row[5]);
+                    foreach ($repon_tributa as $respon) {
+                        $tributa = trim($respon);
+                        if ($tributa == "1") {
+                            if (!in_array(48, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Impuesto de Valor Agregado</li>";
+                                $ids_respo[] = "48";
+                                $ids_update = true;
+                            }
+                        }
+    //                    if ($tributa == "2") {  /*FIX-ME */
+    //                        if (!in_array(__, $ids_respo)) {
+    //                            $acciones.= "<li>Actualiza Responsabilidades Impuesto al Consumo departamental</li>";
+    //                        }
+    //                    }
+    //                    if ($tributa == "3") {  /*FIX-ME */
+    //                        if (!in_array(__, $ids_respo)) {
+    //                            $acciones.= "<li>Actualiza Responsabilidades Impuesto de Industria, Comercio y Aviso</li>";
+    //                        }
+    //                    }
+                        if ($tributa == "4") {
+                            if (!in_array(33, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Impuesto Nacional al Consumo</li>";
+                                $ids_respo[] = "33";
+                                $ids_update = true;
+                            }
+                        }
+                        if ($tributa == "5") {
+                            if (!in_array(9, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Retencion sobre el IVA</li>";
+                                $ids_respo[] = "9";
+                                $ids_update = true;
+                            }
+                        }
+                        if ($tributa == "6") {
+                            if (!in_array(7, $ids_respo)) {
+                                $acciones.= "<li>Actualiza Responsabilidades Retención en la fuente a titulo de renta</li>";
+                                $ids_respo[] = "7";
+                                $ids_update = true;
+                            }
+                        }
+    //                    if ($tributa == "7") {  /*FIX-ME */
+    //                        if (!in_array(__, $ids_respo) or true) {
+    //                            $acciones.= "<li>Actualiza Responsabilidades Retencion sobre el ICA</li>";
+    //                        }
+    //                    }
+    //                    if ($tributa == "21") {  /*FIX-ME */
+    //                        if (!in_array(__, $ids_respo)) {
+    //                            $acciones.= "<li>Actualiza Responsabilidades Impuesto de Timbre</li>";
+    //                        }
+    //                    }
+                    }
+                    if ($ids_update) {
+                        sort($ids_respo);
+                        $ids_respo = array_pad(array_diff($ids_respo, array("")), 26, "");
+                        $ids_datos->responsabilidades = $ids_respo;
+                        $ids->setCaDatos(json_encode($ids_datos));
+                        $ids->save();
+                    }
+                    if ($cli_update) {
+                        $cliente->save();
+                    }
+                }
+                $acciones.= "</ul>";
+                if ($acciones == "<ul></ul>") {
+                    continue;
+                }
+
+                print_r("<tr>");
+                print_r("<td>".$i++."</td>");
+                foreach ($row as $key => $col) {
+                    if ($key > 5) {
+                        continue;
+                    }
+                    print_r("<td>".$col."</td>");
+                }
+                print_r("<td>".$acciones."</td>");
+                print_r("</tr>");
+                if ($i > 100) {
+                    break;
+                }
+                
             }
-            print_r("<td>".$acciones."</td>");
-            print_r("</tr>");
+            echo "</table>";
+            echo "--------------------------------------------------------<br><br>";
+            echo "NO ENCONTRADOS:" . $noencontrados . "<br>";
+            echo "ENCONTRADOS:" . $encontrados . "<br>";
+            echo "NO PROCESADOS:" . $noprocesado . "<br>";
+            echo "--------------------------------------------------------<br><br>";
+            $conn->commit();
+        } catch (Exception $e) {
+            $conn->rollBack();
+            $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
         }
-        echo "</table>";
-        echo "--------------------------------------------------------<br><br>";
-        echo "NO ENCONTRADOS:" . $noencontrados . "<br>";
-        echo "ENCONTRADOS:" . $encontrados . "<br>";
-        echo "NO PROCESADOS:" . $noprocesado . "<br>";
-        echo "--------------------------------------------------------<br><br>";
 
         //$array = $ws->toArray();
         exit;
