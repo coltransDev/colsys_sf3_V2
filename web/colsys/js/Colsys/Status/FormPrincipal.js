@@ -195,11 +195,30 @@ Ext.define('Colsys.Status.FormPrincipal', {
                             maxValue: '23:59:59',
                             increment: 30,
                             format: 'H:i:s'
+                        }]
+                    },
+                    {
+                        xtype: 'fieldset',
+                        autoHeight: true,
+                        border: true,
+                        hidden: true,
+                        id: "fieldset-dian-" + this.modulo + this.idmaster,
+                        layout: {
+                            type: 'table',
+                            columns: 1,
+                            tdAttrs: {style: 'padding: 5px;'},
+                            tableAttrs: {
+                                style: {
+                                    width: '90%'
+                                }
+                            }
                         },
-                        {
+                        scrollable: true,                        
+                        items: [
+                            {
                             xtype: 'datefield',
                             fieldLabel: 'Fch. Muisca',
-                            id: 'vaciado_fchsyga-' + this.modulo + this.idmaster,
+                            id: 'dian_fchsyga-' + this.modulo + this.idmaster,
                             name: 'fchsyga',
                             format: "Y-m-d",
                             altFormat: "Y-m-d",
@@ -243,7 +262,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
         Ext.getCmp('status_fcharribo-' + modulo + idmaster).setDisabled(false);            
         Ext.getCmp('combofactura_status-' + modulo + idmaster).hide();
         
-        var arrayModulos = ["pto-llegada","llegada","ffletes","pto-desconsolidacion"];
+        var arrayModulos = ["pto-llegada","llegada","ffletes","pto-desconsolidacion","pto-dian"];
         
         if(arrayModulos.indexOf(modulo)>-1){
             
@@ -267,6 +286,12 @@ Ext.define('Colsys.Status.FormPrincipal', {
                     case "pto-desconsolidacion":                    
                         Ext.getCmp('fieldset-vaciado-' + modulo + idmaster).show();
                         if (nombrecampo.split("_")[0] === "vaciado") {
+                            Ext.getCmp(nombrecampo + "-" + modulo + idmaster).allowBlank = false;
+                        }
+                        break;
+                    case "pto-dian":                    
+                        Ext.getCmp('fieldset-dian-' + modulo + idmaster).show();
+                        if (nombrecampo.split("_")[0] === "dian") {
                             Ext.getCmp(nombrecampo + "-" + modulo + idmaster).allowBlank = false;
                         }
                         break;
