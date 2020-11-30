@@ -638,6 +638,7 @@ class statusActions extends sfActions {
                     $intro = $request->getParameter("mensaje");
                     if ($request->getParameter("fchsyga")) {
                         $masterSea->setCaFchfinmuisca(Utils::parseDate($request->getParameter("fchsyga")));
+                        $masterSea->save($conn);
                     }
                     $body = "";
                     $otm = true;
