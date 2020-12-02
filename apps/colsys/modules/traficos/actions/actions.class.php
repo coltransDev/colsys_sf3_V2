@@ -153,11 +153,7 @@ class traficosActions extends sfActions {
     */
 
    public function executeListaStatus($request) {
-      Doctrine_Manager::getInstance()->setCurrentConnection('replica');
-      
-      $response = sfContext::getInstance()->getResponse();
-      $response->addJavaScript("swfupload/swfupload", 'last');
-      $response->addJavaScript("swfupload/js/handlers", 'last');
+      Doctrine_Manager::getInstance()->setCurrentConnection('replica');    
 
       $this->idCliente = $this->getRequestParameter("idcliente");
 

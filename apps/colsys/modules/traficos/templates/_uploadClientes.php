@@ -1,9 +1,11 @@
-<?
-include_component("gestDocumental", "widgetUploadImages");
-?>
-<tr>
-    <th class="titulo" >Adjuntar Fotos</th>
-</tr>
+<style>
+    .file-view .thumb img{
+	height: 50px;
+	width: 50px;
+    }    
+
+</style>
+<script src="/js/extExtras/FileUploadMultipleField.js"></script>
 
 <?
 $dimension = 1855;
@@ -12,185 +14,213 @@ $i = 0;
 $j = 0;
 if ($reporte) {
     $i++;
-    $cliente = $reporte->getCliente();
     $referencia = $reporte->getNumReferencia();
     
     // Archivos ubicados en el directorio antiguo
     $folderOld =  $reporte->getDirectorioBase();
-    $directoryOld =$reporte->getDirectorio();
-    $archivosOld = sfFinder::type('file')->maxDepth(0)->name(array('*.jpeg*', '*.jpg*', '*.png*', '*.gif*', '*.JPEG*', '*.JPG*', '*.PNG*', '*.GIF*'))->in($directoryOld);
     
-    $narchivos = count($archivosOld);
-    
-    //Archivos Gestión Documental
     if($referencia){
         $archivos = $reporte->getFilesGestDoc();
-        $narchivos+=count($archivos);
+        $narchivos=count($archivos);
     }
     
     $alto = ceil($narchivos / 4) * $dimVisual;
-    ?>
-
-    <tr>
-        <td style="border-bottom: 0px;">
-            <form>
-                <div style="width: 180px; height: 18px; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px;">
-                    <span id="but<?= $i ?>"></span>
-                </div>
-            </form>
-            <div id="div<?= $i ?>"></div>
-            <input type="checkbox"  title="Marcar o Desmarcar Todas las Fotos" onclick="selTodasFotos(this)"> Marcar o Desmarcar Todas las Fotos
-            <script>
-
-                chart<?= $i ?> = new WidgetUploadImages({
-                    post_params: {
-                        "folder": "<?= base64_encode($folderOld) ?>",
-                        "tam_max": "<?= $dimension ?>",
-                        "tam_max_visual": <?= $dimVisual ?>,
-                        "thumbnails": "thumbnails_<?= $i ?>"
-                    },
-                    button_placeholder_id: "but<?= $i ?>",
-                    upload_target: 'div<?= $i ?>',
-                    debug: true
-                });
-            </script>
-        </td>
-    </tr>	
-    <tr height="<?= $alto + 20 ?>">
-        <td colspan="6" style="vertical-align: top; border-bottom: 0px;" >
-            <div id="thumbnails_<?= $i ?>">
-                <?php
-                foreach ($archivosOld as $file) {
-                    $archivo = explode("/", $file);
-                    $filename = $archivo[count($archivo) - 1];
-                    if(Utils::isImage($filename)){
-                        $id_base = base64_encode($folderOld . "/" . $filename);
-                        echo '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 15px;" id="file_' . $j . '">
-                            <div style="position:relative ">
-                                <div style="position:absolute;" >
-                                    <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folderOld . "/" . $filename) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" />'.substr($filename, 0,8).'
-                                </div>
-                                <div style="position:absolute;top:0px;right:0px" >
-                                    <img src="/images/16x16/button_cancel.gif" style="cursor: pointer"   onclick="deleteFile(&quot;' . $id_base . '&quot;,&quot;file_' . $j . '&quot;)" />
-                                </div>
-                                <div style="position:absolute;top:20px;right:0px;display:block" >
-                                    <input type="checkbox" value="' . $folderOld . '"/"' . $filename . '" name="files[]" class="imgS" idbase="' . $id_base . '" fileid="file_' . $j++ . '" />
-                                </div>
-                            </div>                        
-                          </div>';
-                    }
-                }
-                if(count($archivos)){
-                    foreach ($archivos as $file) {
-                        if(Utils::isImage($file->getCaNombre())){
-                            $filename = $file->getCaNombre();
-                            $folder = $reporte->getDirectorioBaseDocs($filename);                            
-                            echo '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 5px;" id="file_' . $j . '">
-                                <div style="position:relative ">
-                                    <div style="position:absolute;" >
-                                        <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" />
-                                    </div>                                    
-                                    <div style="position:absolute;top:20px;right:0px;display:none" >
-                                       <input type="checkbox" value="' . $folder . '" name="files_' . $reporte->getInoClientesSea()->getOid() . '[]" />
-                                    </div>
-                            </div>                        
-                          </div>';
-                        }
-                    }
-                }
-                ?>
-            </div>
-        </td>
-    </tr>
     
+    ?>
     <tr>
-        <td style="border-bottom: 0px;">
-            <input type="button" value="Eliminar Fotos" onclick="eliminarFotos()">            
+        <td style="border-bottom: 0px;" id="fotos">
         </td>
-    </tr>
+    </tr>    
+
+    <script>
+    Ext.onReady(function () {       
+        
+        var store = new Ext.data.JsonStore({
+            url: '<?=url_for('reportesNeg/datosImagenes?idreporte='.$reporte->getCaIdreporte())?>',
+            root: 'images',            
+            fields: ['name', 'url','id_base']
+        });
+        store.load();
+        
+        var tpl = new Ext.XTemplate(
+            '<tpl for=".">',
+                '<div class="thumb-wrap" id="{name}">',
+		    '<div class="thumb"><img src="{url}" title="{name}"></div>',
+                '<span class="x-editable">{name}</span></div>',
+            '</tpl>',
+            '<div class="x-clear"></div>'
+        );
+
+        var panel = new Ext.FormPanel({
+             id:'images-view',
+            frame:true,
+            width:535,
+            autoHeight:true,
+            collapsible:false,
+            fileUpload: true,
+            layout:'fit',
+            title:'Adjuntar Fotos',            
+            bodyStyle: 'padding: 10px 10px 0 10px;',
+            labelWidth: 50,
+            defaults: {
+                anchor: '95%',                
+                msgTarget: 'side'
+                    },
+            items: [
+                {
+                    xtype: 'hidden',
+                    name: 'folder',
+                    value: '<?= base64_encode($folderOld) ?>'
+                },                
+                new Ext.DataView({
+                    store: store,
+                    tpl: tpl,
+                    id: 'dataview-fotos',
+                    autoHeight:true,
+                    multiSelect: true,
+                    overClass:'x-view-over',
+                    cls: 'file-view',
+                    itemSelector:'div.thumb-wrap',
+                    emptyText: 'No hay fotos para mostrar',
+                    prepareData: function(data){
+                        data.shortName = Ext.util.Format.ellipsis(data.name, 15);
+                        data.sizeString = Ext.util.Format.fileSize(data.size);
+                        //data.dateString = data.lastmod.format("m/d/Y g:i a");
+                        return data;
+                    },
+
+                    listeners: {
+                        selectionchange: {
+                            fn: function(dv,nodes){                                
+                                var l = nodes.length;
+                                var s = l != 1 ? 's' : '';
+                                panel.setTitle('Adjuntar Fotos ('+l+' foto'+s+' seleccionada'+s+')');
+                                Ext.getCmp("button-delete").setDisabled(false);
+                            }
+                        }
+                    }                    
+                }),
+                {
+                    xtype: 'fileuploadmultiplefield',                    
+                    multiple: true,
+                    name: 'fotos[]',                    
+                    width: 500,                    
+                    emptyText: 'Seleccione las fotos que desee cargar',
+                    buttonCfg: {
+                        text: '',
+                        iconCls: 'upload-icon'
+                    },
+                }               
+            ],            
+            buttons: [{
+                text: 'Eliminar fotos',
+                disabled: true,
+                id: 'button-delete',
+                iconCls: 'icon-picture_delete',
+                handler: function() {
+                    var sr = Ext.getCmp('dataview-fotos').getSelectedRecords();                    
+                    
+                    if(sr.length > 0){
+                        if(window.confirm("Está seguro que desea eliminar los archivos?")){
+                            Ext.MessageBox.wait('Eliminando archivos, Espere por favor', '');
+                            /* Loop the array of records */
+                                Ext.each(sr, function(r) {
+                                    var file = r.data['id_base'];
+                                    /* AJAX Request */
+                                    Ext.Ajax.request({
+                                        method: 'POST',
+                                        url: '<?=url_for('gestDocumental/borrarArchivo')?>',
+                                        params: {idarchivo: file},
+                                        success: function() {
+                                            Ext.Msg.alert("Eliminar","Archivos eliminados correctamente");
+                                            Ext.getCmp('dataview-fotos').store.reload();                                        
+                                        },
+                                        failure: function () {
+                                            Ext.MessageBox.alert('Error', 'Server error!');
+                                        }
+                });
+                                }
+                            );                        
+                        }
+                    }else{
+                        Ext.Msg.alert("Error","Debe seleccionar al menos un archivo para eliminar");
+                    }
+                }
+            },/*{
+                text: 'Borrar selección',
+                handler: function(){
+                    panel.getForm().reset();
+                }
+            },*/{
+                text: 'Guardar',
+                handler: function(){
+                    if(panel.getForm().isValid()){
+                        panel.getForm().submit({
+                            url: '<?=url_for('gestDocumental/uploadMultipleImages')?>',
+                            waitMsg: 'Cargando fotos...',
+                            success:function(form,action){                                                                   
+                                var res = Ext.util.JSON.decode( action.response.responseText );
+                                filenames = res.filenames;                                
+                                var nameArchivos = "";
+                                
+                                Ext.each(filenames, function(filename){
+                                    nameArchivos+=filename+"<br/>";                                    
+                                });
+                                
+                                Ext.getCmp('dataview-fotos').store.reload();
+                                Ext.Msg.alert("Fotos","Se han cargado las fotos correctamente<br/>"+nameArchivos);
+                                panel.getForm().reset();
+                            },
+                            failure:function(form,action){
+                                Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+(action.result?": "+action.result.errorInfo:"")+" "+(action.response?"\n Codigo HTTP "+action.response.status:""));
+                            }
+                        });
+                    }
+                }
+            }]
+        });
+        panel.render("fotos");
+    });
+    
+</script>
     <?
-    //break;
+    if(count($archivos)>0){
+        ?>
+        <tr>
+            <th class="titulo" ><b>Fotos asociadas a la referencia</b></th>
+        </tr>	
+        <tr height="<?= $alto + 20 ?>">
+            <td colspan="6" style="vertical-align: top; border-bottom: 0px;" >
+                <div id="thumbnails_<?= $i ?>">
+                        <?
+                        foreach ($archivos as $file) {
+                            if(Utils::isImage($file->getCaNombre())){
+                                $filename = $file->getCaNombre();
+                                $folder = $reporte->getDirectorioBaseDocs($filename);                            
+                                echo '<div style="width:' . $dimVisual . 'px;height:' . $dimVisual . 'px;float: left;margin: 5px;" id="file_' . $j . '">
+                                    <div style="position:relative ">
+                                        <div style="position:absolute;" >
+                                            <img style=" vertical-align: middle;" src="/gestDocumental/verArchivo?idarchivo=' . base64_encode($folder) . '" width="' . $dimVisual . '" height="' . $dimVisual . '" />
+                                        </div>                                    
+                                        <div style="position:absolute;top:20px;right:0px;display:none" >
+                                           <input type="checkbox" value="' . $folder . '" name="files_' . $reporte->getInoHouse()->getOid() . '[]" />
+                                        </div>
+                                </div>                        
+                              </div>';
+                            }
+                        }
+                    ?>
+                </div>
+            </td>
+        </tr>
+        <?
+    }
 }
 ?>
     
 <script>
-    function eliminarFotos()
-    {        
-        $('.imgS:checked').each(
-            function() {
-                //alert($(this).attr("fileid") );
-                deleteFile($(this).attr("idbase"),$(this).attr("fileid"),"1")
-            }
-        );
-    }
-    
     function selTodasFotos(obj)
     {
-        //alert(obj.checked);
-        $('.imgS').attr("checked",!$('.imgS').attr("checked"));
-        /*$('.imgS:checked').each(
-        
-            function() {
-                //alert($(this).attr("fileid") );
-                $(this).attr("c")
-                //deleteFile($(this).attr("idbase"),$(this).attr("fileid"),"1")
-            }
-        );*/
-    }
-
-
-    function deleteFile(file, idtr,msg)
-    {
-        if(msg=="1")
-        {
-            Ext.MessageBox.wait('Guardando, Espere por favor', '---');
-            Ext.Ajax.request(
-            {
-                waitMsg: 'Guardando cambios...',
-                url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
-                params: {
-                    idarchivo: file
-                },
-                failure: function(response, options) {
-                    var res = Ext.util.JSON.decode(response.responseText);
-                    if (res.err)
-                        Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.err);
-                    else
-                        Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
-                },
-                success: function(response, options) {
-                    var res = Ext.util.JSON.decode(response.responseText);
-                    $("#" + idtr).remove();
-                    Ext.MessageBox.hide();
-                }
-            });
-        }else
-        {
-            if (window.confirm("Realmente desea eliminar este archivo?"))
-            {
-                Ext.MessageBox.wait('Guardando, Espere por favor', '---');
-                Ext.Ajax.request(
-                        {
-                            waitMsg: 'Guardando cambios...',
-                            url: '<?= url_for("gestDocumental/borrarArchivo") ?>',
-                            params: {
-                                idarchivo: file
-                            },
-                            failure: function(response, options) {
-                                var res = Ext.util.JSON.decode(response.responseText);
-                                if (res.err)
-                                    Ext.MessageBox.alert("Mensaje", 'Se presento un error guardando por favor informe al Depto. de Sistemas<br>' + res.err);
-                                else
-                                    Ext.MessageBox.alert("Mensaje", 'Se produjo un error, vuelva a intentar o informe al Depto. de Sistema<br>' + res.texto);
-                            },
-                            success: function(response, options) {
-                                var res = Ext.util.JSON.decode(response.responseText);
-                                $("#" + idtr).remove();
-                                Ext.MessageBox.hide();
-                            }
-                        });
-            }
-        }
+        $('.imgS').attr("checked",!$('.imgS').attr("checked"));        
     }
 </script>
-
