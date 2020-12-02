@@ -442,6 +442,71 @@ class gestDocumentalActions extends sfActions {
         $this->setTemplate("responseTemplate");
     }
 
+    public function executeUploadMultipleImages($request) {
+        sfConfig::set('sf_web_debug', false);
+        $folder = base64_decode($this->getRequestParameter("folder"));
+        $thumbnails = $this->getRequestParameter("thumbnails");        
+        $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "600";
+        $dimVisual = ($this->getRequestParameter("tam_max_visual")) ? $this->getRequestParameter("tam_max_visual") : $tam_max;
+
+        $this->forward404Unless($folder);
+        $directory = sfConfig::get('app_digitalFile_root') . DIRECTORY_SEPARATOR . $folder . DIRECTORY_SEPARATOR;
+        
+        if (!is_dir($directory)) {
+            mkdir($directory, 0777, true);
+        }
+        chmod($directory, 0777);        
+        $countfiles = count($_FILES['fotos']['name']);
+                
+        try {
+            if ($countfiles > 0) {                 
+                // Looping all files
+                for($i=0;$i<$countfiles;$i++){                       
+
+                    $fileName = $_FILES['fotos']['name'][$i];
+                    $tmp = explode(".", $fileName);
+                    $fileNameMin = $tmp[0];
+
+                    $name_tmp = $_FILES['fotos']['tmp_name'][$i];
+
+                    $image = $this->open_image($_FILES['fotos']['tmp_name'][$i]);
+
+                    $w = imagesx($image);
+                    $h = imagesy($image);
+                    if ($w > $tam_max || $h > $tam_max) {
+                        $control = ($h >= $w);
+                        if ($control) {
+                            $porcen = $tam_max / $h;
+                        } else {
+                            $porcen = $tam_max / $w;
+                        }
+
+                        $new_w = $w * $porcen;
+                        $new_h = $h * $porcen;
+
+                        $im2 = ImageCreateTrueColor($new_w, $new_h);
+                        imagecopyResampled($im2, $image, 0, 0, 0, 0, $new_w, $new_h, $w, $h);
+                        $w = imagesx($im2);
+                        $h = imagesy($im2);
+
+                        imagejpeg($im2, $directory . $fileNameMin . ".jpg", 80);
+                    } else {
+                        imagejpeg($image, $directory . $fileNameMin . ".jpg", 80);
+                    }
+
+                    $data[$i] = array("filename" => $fileNameMin . ".jpg", "folder" => $folder, "filebase" => base64_encode($folder . "/" . $fileNameMin . ".jpg"), "thumbnails" => $thumbnails, "dimension" => $dimVisual);
+                    $filenames[$i] = $fileNameMin;
+                }                 
+                $this->responseArray = array("success" => true, "data" => $data, "filenames"=>$filenames);
+            } else {
+                $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode("No se cargaron archivos para subir."));
+            }
+        } catch (Exception $e) {
+            $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
+        }
+        $this->setTemplate("responseTemplate");
+    }
+
     public function executeUploadFiles($request) {
         sfConfig::set('sf_web_debug', false);
         $folder = base64_decode($this->getRequestParameter("folder"));
