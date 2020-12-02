@@ -382,7 +382,7 @@ class gestDocumentalActions extends sfActions {
         $folder = base64_decode($this->getRequestParameter("folder"));
         $thumbnails = $this->getRequestParameter("thumbnails");
         //$dimension = $this->getRequestParameter("dimension");
-        $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "200";
+        $tam_max = ($this->getRequestParameter("tam_max")) ? $this->getRequestParameter("tam_max") : "600";
         $dimVisual = ($this->getRequestParameter("tam_max_visual")) ? $this->getRequestParameter("tam_max_visual") : $tam_max;
 
         $this->forward404Unless($folder);
@@ -391,7 +391,7 @@ class gestDocumentalActions extends sfActions {
         if (!is_dir($directory)) {
             mkdir($directory, 0777, true);
         }
-        chmod($directory, 0777);
+        chmod($directory, 0777);        
         try {
             if (count($_FILES) > 0) {
 
@@ -526,7 +526,7 @@ class gestDocumentalActions extends sfActions {
         /*Accesos del usuario*/
         $permisosRutinas = $user->getControlAcceso(self::RUTINA_GESDOC);
         
-        //print_r($permisosRutinas);
+        // print_r($permisosRutinas);
         //exit;
         $idpadre = ($request->getParameter("node") != "" && $request->getParameter("node") != "root") ? $request->getParameter("node") : "0";
         
@@ -540,7 +540,7 @@ class gestDocumentalActions extends sfActions {
         $tree = array("text" => "Gestion Documental",
             "leaf" => true,
             "id" => "1");
-
+        
         foreach ($series as $s) {
             $subseries = Doctrine::getTable("Series")
                     ->createQuery("s")
@@ -794,11 +794,50 @@ class gestDocumentalActions extends sfActions {
         $ref1 = $request->getParameter("ref1");
         $ref2 = $request->getParameter("ref2");
         $ref3 = $request->getParameter("ref3");
+        $exacto = $request->getParameter("exacto");
+        
+        $transporte = utf8_decode($request->getParameter("idtransporte"));
+        $impoexpo = utf8_decode($request->getParameter("idimpoexpo"));
 
-        if (!$nombre && !$documento && !$ref1 && !$ref2 && !$ref3)
+        
+        if (!$nombre && !$documento && !$ref1 && !$ref2 && !$ref3 && ($transporte=="" && $impoexpo=="")){
+            echo "salida";
             exit;
-
-        $q = Doctrine::getTable("Archivos")
+        }
+        
+        //echo $impoexpo;
+        //exit;
+        if($impoexpo == Constantes::TRIANGULACION){
+            $impoexpo = Constantes::IMPO;
+        }
+        //echo utf8_decode($impoexpo);
+        //exit;
+        $transporte = $impoexpo==Constantes::EXPO?constantes::MARITIMO: $transporte;
+        if($idsserie=="")
+        {
+            $q = Doctrine::getTable("Series")
+                ->createQuery("s")
+                ->select("s.*")                 
+                ->innerJoin("s.Modo m WITH m.ca_impoexpo=? AND m.ca_transporte=?",array($impoexpo,$transporte));
+            
+                $serie=$q->fetchOne();  
+                $idsserie=$serie->getCaIdsserie();
+        }
+            
+        if($idsserie=="7")
+        {
+            $q = Doctrine::getTable("Archivos")
+                ->createQuery("a")
+                ->select("a.*,t.ca_documento,t.ca_idsserie")
+                ->innerJoin("a.TipoDocumental t")
+                ->setHydrationMode(Doctrine::HYDRATE_ARRAY)
+                ->where("a.ca_fcheliminado is NULL " )
+                ->addWhere("ca_idsserie IN (7,2)")
+                ->orderBy("ca_ref2 desc,ca_nombre");
+        }
+        else
+        {
+            $q = Doctrine::getTable("Archivos")
                 ->createQuery("a")
                 ->select("a.*,t.ca_documento,t.ca_idsserie")
                 ->innerJoin("a.TipoDocumental t")
@@ -806,7 +845,7 @@ class gestDocumentalActions extends sfActions {
                 ->where("a.ca_fcheliminado is NULL " )
                 ->addWhere("ca_idsserie = ?", $idsserie)
                 ->orderBy("ca_ref2 desc,ca_nombre");
-
+        }
         if ($nombre != "")
             $q->addWhere("ca_nombre = ?", $nombre);
 
@@ -814,10 +853,14 @@ class gestDocumentalActions extends sfActions {
             $q->addWhere("ca_iddocumental = ?", $documento);
 
         if ($ref1 != ""){
-            if($idsserie != 10)
-            $q->addWhere("ca_ref1 like ?", "%" . $ref1 . "%");
+            if($idsserie != 10 && $exacto!="true")
+            {
+                $q->addWhere("ca_ref1 like ?", "%" . $ref1 . "%");
+            }
             else
+            {                
                 $q->addWhere("ca_ref1 = ?", $ref1);
+            }
         }
 
         if ($ref2 != "")
@@ -826,9 +869,14 @@ class gestDocumentalActions extends sfActions {
         if ($ref3 != "")
             $q->addWhere("ca_ref2 like ?", "%" . $ref3 . "%");
 
+//        echo $idsserie;
+//        echo $q->getSqlQuery();
+//        exit;
         $tipoDocs = $q->execute();
-        //echo "<pre>";print_r($tipoDocs);echo "</pre>";
+//        echo "<pre>";print_r($tipoDocs);echo "</pre>";
+//        exit;
         $this->tipoDocs = array();
+        
         foreach ($tipoDocs as $t) {
             $t["ca_ref2"] = utf8_encode($t["ca_ref2"]);
             if ($t["ca_fcheliminado"])
@@ -841,7 +889,9 @@ class gestDocumentalActions extends sfActions {
                 $this->tipoDocs[$t["ca_ref1"]][] = array("idarchivo" => $t["ca_idarchivo"], "documento" => utf8_encode($t["TipoDocumental"]["ca_documento"]), "iddocumental" => $t["ca_iddocumental"], "ref1" => $t["ca_ref1"], "ref2" => $t["ca_ref2"], "ref3" => $t["ca_ref3"], "nombre" => ($t["ca_nombre"] . (($t["ca_fcheliminado"] != "") ? " (Eliminado)" : "" )), "usucreado" => $t["ca_usucreado"], "fchcreado" => $t["ca_fchcreado"], "leaf" => true, "expanded" => true, "idsserie"=>$t["TipoDocumental"]["ca_idsserie"]);
             }
         }
-        
+//        echo "<pre>";print_r($this->tipoDocs);echo "</pre>";
+//        exit;
+
         $tree = $this->generateTree($this->tipoDocs);
         $this->responseArray = $tree;
         $this->setTemplate("responseTemplate");
@@ -960,7 +1010,7 @@ class gestDocumentalActions extends sfActions {
                         //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
                         $mime = explode(";", $part->getHeader('content-type'));
                         $mime = $mime[0];
-                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO" || $folder1=="DOCUMENTOSOTM" || $folder1=="DOCUMENTOSCLIENTES"|| $folder1=="DOCUMENTOSEXPO" || $folder1=="DOCUMENTOSADU")
+                        if($folder1=="DOCUMENTOS" || $folder1=="DOCUMENTOSAEREO" || $folder1=="DOCUMENTOSOTM" || $folder1=="DOCUMENTOSCLIENTES"|| $folder1=="DOCUMENTOSEXPO" || $folder1=="DOCUMENTOSADU" || $folder1=="DOCUMENTOSTH" || $folder1=="DOCUMENTOSTT")
                             $asunto = $message->subject;
                         else
                             $asunto = $fileName;
@@ -968,7 +1018,8 @@ class gestDocumentalActions extends sfActions {
                         $ref = array();
                         $data = array();
                         $ref = explode("-",$asunto);
-                        if($ref[1]!="cgar")
+                        $data["ref1"] = $ref[0];
+                        if($ref[1]!="cgar" &&  $folder1!="DOCUMENTOSTH")
                         {
                             $ref[] = substr($asunto, 0, 13);
                             $ref[] = substr($asunto, 14, 4);
@@ -977,19 +1028,22 @@ class gestDocumentalActions extends sfActions {
                             $data["ref1"] = $ref[0];
                         }
                         
-                        if (isset($ref[1])) {
+                        //exit;
+                        
+                        if (isset($ref[1]) &&  $folder1!="DOCUMENTOSTH") {
                             if ($ref[1] == "cost" || $ref[1] == "costos") {
                                 $data["ref2"] = "costos";
                             } else if ($ref[1] == "pref" || $ref[1] == "libp") {
                                 $data["ref2"] = "";
                             } else {
-                                $sql = "select  ca_hbls from tb_inoclientes_sea 
-                                where ca_referencia='" . $ref[0] . "' and UPPER(substring(ca_hbls from (char_length(ca_hbls)-3) ))= UPPER('" . $ref[1] . "') limit 1";
+                                $sql = "select  h.ca_doctransporte from ino.tb_house h
+                                    inner join ino.tb_master m ON h.ca_idmaster=m.ca_idmaster 
+                                where m.ca_referencia='" . $ref[0] . "' and UPPER(substring(h.ca_doctransporte from (char_length(h.ca_doctransporte)-3) ))= UPPER('" . $ref[1] . "') limit 1";
                                 $con = Doctrine_Manager::getInstance()->connection();
 
                                 $st = $con->execute($sql);
                                 $resul = $st->fetchAll();
-                                $data["ref2"] = $resul[0]["ca_hbls"];
+                                $data["ref2"] = $resul[0]["ca_doctransporte"];
                             }
                         }
                         
@@ -1021,16 +1075,7 @@ class gestDocumentalActions extends sfActions {
                                 $st = $con->execute($sql);
                                 $resul = $st->fetchAll();
                                 $data["ref1"] = $resul[0]["ca_id"];
-                                $data["ref1"] = $ref[0];
-                                
-                        /*      if($debug=="true")
-                                {
-                                    echo $sql."<pre>";
-                                    print_r($data);
-                                    echo "<pre>";
-                                    //echo $asunto."<br>".$fileName;
-                                }
-                         */
+                                $data["ref1"] = $ref[0];                       
                         }
                         else if ($ref[1] == "pqr")
                         {
@@ -1060,8 +1105,44 @@ class gestDocumentalActions extends sfActions {
                         else
                             $data["iddocumental"] = $request->getParameter("iddocumental");
                         
-                        //print_r($data);
-                        //exit;
+                        
+                        if($folder1=="DOCUMENTOSTH")
+                        {
+                            if ($ref[1] == "01")
+                                $data["iddocumental"] = "84";
+                            else if ($ref[1] == "02")
+                                $data["iddocumental"] = "85";
+                            else if ($ref[1] == "03")
+                                $data["iddocumental"] = "86";
+                            else if ($ref[1] == "04")
+                                $data["iddocumental"] = "87";
+                            else if ($ref[1] == "05")
+                                $data["iddocumental"] = "88";
+                            else if ($ref[1] == "06")
+                                $data["iddocumental"] = "89";
+                            else if ($ref[1] == "07")
+                                $data["iddocumental"] = "90";
+                            else if ($ref[1] == "00")
+                                $data["iddocumental"] = "92";
+                        }
+                        
+                        
+                        
+                        if($folder1=="DOCUMENTOSTT")
+                        {
+                            if ($ref[1] == "01")
+                                $data["iddocumental"] = "82";
+                            else if ($ref[1] == "02")
+                                $data["iddocumental"] = "81";
+                            else if ($ref[1] == "03")
+                                $data["iddocumental"] = "80";
+                            else if ($ref[1] == "04")
+                                $data["iddocumental"] = "63";
+                            else if ($ref[1] == "05")
+                                $data["iddocumental"] = "60";
+                            else if ($ref[1] == "06")
+                                $data["iddocumental"] = "57";
+                        }
 
                         if ($data["ref1"])
                             $path.=$data["ref1"] . DIRECTORY_SEPARATOR;
@@ -1103,7 +1184,9 @@ class gestDocumentalActions extends sfActions {
         }
         catch(Exception $e)
         {
+            print_r($data);
             echo $e->getMessage();
+            echo $e->getTrace();
             /*$data=array();
             $data["from"]="colsys@coltrans.com.co";
             $data["to"]="maquinche@coltrans.com.co";
