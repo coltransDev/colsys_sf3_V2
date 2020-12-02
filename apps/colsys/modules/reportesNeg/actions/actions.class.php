@@ -5507,6 +5507,32 @@ class reportesNegActions extends sfActions {
         }
     }
 
-}
+    public function executeDatosImagenes(sfWebRequest $request) {        
+        
+        $idreporte = $request->getParameter("idreporte");
+        $reporte = Doctrine::getTable("Reporte")->find($idreporte);     
+        $referencia = $reporte->getNumReferencia();
+    
+        // Archivos ubicados en el directorio antiguo
+        $folderOld =  $reporte->getDirectorioBase();
+        $directoryOld =$reporte->getDirectorio();
+        $archivosOld = sfFinder::type('file')->maxDepth(0)->name(array('*.jpeg*', '*.jpg*', '*.png*', '*.gif*', '*.JPEG*', '*.JPG*', '*.PNG*', '*.GIF*'))->in($directoryOld);
 
+        $narchivos = count($archivosOld);
+        $data = array();        
+        
+        foreach ($archivosOld as $file) {
+            $archivo = explode("/", $file);
+            $filename = $archivo[count($archivo) - 1];
+            $row["name"] = substr($filename, 0,8);
+            $row["url"] = '/gestDocumental/verArchivo?idarchivo=' . base64_encode($folderOld . "/" . $filename);            
+            $row["id_base"] = base64_encode($folderOld . "/" . $filename);
+        
+            $data[] = $row;
+        }
+
+        $this->responseArray = array("success" => true, "images" => $data);
+        $this->setTemplate("responseTemplate");        
+    }
+}
 ?>
