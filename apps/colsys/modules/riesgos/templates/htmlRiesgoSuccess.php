@@ -13,6 +13,10 @@ $legal = $sf_data->getRaw("legal");
 $economico = $sf_data->getRaw("economico");
 $comercial = $sf_data->getRaw("comercial");
 
+$valores = $sf_data->getRaw("valores");
+//echo "<pre>";print_r($valores);echo "</pre>";
+//exit;
+$rowsVal = count($valores);
 ?>
 <link rel="stylesheet" type="text/css" media="screen" href="/css/coltrans.css" />
 
@@ -24,12 +28,11 @@ $comercial = $sf_data->getRaw("comercial");
         <tr>
             <th colspan="1" style="padding: 3px;color:#333333;">
                 <table cellpadding="3" cellspacing="2" border="0" style="font-size: 22px;" >
-                    <tr><td colspan="2"><table><tr><td><img src="<?= $proceso->getDepartamento()->getEmpresa()->getLogoHtml() ?>" /></td></tr>
-
-                                                    </table></td></tr>
+                    <tr><td colspan="2"><table><tr><td><img src="<?= $proceso->getCaIdempresa()?$proceso->getEmpresa()->getLogoHtml():'https://www.coltrans.com.co/logosoficiales/coltrans/LogoGrupoEmpresarialColtransMed.png' ?>" /></td></tr></table></td></tr>
                 </table>
             </th>
-            <?if($tipo=="repos"){
+            <?
+            if($tipo=="repos"){
                 $repos = '<span style="color:blue">Ver. '.$version->getCaVersion().'</span><br><span style="color:blue; font-size:18px;">Usuario: '.$version->getCaUsucreado().' Fecha: '.$version->getCaFchcreado().'</span>';
                 $observaciones = '<tr><th colspan="8" align="left" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3; font-size:18px; color: blue; border:1px solid #D0D0D0;">Notas de la versión:<br>'.$version->getCaObservaciones().'</th></tr>'; 
             }else{
@@ -37,202 +40,147 @@ $comercial = $sf_data->getRaw("comercial");
                 $observaciones = "";
             }
             ?>
-            <th colspan="7" align="cenTER"><h1>EVALUACION DE RIESGOS: PROCESO <?= strtoupper($proceso->getCaNombre()) ?>&nbsp;<?=$repos?></h1></th>
+            <th colspan="12" align="center"><h1>F_277_Versión_01_Vigencia_29_01_2021. EVALUACION DE RIESGOS: PROCESO <?= strtoupper($proceso->getCaNombre()) ?>&nbsp;<?=$repos?></h1></th>
         </tr>        
         <tr>
-            <th colspan="8" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;	border:1px solid #D0D0D0;">RIESGO: <span style="font-weight: bold;"><?=$riesgo->getCaCodigo()?></span></th>
+            <th colspan="13" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;text-align:center;"><b>INFORMACI&Oacute;N GENERAL</b></th>
+        </tr>
+        <tr>
+            <th colspan="7" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3; text-align:center;"><b>RIESGO</b></th>
+            <th colspan="2" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3; text-align:center;"><b>EMPRESA</b></th>
+            <th colspan="1" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3; text-align:center;"><b>CODIGO</b></th>
+            <th colspan="3" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3; text-align:center;"><b>CLASIFICACION</b></th>
+        </tr> 
+        <tr>
+            <td colspan="7" align="center" style="font-size:25px; vertical-align:center;"><?= strip_tags(html_entity_decode($riesgo->getCaRiesgo()),'<font><br>')?></td>
+            <td colspan="2" align="center" style="font-size:25px; vertical-align:center;"><?=$proceso->getCaIdempresa()?$proceso->getEmpresa()->getCaNombre():"TRANSVERSALES"?></td>
+            <td colspan="1" align="center" style="font-size:25px; vertical-align:center;"><?=$riesgo->getCaCodigo()?></td>
+            <td colspan="3" align="center" style="font-size:25px; vertical-align:center;"><?=!$riesgo->getCaAprobado()?'<div style="color: #FF0000;">PENDIENTE DE APROBACI&Oacute;N</div><br/>':''?><?=$riesgo->getClasificacion()?></td>
         </tr> 
         <?=$observaciones?>
-    <?
+        <tr>
+            <th width="30%" rowspan="1" colspan="5" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;"><b>FACTOR GENERADOR</b></th>
+            <th width="20%" rowspan="1" colspan="4" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;"><b>CAUSAS</b></th>
+            <th width="50%" rowspan="1" colspan="4" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;"><b>CONTROLES</b></th>            
+        </tr>            
         
-        $uno = true;        
-        //foreach ($riesgos as $riesgo) {
-            
-            $rowspan = 2;
-            /*if($riesgo->getCaImpresion()>0)
-                $rowspan++;*/
-            //$eventos = $riesgo->getIdgEventos();
-            if(count($eventos)>0)
-                $rowspan = $rowspan+count($eventos)+2;            
-            ?>
-            <tr>
-                <!--<th colspan="1" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">ID</th>-->
-                <th width="30%" rowspan="2" colspan="1" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">RIESGO</th>
-                <th width="20%" rowspan="2" colspan="1" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">CAUSAS</th>
-                <th width="20%" rowspan="2" colspan="1" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">CONTROLES</th>
-                <th width="30%" colspan="5" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">VALORACION</th>                
-                
-                <!--<th colspan="1" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">AP</th>
-                <th colspan="1" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">PLAN CONTINGENCIA</th>-->
-                
-            </tr>            
-            <tr>
-                <th width="5%" colspan="1" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">P</th>                
-                <th width="20%" colspan="3" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">IMPACTO</th>                
-                <th width="5%" colspan="1" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;font-size:20px;">SCORE PXI</th>                
-            </tr>
-            <tr>
-                <!--<td rowspan="<?=$rowspan?>"><h3><?= html_entity_decode($riesgo->getCaCodigo()) ?></h3></td>-->
-                <td colspan="1" rowspan="8" style="font-size:25px; vertical-align:top;">                                                                
-                        <b><i>RIESGO:</i></b><br><?= strip_tags(html_entity_decode($riesgo->getCaRiesgo()),'<font><br>') ?><br><br>
-                        <b><i>FACTOR GENERADOR:</i></b><br>
-                        <?
-                        $factores = $riesgo->getIdgFactor();
-                        foreach ($factores as $factor) {
-                            echo html_entity_decode($factor->getCaFactor()) . "<br/>";
+        <tr>
+            <td colspan="5" rowspan="1" style="font-size:25px; vertical-align:top;"><?$factores = $riesgo->getRsgoFactor();
+                    foreach ($factores as $factor) {
+                        echo $factor->getCaFactor(). "<br/>";
+                    }?></td>
+            <td colspan="4" rowspan="3" style="font-size:25px; vertical-align:top;"><?$causas = $riesgo->getRsgoCausas();                      
+                    foreach($causas as $causa){
+                        $color = "black";
+                        if($causa->getCaNueva()){
+                            $color = "red";
                         }
-                        ?><br>                        
-                        <b><i>ETAPA DEL PROCESO:</i></b><br><?= html_entity_decode($riesgo->getCaEtapa()) ?><br><br>
-                        <b><i>FACTOR POTENCIADOR ENTORNO (normativos, sociales, etc):</i></b><br><?= html_entity_decode($riesgo->getCaPotenciador()) ?><br>                    
-                </td>
-                <td colspan="1" rowspan="8" style="font-size:25px; vertical-align:top;">
-                    <?
-                        $causas = $riesgo->getIdgCausas();                        
-                        foreach($causas as $causa){
-                            $color = "black";
-                            if($causa->getCaNueva()){
-                                $color = "red";
-                            }
-                            ?>
-                            <span style="color:<?=$color?>"><?=$causa->getCaOrden()?>.&nbsp;<?=html_entity_decode($causa->getCaCausa())?></span><br/>
-                            <?                                    
-                        }        
-                    ?>                    
-                </td>
-                <td rowspan="8" colspan="1" style="font-size:25px; vertical-align:top;"><?= strip_tags(html_entity_decode($riesgo->getCaControles()),'<font><div><br>') ?></td>                <?
-                
-                if($val){
-                $impacto = (($val->getCaOperativo()*10*0.01)+($val->getCaLegal()*30*0.01)+($val->getCaEconomico()*40*0.01)+($val->getCaComercial()*20*0.01));
-                $score = $impacto * $val->getCaPeso();
-                
-                
-                $color = 'black';
-                
+                        ?><span style="color:<?=$color?>"><?=$causa->getCaOrden()?>.&nbsp;<?=html_entity_decode($causa->getCaCausa())?></span><br/><?
+                    }?></td>
+            <td colspan="4" rowspan="3" style="font-size:25px; vertical-align:top;"><?= html_entity_decode($riesgo->getCaControles()) ?></td>                
+            
+        </tr>
+        <tr>
+            <th width="30%" colspan="5" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;"><b>ETAPA DEL PROCESO</b></th>
+        </tr>
+        <tr>
+            <td colspan="5" rowspan="1" style="font-size:25px; vertical-align:top;"><?= html_entity_decode($riesgo->getCaEtapa())?></td>
+        </tr>
+        <tr>    
+            <th width="100%" colspan="13" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;"><b>FACTOR POTENCIADOR ENTORNO (normativos, sociales, etc)</b></th>
+        </tr>
+        <tr>
+            <td colspan="13" style="font-size:25px; vertical-align:top;"><?= html_entity_decode($riesgo->getCaPotenciador()) ?></td>
+        </tr>                
+        <tr>
+            <th width="100%" colspan="13" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;text-align:center;"><b>PLAN DE CONTINGENCIA</b></th>
+        </tr>
+        <tr>
+            <td colspan="13" style="font-size:25px;"><?= html_entity_decode($riesgo->getCaContingencia()) ?></td>
+        </tr>
+        <tr>
+            <th width="60%" colspan="10" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;text-align:center;"><b>VALORACION</b></th>            
+            <th width="40%" colspan="3" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;text-align:center;"><b>AP</b></th>            
+        </tr>
+        <?
+        if($val && count($valores)>0){
+            ?>
+        <tr>
+            <th colspan="1" rowspan="2" width=1% align="center" style="font-size:15px; background-color: #E3E3E3; ">A&Ntilde;O</th>
+            <th colspan="1" rowspan="2" width=5% align="center" style="font-size:15px; background-color: #E3E3E3; ">SUCURSAL</th>            
+            <th colspan="1" rowspan="2" width=1% align="center" style="font-size:15px; background-color: #E3E3E3; ">PROBABILIDAD DE OCURRENCIA</th>
+            <th colspan="5" align="center" style="font-size:15px; background-color: #E3E3E3;">IMPACTO</th> 
+            <th colspan="1" rowspan="2" width=5% align="center" style="font-size:15px; background-color: #E3E3E3; ">SCORE</th>
+            <th colspan="1" rowspan="2" width=8% align="center" style="font-size:30px; background-color: #E3E3E3; ">SCORE PXI</th>                
+            <td colspan="3" rowspan="<?=$rowsVal+2?>" width=40% style="font-size:25px;"><?= strip_tags(html_entity_decode($riesgo->getCaAp()),'<font><div><br>') ?></td>            
+        </tr>        
+        <tr>
+            <th colspan="1" align="center" width=8% style="font-size:15px; background-color: #E3E3E3; ">OPERATIVO 10%</th>
+            <th colspan="1" align="center" width=5% style="font-size:15px; background-color: #E3E3E3; ">LEGAL 30%</th>
+            <th colspan="1" align="center" width=8% style="font-size:15px; background-color: #E3E3E3; ">ECON&Oacute;MICO 40%</th>
+            <th colspan="1" align="center" width=8% style="font-size:15px; background-color: #E3E3E3; ">COMERCIAL 20%</th>
+            <th colspan="1" align="center" width=5% style="font-size:15px; background-color: #E3E3E3; ">TOT</th>
+            
+        </tr>
+
+            <!--<td align="center" style="font-size:15px; margin: 0px; padding: 6px 4px 2px 4px; background-color: #3366FF;border:1px solid #D0D0D0; text-align:center;">LO QUE SSEA</td>-->
+            <?
+            $i=0;
+            $nsucursales = count($valores);
+            foreach($valores as $key => $valor){
+
+                $score = $valor["promedioscorexano"];
                 switch($score){
-                    case $score<=5.9:
+                    case $score < 6:
                         $color = '#3366FF';
                         break;
-                    case $score>=6 && $score<= 24.9:
+                    case $score>=6 && $score < 25:
                         $color = '#008000';
                         break;
-                    case $score>=25 && $score<= 59.9:
+
+                    case $score>=25 && $score < 60:
                         $color = '#FFCC00';
                         break;
                     case $score>=60 && $score<=100:
                         $color = '#FF0000';
+                        break;
+                    default:
+                        $color = "#FFFFFF";
+                        break;
                 }
-                
                 ?>
-                <td colspan="1" rowspan= "8" style="font-size:25px;" align="center" ><?= html_entity_decode($val->getCaPeso()) ?></td>
-                <td width="14%" colspan="1" style="font-size:25px;">OPERATIVO</td>
-                <td width="3%" colspan="1" style="font-size:25px;">10%</td>
-                <td width="3%" colspan="1" rowspan= "8" style="font-size:25px;" align="center"><?=$impacto?></td>
-                <td colspan="1" rowspan= "8" style="background-color:<?=$color?>; font-size:30px;" align="center"><?=$score?></td>
-                <?}?>
-            </tr>
-            <?
-            if($val){
-            ?>
-            <tr>
-                <td colspan="1" style="font-size:25px;"><?=$operativo?></td>
-                <td colspan="1" style="font-size:25px;"><?=$val->getCaOperativo()?></td>
-            </tr>
-            <tr>
-                <td colspan="1" style="font-size:25px;">LEGAL</td>
-                <td colspan="1" style="font-size:25px;">30%</td>
-            </tr>            
-            <tr>
-                <td colspan="1" style="font-size:25px;"><?=$legal?></td>
-                <td colspan="1" style="font-size:25px;"><?=$val->getCaLegal()?></td>
-            </tr>
-            <tr>
-                <td colspan="1" style="font-size:25px;">ECONOMICO</td>
-                <td colspan="1" style="font-size:25px;">40%</td>
-            </tr>
-            <tr>
-                <td colspan="1" style="font-size:25px;"><?=$economico?></td>
-                <td colspan="1" style="font-size:25px;"><?=$val->getCaEconomico()?></td>
-            </tr>
-            <tr>
-                <td colspan="1" style="font-size:25px;">COMERCIAL</td>
-                <td colspan="1" style="font-size:25px;">20%</td>
-            </tr>
-            <tr>
-                <td colspan="1" style="font-size:25px;"><?=$comercial?></td>
-                <td colspan="1" style="font-size:25px;"><?=$val->getCaComercial()?></td>
-            </tr>
-            <?}?>
-            <tr>
-                <th colspan="2" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">AP</th>
-                <th colspan="6" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">PLAN CONTINGENCIA</th>
-            </tr>
-            <tr>
-                <td colspan="2" style="font-size:25px;"><?= strip_tags(html_entity_decode($riesgo->getCaAp()),'<font><div><br>') ?></td>
-                <td colspan="6" style="font-size:25px;"><?= strip_tags(html_entity_decode($riesgo->getCaContingencia()),'<font><div><br>') ?></td>
-            </tr>
-            <tr>
-                <td colspan="8" align="rigth" valign="bottom" style="font-size:20px;">
-                    <b>Fecha de Impresión:</b><?=date("Y-m-d H:i:s")?>&nbsp;<b>Usuario Impresión:</b><?=$user->getNombre()?>&nbsp;<b>Riesgo&nbsp;<?=$nriesgo?>&nbsp;de&nbsp;<?=$triesgos?></b>
-                </td>
-            </tr>
-            
-            <!--<tr>
-                <th colspan="2" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">VALORACION</th>
-                <td colspan="6" style="font-size:25px;">
+                <tr>
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?= utf8_decode($valor["ano"])?></td>
+                    <td style="font-size:25px; vertical-align:top;"><?= utf8_decode($valor["sucursal"])?></td>
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?=$valor["peso"]?></td>
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?=$valor["operativo"]?></td>
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?=$valor["legal"]?></td>                                
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?=$valor["economico"]?></td>                                
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?=$valor["comercial"]?></td>                                
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?=$valor["impacto"]?></td>
+                    <td align="center" style="font-size:25px; vertical-align:top;"><?=$valor["score"]?></td>
                     <?
-                    $valores = $riesgo->getIdgValoracion();
-                    foreach($valores as $valor){
-                        $impacto = ($valor->getCaOperativo()*10*0.01)+($valor->getCaLegal()*30*0.01)+($valor->getCaEconomico()*40*0.01)+($valor->getCaComercial()*20*0.01)
-                        ?>                                                 
-                        <span>ANO:</span><b><?=$valor->getCaAno()?></b>
-                        <span>POSIBILIDAD: </span><b><?=$valor->getCaPeso()?></b>
-                        <span>OPERATIVO (10%): </span><b><?=$valor->getCaOperativo()?></b>
-                        <span>LEGAL (30%): </span><b><?=$valor->getCaLegal()?></b>
-                        <span>ECONOMICO (40%): </span><b><?=$valor->getCaEconomico()?></b>
-                        <span>COMERCIAL (20%): </span><b><?=$valor->getCaComercial()?></b>
-                        <span style="color:blue;">IMPACTO: </span><b><?=$impacto?></b>
-                        <span style="color:blue;">SCORE PxI: </span><b><?=$impacto*$valor->getCaPeso()?></b><br/>                        
-                        <?
+                    if($i==0){?>
+                    <td rowspan="<?=$nsucursales?>" align="center" style="background-color:<?=$color?>; font-size:30px; vertical-align:center; "><?=$valor["promedioscorexano"]?></td>                
+                        <?                            
                     }
+                    $i++;
                     ?>
-                </td>
-            </tr>-->
-            <?  
-            /*if(count($eventos)>0){
-                ?>
+                </tr>                                            
+                <?                    
+            }                    
+        }else{
+            ?>
                 <tr>
-                    <th colspan="8" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">EVENTOS</th>
+                    <td colspan="10" align="center" style="font-size:25px; background-color: red;">NO HAY VALORACIONES PARA EL A&Ntilde;O SOLICITADO</td>
+                    <td colspan="3" width=40% style="font-size:25px;"><?= strip_tags(html_entity_decode($riesgo->getCaAp()),'<font><div><br>') ?></td>            
                 </tr>
-                <tr>
-                    <th colspan="2" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">FCH. EVENTO</th>
-                    <th colspan="2" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">EVENTO</th>
-                    <th colspan="2" align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">CLIENTE</th>
-                    <th align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">DOCUMENTO</th>
-                    <th align="center" style="margin: 0px; padding: 6px 4px 2px 4px; background-color: #E3E3E3;border:1px solid #D0D0D0;">PA</th>
-                </tr> 
-                <?
-                foreach($eventos as $evento){
-                    ?>
-                    <tr>
-                        <td colspan="2" style="font-size:25px;"><?=$evento->getCaFchevento()?></td>
-                        <td colspan="2" style="font-size:25px;"><?=html_entity_decode($evento->getCaDescripcion())?></td>
-                        <td colspan="2" style="font-size:25px;"><?=$evento->getCliente()->getIds()->getCaNombre()?></td>
-                        <td style="font-size:25px;"><?=$evento->getCaDocumento()?></td>
-                        <td style="font-size:25px;"><?=$evento->getCaPa()?></td>
-                    </tr>
-                    <?                                            
-                }
-            }
-            if($riesgo->getCaImpresion()>0){
-                ?>
-                <tr>
-                    <td colspan="8" height="<?=$riesgo->getCaImpresion()?>" align="rigth" valign="bottom" style="font-size:20px;">
-                        <b>Proceso:</b><?=$proceso->getCaNombre()?>&nbsp;<b>Fecha de Impresión:</b><?=date("Y-m-d H:i:s")?>&nbsp;<b>Usuario Impresión:</b><?=$user->getNombre()?><br/>
-
-                    </td>
-                </tr>
-                <?
-            }*/
-        //}
-        ?>         
+            <?
+        }
+        ?>              
+        <tr>
+            <td colspan="13" align="rigth" valign="bottom" style="font-size:20px;">
+                <b>Fecha de Impresión:</b><?=date("Y-m-d H:i:s")?>&nbsp;<b>Usuario Impresión:</b><?=$user->getNombre()?>&nbsp;<b>Riesgo&nbsp;<?=$nriesgo?>&nbsp;de&nbsp;<?=$triesgos?></b>
+            </td>
+        </tr>
 </table>
