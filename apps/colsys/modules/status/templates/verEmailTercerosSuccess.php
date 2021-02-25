@@ -122,7 +122,8 @@ use_helper("MimeType");
                         <?
                         $referencia = $reporte->getNumReferencia();
                         if ($referencia) {
-                            echo "<b>Ref.: ".$referencia."</b>";
+                            echo "<b>Ref.: ".$referencia."</b><br/>";
+                            echo "<b>Doc. Transporte</b>: ".$reporte->getDoctransporte();
                             $archivos = $reporte->getFilesGestDoc();
                             if (count($archivos)) {
                                 foreach ($archivos as $file) {

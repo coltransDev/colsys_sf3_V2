@@ -1324,6 +1324,7 @@ class statusActions extends sfActions {
                     $options["fchini"] = Utils::parseDate($fecha." ".$hora, "Y-m-d H:i:s");
                     $options["fchend"] = date("Y-m-d H:i:s");
 //                    print_r($options);
+//                    exit;
                     $idgConfig = IdgTable::getNuevoIndicador($options);
                     $calculo = $idgConfig->calcularIndicador($options);
                     $cumple = $idgConfig->evaluarIndicador($calculo["estado"], $calculo["val"], $options);                    
@@ -1560,7 +1561,7 @@ class statusActions extends sfActions {
                     SELECT m.ca_idmaster
                     FROM ino.tb_master m
                             INNER JOIN ino.tb_master_sea ms ON ms.ca_idmaster = m.ca_idmaster	
-                        WHERE ms.ca_fchconfirmacion > '2020-05-18' and substring(ca_referencia from 16 for 2) = '20') q on q.ca_idmaster = cf.ca_idmaster and ca_tipo = 'Not.DIAN 1207'
+                        WHERE ms.ca_fchconfirmacion > '2020-05-18' and right(ca_referencia, 2)::int >= 20) q on q.ca_idmaster = cf.ca_idmaster and ca_tipo = 'Not.DIAN 1207'
                     INNER JOIN ino.tb_master m ON m.ca_idmaster = q.ca_idmaster
                     INNER JOIN tb_ciudades ori on ori.ca_idciudad = m.ca_origen
                     INNER JOIN tb_ciudades des on des.ca_idciudad = m.ca_destino
