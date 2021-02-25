@@ -6,15 +6,13 @@ Ext.define('Colsys.Indicadores.grZarpe', {
     extend: 'Colsys.Chart.dobleAxis',
     axes: [{
             type: 'numeric',
-            position: 'right',
-            //grid: true,
+            position: 'right',            
             minimum: 0,
             maximum: 120,
             title: {
                 text: '% De Cumplimiento',
                 fontSize: 15
-            },
-            //adjustByMajorUnit: true,
+            },            
             fields: 'porcentaje'
         }, {
             type: 'numeric3d',
@@ -63,128 +61,33 @@ Ext.define('Colsys.Indicadores.grZarpe', {
     },
     listeners: {
         afterrender: function (ct, position) {
-            indice = this.indice;
-            idform = this.idform;
-            res = this.res;
-            subtitulo = this.subtitulo;
-            transporte = this.transporte;
-
-            gr3 = Ext.getCmp('grafica3' + indice + idform);
-            tb = new Ext.toolbar.Toolbar({
-                style: {
-                    border: 'none'
-                }
-            });
             
-            tb.add(
-                    {
-                        xtype: "panel",
-                        width: '60%',
-                        html: '<img style="float:left;margin-left:5%;" src="../../images/coltrans_logo.png"></img>',
-                        border: false
-                    },
-                    '->',
-                    {
-                        xtype: 'button',
-                        border: false,
-                        iconCls: 'menu_responsive',
-                        arrowVisible: false,
-                        menu: {
-                            items: [
-                                {
-                                    text: 'Detalles',
-                                    border: false,
-                                    iconCls: 'zoom_img',
-                                    class: 'ven1',
-                                    indice: indice,
-                                    handler: function () {
-                                        indi = this.up('menu').up('button').up('toolbar').up().indice;
-                                        res = this.up('menu').up('button').up('toolbar').up().res;
-                                        idfor = this.up('menu').up('button').up('toolbar').up().idform;
-
-                                        Ext.create('Colsys.Indicadores.winZarpe', {
-                                            id: 'w3' + indi + idfor,
-                                            indice: indi,
-                                            idform: idfor,
-                                            res: res
-
-                                        });
-
-                                        Ext.create('Ext.fx.Anim', {
-                                            target: Ext.getCmp('w3' + indi + idfor),
-                                            duration: 1000,
-                                            from: {
-                                                width: 0,
-                                                opacity: 0,
-                                                height: 0,
-                                                left: 0
-                                            },
-                                            to: {
-                                                width: 300,
-                                            }
-                                        });
-                                        if (res[indi]) {
-                                            Ext.getCmp('w3' + indi + idfor).show();
-                                        }
-
-
-                                    }
-                                },
-                                {
-                                    text: 'Descargar Imagen',
-                                    iconCls: 'page_save',
-                                    handler: function (btn, e, eOpts) {
-                                        gr3.downloadCanvas('Oportunidad en el Zarpe', subtitulo, transporte);
-                                    }
-                                },
-                                {
-                                    text: 'Vista Previa',
-                                    iconCls: 'photo_img',
-                                    handler: function (btn, e, eOpts) {
-                                        gr3.previewIndicadores('Oportunidad en el Zarpe', subtitulo, transporte);
-                                    }
-                                },
-                                {
-                                    text: 'Informe del Periodo',
-                                    iconCls: 'csv',
-                                    handler: function (btn, e, eOpts) {
-                                        indi = this.up('menu').up('button').up('toolbar').up().indice;
-                                        res = this.up('menu').up('button').up('toolbar').up().res;
-                                        idfor = this.up('menu').up('button').up('toolbar').up().idform;
-                                        
-                                        filtro = "zarpe";
-                                        var data = res[indi].datosgrid;
-                                        winindicadores = Ext.create('Colsys.Indicadores.winIndicadores', {
-                                            id: 'winIndicadores' + idfor+indi,
-                                            datos: data,
-                                            listeners: {
-                                                destroy: function () {
-                                                    winindicadores = null;
-                                                }
-                                            }
-                                        }).show();                                        
-                                        Ext.getCmp('gridindicadores1').ocultar(filtro);
-                                        winindicadores.show();
-                                    }
-                                }
-                            ]
-                        }
-                    }
-
-            );
-            this.addDocked(tb);
-        }/*,
-        initialize : function( me, eOpts ) {
-                this.store.load({
-                    callback: function(records, operation, success) {
-                    
-                },
-                scope: this
+            var me = this;            
+            var indice = me.up().indice;
+            var idform = me.up().idform;
+            var idgrafica = me.up().idgrafica;
+            res = me.res;            
+            
+            tb =    Ext.create('Colsys.Indicadores.ToolbarGrafica',{
+                id: 'toolbar-'+ idgrafica + indice + idform,
+                indice: indice,
+                idform: idform,
+                ngrafica: me.up().ngrafica,
+                subtitulo: me.up().subtitulo,
+                transporte: me.up().transporte,                        
+                filtro: me.filtro,
+                res: me.res
             });
-       }*/
+            this.addDocked(tb);
+            
+            asignarinfo(me, res[indice].zarpe);
+            this.asignarSeries(me);
+            ajustarEjeY(me, res[indice].zarpe);
+        }
     },
     asignarSeries: function (gr3) {
-        gr3.addSeries([{
+        gr3.addSeries(
+            [{
                 type: 'bar3d',
                 title: 'Negocios',
                 axis: 'left',
@@ -231,8 +134,7 @@ Ext.define('Colsys.Indicadores.grZarpe', {
                         toolTip.setHtml("<b>" + ctx.field + "</b>" + ': ' + record.get(ctx.field) + "%");
                     }
                 }
-
-            }]);
+            }]
+        );
     }
-}
-);
+});

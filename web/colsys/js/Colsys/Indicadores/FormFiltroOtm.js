@@ -578,6 +578,7 @@ function agregarFooter(panel, titulo, subtitulo, transporte) {
     });
     tb.add(
         Ext.create('Ext.Panel', {
+            id: 'footer-'+panel.id,
             border: false,
             width: '100%',
             style: {

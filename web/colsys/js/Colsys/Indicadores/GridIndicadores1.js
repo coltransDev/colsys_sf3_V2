@@ -78,6 +78,16 @@ Ext.define('Colsys.Indicadores.GridIndicadores1', {
                 //hideable: false
             },
             {
+                text: "Ciu. Origen",
+                dataIndex: 'ciuorigen',
+                hidden: true,
+                //id: 'traorigen',
+                //flex: 1,
+                width: 120
+                //sortable: true
+                //hideable: false
+            },
+            {
                 text: "Destino",
                 dataIndex: 'destino',
                 //id: 'destino',
@@ -163,6 +173,23 @@ Ext.define('Colsys.Indicadores.GridIndicadores1', {
                 //flex: 1,
                 //sortable: false,
                 //hideable: false
+            },
+            {
+                text: "Incoterms",
+                dataIndex: 'incoterms',
+                //id: 'proveedor',
+                width: 150,
+                hidden: true
+                //flex: 1,
+                //sortable: false,
+                //hideable: false
+            },
+            {
+                text: "Factura No.",
+                dataIndex: 'factura',
+                //id: 'proveedor',
+                width: 150,
+                hidden: true                
             },
             {
                 text: "Fch. Carga<br/> con Reserva",

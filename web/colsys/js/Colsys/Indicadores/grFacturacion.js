@@ -6,26 +6,22 @@ Ext.define('Colsys.Indicadores.grFacturacion', {
     },
     axes: [{
             type: 'numeric',
-            position: 'right',
-            //grid: true,
-            id: 'g5-axesr' + indice + idform,
+            position: 'right',                        
             minimum: 0,
             maximum: 120,
             title: {
                 text: '% De Cumplimiento',
                 fontSize: 15
-            },
-            //adjustByMajorUnit: true,
+            },            
             fields: 'porcentaje'
         }, {
-            type: 'numeric3d',
-            id: 'g5-axesl' + indice + idform,
+            type: 'numeric3d',            
+            position: 'left',
             adjustByMajorUnit: true,
             minimum: 0,
             grid: true,
             increment: 1,
-            majorTickSteps : 5,            
-            position: 'left',
+            majorTickSteps : 5,                        
             title: {
                 text: 'Negocios',
                 fontSize: 15
@@ -33,8 +29,8 @@ Ext.define('Colsys.Indicadores.grFacturacion', {
             fields: 'negocios'
         }, {
             type: 'category3d',
-            position: 'bottom',
             grid: true,
+            position: 'bottom',            
             title: {
                 text: 'Mes',
                 fontSize: 15
@@ -65,114 +61,28 @@ Ext.define('Colsys.Indicadores.grFacturacion', {
     },
     listeners: {
         afterrender: function (ct, position) {
-            indice = this.indice;
-            idform = this.idform;
-            res = this.res;
-            subtitulo = this.subtitulo;
-            transporte = this.transporte;
-
-            gr5 = Ext.getCmp('grafica5' + indice + idform);
-            tb = new Ext.toolbar.Toolbar({
-                style: {
-                    border: 'none'
-                }
+            
+            var me = this;            
+            var indice = me.up().indice;
+            var idform = me.up().idform;
+            var idgrafica = me.up().idgrafica;
+            res = me.res;            
+            
+            tb =    Ext.create('Colsys.Indicadores.ToolbarGrafica',{
+                id: 'toolbar-'+ idgrafica + indice + idform,
+                indice: indice,
+                idform: idform,
+                ngrafica: me.up().ngrafica,
+                subtitulo: me.up().subtitulo,
+                transporte: me.up().transporte,                        
+                filtro: me.filtro,
+                res: me.res
             });
-            tb.add(
-                    {
-                        xtype: "panel",
-                        width: '60%',
-                        html: '<img style="float:left;margin-left:5%;" src="../../images/coltrans_logo.png"></img>',
-                        border: false
-                    },
-                    '->',
-                    {
-                        xtype: 'button',
-                        border: false,
-                        iconCls: 'menu_responsive',
-                        arrowVisible: false,
-                        menu: {
-                            items: [
-                                {
-                                    text: 'Detalles',
-                                    border: false,
-                                    iconCls: 'zoom_img',
-                                    class: 'ven1',
-                                    indice: indice,
-                                    handler: function () {
-
-                                        indi = this.up('menu').up('button').up('toolbar').up().indice;
-                                        res = this.up('menu').up('button').up('toolbar').up().res;
-                                        idfor = this.up('menu').up('button').up('toolbar').up().idform;
-
-                                        Ext.create('Colsys.Indicadores.winFacturacion', {
-                                            id: 'w5' + indi + idfor,
-                                            indice: indi,
-                                            idform: idfor,
-                                            res: res
-                                        });
-
-                                        Ext.create('Ext.fx.Anim', {
-                                            target: Ext.getCmp('w5' + indi + idfor),
-                                            duration: 1000,
-                                            from: {
-                                                width: 0,
-                                                opacity: 0,
-                                                height: 0,
-                                                left: 0
-                                            },
-                                            to: {
-                                                width: 300
-                                                
-                                            }
-                                        });
-                                        if (res[indice]) {
-                                            Ext.getCmp('w5' + indi + idfor).show();
-                                        }
-                                    }
-                                },
-                                {
-                                    text: 'Descargar Imagen',
-                                    iconCls: 'page_save',
-                                    handler: function (btn, e, eOpts) {
-                                        gr5.downloadCanvas('Oportunidad en la Facturaci\u00D3n', subtitulo, transporte);
-                                    }
-                                },
-                                {
-                                    text: 'Vista Previa',
-                                    iconCls: 'photo_img',
-                                    handler: function (btn, e, eOpts) {
-                                        gr5.previewIndicadores('Oportunidad en la Facturaci&oacute;n', subtitulo, transporte);
-                                    }
-                                },
-                                {
-                                    text: 'Informe del Periodo',
-                                    iconCls: 'csv',
-                                    handler: function (btn, e, eOpts) {
-                                        indi = this.up('menu').up('button').up('toolbar').up().indice;
-                                        res = this.up('menu').up('button').up('toolbar').up().res;
-                                        idfor = this.up('menu').up('button').up('toolbar').up().idform;
-                                        
-                                        filtro = "facturacion";
-                                        var data = res[indi].datosgrid;
-                                        winindicadores = Ext.create('Colsys.Indicadores.winIndicadores', {
-                                            id: 'winIndicadores' + idfor+indi,
-                                            datos: data,
-                                            listeners: {
-                                                destroy: function () {
-                                                    winindicadores = null;
-                                                }
-                                            }
-                                        }).show();                                        
-                                        Ext.getCmp('gridindicadores1').ocultar(filtro);
-                                        winindicadores.show();
-                                    }
-                                }
-                            ]
-                        }
-                    }
-
-            );
             this.addDocked(tb);
+            
+            asignarinfo(me, res[indice].facturacion);
+            this.asignarSeries(me);
+            ajustarEjeY(me, res[indice].facturacion);            
         }
     },
     asignarSeries: function (gr5) {
@@ -196,7 +106,6 @@ Ext.define('Colsys.Indicadores.grFacturacion', {
                         mostrardatosMes("facturacion", item.record.data.name);
                     }
                 }
-
             },
             {
                 type: 'line',

@@ -10,7 +10,7 @@ Ext.define('Colsys.Indicadores.winEmbarque', {
     closeAction: 'hide',
     listeners: {
         afterrender: function (ct, position) {
-            //alert(this.res);
+            //alert(indi);
             indi = this.indice;
             res1 = this.res;
             idfor = this.idform;

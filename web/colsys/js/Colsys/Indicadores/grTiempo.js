@@ -131,7 +131,7 @@ Ext.define('Colsys.Indicadores.grEmbarque', {
                                             listeners: {
                                                 destroy: function () {
                                                     winindicadores = null;
-                                                }
+                                }
                                             }
                                         }).show();                                        
                                         Ext.getCmp('gridindicadores1').ocultar(filtro);

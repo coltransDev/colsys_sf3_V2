@@ -7,6 +7,7 @@
 indice = 0;
 colors = ['blue', 'yellow', 'red', 'green', 'gray'];
 res = [];
+winindicadores = null;
 
 function daysInMonth(month,year) {
     return new Date(year, month, 0).getDate();
@@ -36,7 +37,8 @@ function getHighest(array, attribute) {
 Ext.define('Colsys.Indicadores.FormFiltro', {
     extend: 'Ext.form.Panel',
     alias: 'widget.wFormFiltro',
-    waitMsg : 'Please wait...',
+    waitMsg : 'Please wait...',    
+    autoScroll: true,                                                                        
     listeners: {
         afterrender: function (ct, position) {
             idform = this.id;
@@ -301,221 +303,33 @@ Ext.define('Colsys.Indicadores.FormFiltro', {
                                         itemId: 'tabgraficas' + indice + idform,
                                         class: 'tabgraficas' + indice + idform,
                                         autoDestroy: false,
-                                        closable: true,
+                                        closable: true,                                        
+                                        autoScroll: true,                                        
+                                        defaults: {
+                                            bodyPadding: 10,
+                                            scrollable: true
+                                        },
                                         listeners: {
                                             close: function (tab, eOpts) {
-
                                                 this.items.each(function (childItem) {
                                                     this.remove(childItem);
                                                 }, this);
                                             }
                                         },
                                         items: [
-                                            Ext.create('Ext.form.Panel', {
+                                            Ext.create('Ext.panel.Panel', {
                                                 bodyPadding: 10,
-                                                id: 'panel' + indice + idform,
+                                                id: 'formpanel-' + indice + idform,                                                                                                
+                                                autoScroll: true,
+                                                height: 5000,
                                                 listeners: {
                                                     beforerender: function (ct, position) {
                                                         pref = Ext.getCmp(idform).prefijo;
-                                                        filtro = Ext.getCmp(idform).getForm().getValues();
-                                                        filtro = JSON.stringify(filtro);
+                                                        filtro = JSON.stringify(Ext.getCmp(idform).getForm().getValues());                                                        
                                                         tab = this;
-                                                        this.add(
-                                                            ///OPORTUNIDAD EN LA SALIDA///
-                                                            Ext.create('Ext.panel.Panel', {
-                                                                id: 'grafica3' + indice + idform + "-panel",
-                                                                style: {
-                                                                    border: 'solid',
-                                                                    borderColor: '#157FCC',
-                                                                    borderRadius: '10px',
-                                                                    padding: '20px',
-                                                                    borderWidth: '2px',
-                                                                    boxShadow: '5px 5px 5px #888888',
-                                                                    margin: '2%',
-                                                                    marginBottom: '6%'
-                                                                },
-                                                                listeners: {
-                                                                    afterrender: function (ct, position) {
-                                                                        $('#grafica3' + indice + idform + "-panel div").css({border: 'none'});
-                                                                    },
-                                                                    render: function (ct, position) {
-                                                                        this.add({
-                                                                            xtype: 'Colsys.Indicadores.grZarpe',
-                                                                            id: 'grafica3' + indice + idform,
-                                                                            name: 'grafica3' + indice,
-                                                                            class: 'grafica',
-                                                                            filtro: filtro,
-                                                                            pref: pref,
-                                                                            indice: indice,
-                                                                            idform: idform,
-                                                                            res: res,
-                                                                            subtitulo: subtitulo,
-                                                                            transporte: transporte
-                                                                        });
-                                                                        if (transporte == "Mar\u00EDtimo") {
-                                                                            agregarFooter(this, 'Oportunidad en el Zarpe', subtitulo, transporte);
-                                                                        }
-                                                                        if (transporte == "A\u00E9reo") {
-                                                                            agregarFooter(this, 'Oportunidad en la Salida', subtitulo, transporte);
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }),
-                                                            ///OPORTUNIDAD EN LA LLEGADA///
-                                                            Ext.create('Ext.panel.Panel', {
-                                                                id: 'grafica4' + indice + idform + "-panel",
-                                                                style: {
-                                                                    border: 'solid',
-                                                                    borderColor: '#157FCC',
-                                                                    borderRadius: '10px',
-                                                                    padding: '20px',
-                                                                    borderWidth: '2px',
-                                                                    boxShadow: '5px 5px 5px #888888',
-                                                                    margin: '2%',
-                                                                    marginBottom: '6%'
-                                                                },
-                                                                listeners: {
-                                                                    afterrender: function (ct, position) {
-                                                                        $('#grafica4' + indice + idform + "-panel div").css({border: 'none'});
-                                                                    },
-                                                                    render: function (ct, position) {
-                                                                        this.add({
-                                                                            xtype: 'Colsys.Indicadores.grLlegada',
-                                                                            id: 'grafica4' + indice + idform,
-                                                                            name: 'grafica4' + indice,
-                                                                            class: 'grafica',
-                                                                            filtro: filtro,
-                                                                            pref: pref,
-                                                                            indice: indice,
-                                                                            idform: idform,
-                                                                            res: res,
-                                                                            subtitulo: subtitulo,
-                                                                            transporte: transporte
-
-                                                                        });
-                                                                        agregarFooter(this, 'Oportunidad en la Llegada', subtitulo, transporte);
-                                                                    }
-                                                                }
-                                                            }),
-                                                            ///////////////////////////////////
-                                                            Ext.create('Ext.panel.Panel', {
-                                                                id: 'grafica5' + indice + idform + "-panel",
-                                                                style: {
-                                                                    border: 'solid',
-                                                                    borderColor: '#157FCC',
-                                                                    borderRadius: '10px',
-                                                                    padding: '20px',
-                                                                    borderWidth: '2px',
-                                                                    boxShadow: '5px 5px 5px #888888',
-                                                                    margin: '2%',
-                                                                    marginBottom: '6%'
-                                                                },
-                                                                listeners: {
-                                                                    afterrender: function (ct, position) {
-                                                                        $('#grafica5' + indice + idform + "-panel div").css({border: 'none'});
-                                                                    },
-                                                                    render: function (ct, position) {
-                                                                        this.add({
-                                                                            xtype: 'Colsys.Indicadores.grFacturacion',
-                                                                            id: 'grafica5' + indice + idform,
-                                                                            name: 'grafica5' + indice,
-                                                                            class: 'grafica',
-                                                                            filtro: filtro,
-                                                                            pref: pref,
-                                                                            indice: indice,
-                                                                            idform: idform,
-                                                                            res: res,
-                                                                            subtitulo: subtitulo,
-                                                                            transporte: transporte
-                                                                        }
-                                                                        );
-                                                                        agregarFooter(this, 'Oportunidad en la Facturaci&oacute;n', subtitulo, transporte);
-                                                                    }
-                                                                }
-                                                            }),
-                                                            ///OPORTUNIDAD EN LA FACTURACIÓN///
-                                                            Ext.create('Ext.panel.Panel', {
-                                                                id: 'grafica6' + indice + idform + "-panel",
-                                                                style: {
-                                                                    border: 'solid',
-                                                                    borderColor: '#157FCC',
-                                                                    borderRadius: '10px',
-                                                                    padding: '20px',
-                                                                    borderWidth: '2px',
-                                                                    boxShadow: '5px 5px 5px #888888',
-                                                                    margin: '2%',
-                                                                    marginBottom: '6%'
-                                                                },
-                                                                listeners: {
-                                                                    afterrender: function (ct, position) {
-                                                                        $('#grafica6' + indice + idform + "-panel div").css({border: 'none'});
-                                                                    },
-                                                                    render: function (ct, position) {
-                                                                        this.add({
-                                                                            xtype: 'Colsys.Indicadores.grVaciado',
-                                                                            id: 'grafica6' + indice + idform,
-                                                                            name: 'grafica6' + indice,
-                                                                            class: 'grafica',
-                                                                            filtro: filtro,
-                                                                            pref: pref,
-                                                                            indice: indice,
-                                                                            idform: idform,
-                                                                            res: res,
-                                                                            subtitulo: subtitulo,
-                                                                            transporte: transporte
-                                                        });
-                                                                        tb = new Ext.toolbar.Toolbar({
-                                                                            dock: 'bottom',
-                                                                            border: false
-                                                                        });
-                                                                        agregarFooter(this, 'Oportunidad en la Desconsolidaci\u00F3n', subtitulo, transporte);
-                                                                    }
-                                                                }
-                                                            }),
-                                                            ///COORDINACIÓN DE EMBARQUE///
-                                                            Ext.create('Ext.panel.Panel', {
-                                                                id: 'grafica8' + indice + idform + "-panel",
-                                                                style: {
-                                                                    border: 'solid',
-                                                                    borderColor: '#157FCC',
-                                                                    borderRadius: '10px',
-                                                                    padding: '20px',
-                                                                    borderWidth: '2px',
-                                                                    boxShadow: '5px 5px 5px #888888',
-                                                                    margin: '2%',
-                                                                    marginBottom: '6%'
-                                                                },
-                                                                listeners: {
-                                                                    afterrender: function (ct, position) {
-                                                                        $('#grafica8' + indice + idform + "-panel div").css({border: 'none'});
-                                                                    },
-                                                                    render: function (ct, position) {
-                                                                        this.add({
-                                                                            xtype: 'Colsys.Indicadores.grEmbarque',
-                                                                            id: 'grafica8' + indice + idform,
-                                                                            name: 'grafica8' + indice,
-                                                                            class: 'grafica',
-                                                                            filtro: filtro,
-                                                                            pref: pref,
-                                                                            indice: indice,
-                                                                            idform: idform,
-                                                                            res: res,
-                                                                            subtitulo: subtitulo,
-                                                                            transporte: transporte
-                                                                        }
-                                                                        );
-                                                                        tb = new Ext.toolbar.Toolbar({
-                                                                            dock: 'bottom',
-                                                                            border: false
-                                                                        });
-                                                                        agregarFooter(this, 'Coordinacion de Embarque', subtitulo, transporte);
-                                                                    }
-                                                                }
-                                                            })                                                            
-                                                        );
-                                                        b = $('.tabgraficas' + indice + idform);
-                                                        a = $("<div></div>").text("AAAAAAAAA");
-                                                        a.appendTo(b);
+//                                                        b = $('.tabgraficas' + indice + idform);
+//                                                        a = $("<div></div>").text("AAAAAAAAA");
+//                                                        a.appendTo(b);
                                                     },
                                                     afterrender: function (ct, position) {
                                                         Ext.Ajax.request({
@@ -526,7 +340,7 @@ Ext.define('Colsys.Indicadores.FormFiltro', {
                                                             },
                                                             success: function (response, options) {
                                                                 var resp = Ext.decode(response.responseText);
-                                                                if (resp.success){
+                                                                if (resp.success){//                                                                
                                                                     Ext.Ajax.request({
                                                                         url: pref + '/widgets5/datosGraficasIndicadores',
                                                                         params: {
@@ -534,414 +348,313 @@ Ext.define('Colsys.Indicadores.FormFiltro', {
                                                                             cliente: cli
                                                                         },
                                                                         success: function (response, options) {
-                                                                            res[indice] = Ext.decode(response.responseText);
-                                                                            console.log(res);
+                                                                            res[indice] = Ext.decode(response.responseText);                                                                            
                                                                             datos = res[indice].datosgrid;
                                                                             datoscoor = res[indice].griddatoscumplimiento;
 
                                                                             datosLcl = res[indice].gridvolumen;
-                                                                            tab.add(
-                                                                                ///TIEMPO DE TRÁNSITO///
-//                                                                                Ext.create('Ext.panel.Panel', {
-//                                                                                    id: 'grafica2' + indice + idform + "-panel",
-//                                                                                    style: {
-//                                                                                        border: 'solid',
-//                                                                                        borderColor: '#157FCC',
-//                                                                                        borderRadius: '10px',
-//                                                                                        padding: '20px',
-//                                                                                        borderWidth: '2px',
-//                                                                                        boxShadow: '5px 5px 5px #888888',
-//                                                                                        margin: '2%',
-//                                                                                        marginBottom: '6%'
-//                                                                                    },
-//                                                                                    listeners: {
-//                                                                                        afterrender: function (ct, position) {
-//                                                                                            $('#grafica2' + indice + idform + "-panel div").css({border: 'none'});
-//                                                                                        },
-//                                                                                        render: function (ct, position) {
-//                                                                                            this.add(                                                                                                
-//                                                                                                Ext.create('Colsys.Chart.dobleAxis', {
-//                                                                                                    plugins: {
-//                                                                                                        ptype: 'chartitemevents',
-//                                                                                                        moveEvents: true
-//                                                                                                    },
-//                                                                                                    id: 'grafica2' + indice + idform,
-//                                                                                                    name: 'grafica2',
-//                                                                                                    axes: [{
-//                                                                                                        type: 'numeric',
-//                                                                                                        position: 'right',                                                                                                
-//                                                                                                        minimum: 0,
-//                                                                                                        maximum: 120,
-//                                                                                                        title: {
-//                                                                                                            text: '% De Cumplimiento',
-//                                                                                                            fontSize: 15
-//                                                                                                        },                                                                                
-//                                                                                                        fields: 'porcentaje'
-//                                                                                                    }, {
-//                                                                                                        id: 'g2-axesl' + indice + idform,
-//                                                                                                        type: 'numeric3d',
-//                                                                                                        position: 'left',
-//                                                                                                        adjustByMajorUnit: false,
-//                                                                                                        minimum: 0,
-//                                                                                                        grid: true,
-//                                                                                                        increment: 1,
-//                                                                                                        title: {
-//                                                                                                            text: 'Negocios',
-//                                                                                                            fontSize: 15
-//                                                                                                        },                                                                                                        
-//                                                                                                        fields: res[indice].y
-//                                                                                                    }, {
-//                                                                                                        type: 'category3d',
-//                                                                                                        position: 'bottom',
-//                                                                                                        grid: true,
-//                                                                                                        title: {
-//                                                                                                            text: 'Mes',
-//                                                                                                            fontSize: 15
-//                                                                                                        },
-//                                                                                                        fields: 'name'
-//                                                                                                    }],
-//                                                                                                    tooltip: {
-//                                                                                                        trackMouse: true,
-//                                                                                                        width: 140,
-//                                                                                                        height: 28,
-//                                                                                                        renderer: function (toolTip, record, ctx) {
-//                                                                                                            if (record.get(ctx.field)) {
-//                                                                                                                toolTip.setHtml(ctx.field + ": " + parseFloat(record.get(ctx.field)).toFixed(0));
-//                                                                                                            } else {
-//                                                                                                                toolTip.setHtml(ctx.field + ": 0");
-//                                                                                                            }
-//                                                                                                        }
-//                                                                                                    },
-//                                                                                                    listeners: {
-//                                                                                                        afterrender: function (ct, position) {
-//                                                                                                            gr2 = Ext.getCmp('grafica2' + indice + idform);
-//                                                                                                            tb = new Ext.toolbar.Toolbar({
-//                                                                                                                style: {
-//                                                                                                                    border: 'none'
-//                                                                                                                }
-//                                                                                                            });
-//                                                                                                            tb.add({
-//                                                                                                                    xtype: "panel",
-//                                                                                                                    width: '80%',
-//                                                                                                                    html: '<img style="float:left;margin-left:5%;" src="../../images/coltrans_logo.png"></img>',
-//                                                                                                                    border: false
-//                                                                                                                },
-//                                                                                                                '->',
-//                                                                                                                {
-//                                                                                                                    xtype: 'button',
-//                                                                                                                    border: false,
-//                                                                                                                    iconCls: 'menu_responsive',
-//                                                                                                                    arrowVisible: false,
-//                                                                                                                    menu: {
-//                                                                                                                        items: [{
-//                                                                                                                            text: 'Detalles',
-//                                                                                                                            border: false,
-//                                                                                                                            iconCls: 'zoom_img',
-//                                                                                                                            class: 'ven1',
-//                                                                                                                            indice: indice,
-//                                                                                                                            handler: function () {
-//                                                                                                                                Ext.create('Colsys.Indicadores.winTransito', {
-//                                                                                                                                    id: 'w2' + this.indice + idform,
-//                                                                                                                                    indice: this.indice,
-//                                                                                                                                    idform: idform,
-//                                                                                                                                    res: res
-//                                                                                                                                });
-//
-//                                                                                                                                Ext.create('Ext.fx.Anim', {
-//                                                                                                                                    target: Ext.getCmp('w2' + this.indice + idform),
-//                                                                                                                                    duration: 1000,
-//                                                                                                                                    from: {
-//                                                                                                                                        width: 0,
-//                                                                                                                                        opacity: 0,
-//                                                                                                                                        height: 0,
-//                                                                                                                                        left: 0
-//                                                                                                                                    },
-//                                                                                                                                    to: {
-//                                                                                                                                        width: 300,
-//                                                                                                                                    }
-//                                                                                                                                });
-//                                                                                                                                if (res[this.indice]) {
-//                                                                                                                                    Ext.getCmp('w2' + this.indice + idform).show();
-//                                                                                                                                }
-//                                                                                                                            }
-//                                                                                                                        },
-//                                                                                                                        {
-//                                                                                                                            text: 'Descargar Imagen',
-//                                                                                                                            iconCls: 'page_save',
-//                                                                                                                            handler: function (btn, e, eOpts) {
-//                                                                                                                                gr2.downloadCanvas('Tiempo de Transito', subtitulo, transporte);
-//                                                                                                                            }
-//                                                                                                                        },
-//                                                                                                                        {
-//                                                                                                                            text: 'Vista Previa',
-//                                                                                                                            iconCls: 'photo_img',
-//                                                                                                                            handler: function (btn, e, eOpts) {
-//                                                                                                                                gr2.previewIndicadores('Tiempo de Transito', subtitulo, transporte);
-//                                                                                                                            }
-//                                                                                                                        },
-//                                                                                                                        {
-//                                                                                                                            text: 'Informe del Periodo',
-//                                                                                                                            iconCls: 'csv',
-//                                                                                                                            handler: function (btn, e, eOpts) {
-//                                                                                                                                indi = indice;                                                                                                                        
-//                                                                                                                                idfor = idform;
-//
-//                                                                                                                                filtro = "transito";
-//                                                                                                                                var data = res[indi].datosgrid;
-//                                                                                                                                winindicadores = Ext.create('Colsys.Indicadores.winIndicadores', {
-//                                                                                                                                    id: 'winIndicadores' + idfor+indi,
-//                                                                                                                                    datos: data,
-//                                                                                                                                    listeners: {
-//                                                                                                                                        destroy: function () {
-//                                                                                                                                            winindicadores = null;
-//                                                                                                                                                        }
-//                                                                                                                                                }
-//                                                                                                                                }).show();                                        
-//                                                                                                                                Ext.getCmp('gridindicadores1').ocultar(filtro);
-//                                                                                                                                winindicadores.show();
-//                                                                                                                                            }
-//                                                                                                                        }]
-//                                                                                                                    }
-//                                                                                                                }
-//                                                                                                            );
-//                                                                                                            this.addDocked(tb);
-//                                                                                                        }
-//                                                                                                    }
-//                                                                                                })
-//                                                                                            );
-//                                                                                            agregarFooter(this, 'Tiempo de Transito', subtitulo, transporte);
-//                                                                                        }
-//                                                                                    }
-//                                                                                }),
+                                                                            tab.add(                                                                                
+                                                                                /***PANEL IDG OPORTUNIDAD EN EL ZARPE**/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica3' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica3',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica: transporte == "Mar\u00EDtimo"?"Oportunidad en el Zarpe":"Oportunidad en la Salida",
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grZarpe',
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                name: me.idgrafica,
+                                                                                                class: 'grafica',
+                                                                                                filtro: "zarpe",
+                                                                                                pref: pref,
+                                                                                                res: res
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                }),
+                                                                                /***PANEL IDG OPORTUNIDAD EN LA LLEGADA**/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica4' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica4',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica: 'Oportunidad en la Llegada',
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grLlegada',
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                name: me.idgrafica,
+                                                                                                class: 'grafica',
+                                                                                                filtro: "llegada",
+                                                                                                pref: pref,
+                                                                                                res: res
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                }),
+                                                                                /***PANEL IDG OPORTUNIDAD EN LA FACTURACIÓN**/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica5' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica5',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica: 'Oportunidad en la Facturaci&oacute;n',
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grFacturacion',
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                name: me.idgrafica,
+                                                                                                class: 'grafica',
+                                                                                                filtro: "facturacion",
+                                                                                                pref: pref,                                                                                                
+                                                                                                res: res
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                }),
+                                                                                /***PANEL IDG OPORTUNIDAD EN LA DESCONSOLIDACIÓN**/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica6' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica6',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica: 'Oportunidad en la Desconsolidaci\u00F3n',
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grVaciado',
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                name: me.idgrafica,
+                                                                                                class: 'grafica',
+                                                                                                filtro: "vaciado",
+                                                                                                pref: pref,                                                                                                
+                                                                                                res: res
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                }),
+                                                                                /***PANEL IDG COORDINACIÓN DE EMBARQUE**/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica8' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica8',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica: 'Coordinación de Embarque',
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grEmbarque',
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                name: me.idgrafica,
+                                                                                                class: 'grafica',
+                                                                                                filtro: 'embarque',
+                                                                                                pref: pref,                                                                                                
+                                                                                                res: res
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                }),
+                                                                                /***PANEL IDG TIEMPO DE TRANSITO**/                                                                                    
                                                                                 Ext.create('Colsys.Indicadores.PanelGrafica',{
                                                                                     id: 'grafica2' + indice + idform + "-panel",
                                                                                     idgrafica: 'grafica2',
                                                                                     indice: indice,
                                                                                     idform: idform,
-                                                                                    fields: res[indice].y,
-                                                                                    res:res,
                                                                                     ngrafica:"Tiempo de transito",
                                                                                     subtitulo: subtitulo,
                                                                                     transporte: transporte,
-                                                                                    filtro: 'transito'
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grTiempoTransito',
+                                                                                                id: me.idgrafica + indice + idform,                                                                                                
+                                                                                                filtro: "transito",                                                                                                
+                                                                                                fields: res[indice].y,                                                                                                                                                                                                                                                                                                
+                                                                                                res: res                                                                                                
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
                                                                                 }),
-                                                                                ///Volumen LCL///
-                                                                                Ext.create('Ext.panel.Panel', {
+                                                                                /***PANEL DATOS VOLUMEN LCL***/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
                                                                                     id: 'grafica1' + indice + idform + "-panel",
-                                                                                    style: {
-                                                                                        border: 'solid',
-                                                                                        borderColor: '#157FCC',
-                                                                                        borderRadius: '10px',
-                                                                                        padding: '20px',
-                                                                                        borderWidth: '2px',
-                                                                                        boxShadow: '5px 5px 5px #888888',
-                                                                                        margin: '2%',
-                                                                                        marginBottom: '6%'
-                                                                                    },
-                                                                                    listeners: {
-                                                                                        afterrender: function (ct, position) {
-                                                                                            $('#grafica1' + indice + idform + "-panel div").css({border: 'none'});
-                                                                                        },
+                                                                                    idgrafica: 'grafica1',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica:"Volumen x Tr&aacute;fico LCL",
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
                                                                                         render: function (ct, position) {
+                                                                                            var me = this;
                                                                                             this.add({
-                                                                                                xtype: 'Colsys.Indicadores.grVolumen',
-                                                                                                id: 'grafica1' + indice + idform,
-                                                                                                name: 'grafica1',
-                                                                                                class: 'grafica',
-                                                                                                filtro: filtro,
-                                                                                                pref: pref,
+                                                                                                xtype: 'Colsys.Indicadores.grDatosVolumen',
+                                                                                                id: me.idgrafica + indice + idform,                                                                                                
+                                                                                                filtro: "volumen",                                                                                                
+                                                                                                fields: res[indice].y,                                                                                                
                                                                                                 tipo: 'LCL',
-                                                                                                indice: indice,
-                                                                                                idform: idform,
-                                                                                                res: res,
-                                                                                                subtitulo: subtitulo,
-                                                                                                transporte: transporte
-                                                                                            });
-                                                                                            agregarFooter(this, 'Volumen x Tr&aacute;fico LCL', subtitulo, transporte);
+                                                                                                res: res                                                                                                
+                                                                                            });                                                                                            
                                                                                         }
                                                                                     }
-                                                                                }),
-                                                                                ///Volumen FCL///
-                                                                                Ext.create('Ext.panel.Panel', {
+                                                                                }),                                                                                
+                                                                                /***PANEL DATOS VOLUMEN FCL***/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
                                                                                     id: 'grafica1FCL' + indice + idform + "-panel",
-                                                                                    style: {
-                                                                                        border: 'solid',
-                                                                                        borderColor: '#157FCC',
-                                                                                        borderRadius: '10px',
-                                                                                        padding: '20px',
-                                                                                        borderWidth: '2px',
-                                                                                        boxShadow: '5px 5px 5px #888888',
-                                                                                        margin: '2%',
-                                                                                        marginBottom: '6%'
-                                                                                    },
-                                                                                    listeners: {
-                                                                                        afterrender: function (ct, position) {
-                                                                                            $('#grafica1FCL' + indice + idform + "-panel div").css({border: 'none'});
-                                                                                        },
+                                                                                    idgrafica: 'grafica1FCL',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica:"Volumen x Tr&aacute;fico FCL",
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
                                                                                         render: function (ct, position) {
+                                                                                            var me = this;
                                                                                             this.add({
-                                                                                                xtype: 'Colsys.Indicadores.grVolumen',
-                                                                                                id: 'grafica1FCL' + indice + idform,
-                                                                                                name: 'grafica1FCL',
-                                                                                                class: 'grafica',
-                                                                                                filtro: filtro,
-                                                                                                pref: pref,
+                                                                                                xtype: 'Colsys.Indicadores.grDatosVolumen',
+                                                                                                id: me.idgrafica + indice + idform,                                                                                                
+                                                                                                filtro: "volumen",                                                                                                
+                                                                                                fields: res[indice].y,
                                                                                                 tipo: 'FCL',
-                                                                                                indice: indice,
-                                                                                                idform: idform,
-                                                                                                res: res,
-                                                                                                subtitulo: subtitulo,
-                                                                                                transporte: transporte
-                                                                                            });
-                                                                                            agregarFooter(this, 'Volumen x Tr&aacute;fico FCL', subtitulo, transporte);
+                                                                                                res: res                                                                                                
+                                                                                            });                                                                                            
                                                                                         }
                                                                                     }
                                                                                 }),
-                                                                                ///Peso///
-                                                                                Ext.create('Ext.panel.Panel', {
-                                                                                        id: 'grafica7' + indice + idform + "-panel",
-                                                                                        style: {
-                                                                                            border: 'solid',
-                                                                                            borderColor: '#157FCC',
-                                                                                            borderRadius: '10px',
-                                                                                            padding: '20px',
-                                                                                            borderWidth: '2px',
-                                                                                            boxShadow: '5px 5px 5px #888888',
-                                                                                            margin: '2%',
-                                                                                            marginBottom: '6%'
-                                                                                        },
-                                                                                        listeners: {
-                                                                                            afterrender: function (ct, position) {
-                                                                                                $('#grafica7' + indice + idform + "-panel div").css({border: 'none'});
-                                                                                            },
-                                                                                            render: function (ct, position) {
-                                                                                                this.add({
-                                                                                                    xtype: 'Colsys.Indicadores.grPeso',
-                                                                                                    id: 'grafica7' + indice + idform,
-                                                                                                    name: 'grafica7' + indice,
-                                                                                                    class: 'grafica',
-                                                                                                    filtro: filtro,
-                                                                                                    pref: pref,
-                                                                                                    indice: indice,
-                                                                                                    idform: idform,
-                                                                                                    res: res,
-                                                                                                    subtitulo: subtitulo,
-                                                                                                    transporte: transporte
-                                                                                                });
-                                                                                                agregarFooter(this, 'Peso x Mes', subtitulo, transporte);
-                                                                                            }
+                                                                                /***PANEL DATOS FACTURACION X TRAFICO***/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica10' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica10',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica:"Facturaci&oacute;n x Tr&aacute;fico",
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grDatosFacturacion',                                                                                                
+                                                                                                id: me.idgrafica + indice + idform,                                                                                                
+                                                                                                filtro: "transito",                                                                                                
+                                                                                                fields: res[indice].y,
+                                                                                                tipo: 'xTrafico',
+                                                                                                res: res
+                                                                                            });                                                                                            
                                                                                         }
-                                                                                    })
+                                                                                    }
+                                                                                }),    
+                                                                                /***PANEL DATOS FACTURACION X MES***/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica11' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica11',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica:"Facturaci&oacute;n x Mes",
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grDatosFacturacion',                                                                                                
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                //name: me.idgrafica,
+                                                                                                class: 'grafica',
+                                                                                                filtro: "transito",                                                                                                
+                                                                                                fields: res[indice].y,                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                tipo: 'xMes',
+                                                                                                res: res
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                }),    
+                                                                                /***PANEL DATOS PESO x TRAFICO***/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica7' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica7',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica:"Peso x Tr&aacute;fico",
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grDatosPeso',
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                name: me.idgrafica,                                                                                                
+                                                                                                filtro: "peso",                                                                                                
+                                                                                                fields: res[indice].y,
+                                                                                                tipo: 'xTrafico',
+                                                                                                res: res                                                                                                
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                }),
+                                                                                /***PANEL DATOS PESO x MES***/
+                                                                                Ext.create('Colsys.Indicadores.PanelGrafica',{
+                                                                                    id: 'grafica7_1' + indice + idform + "-panel",
+                                                                                    idgrafica: 'grafica7_1',
+                                                                                    indice: indice,
+                                                                                    idform: idform,
+                                                                                    ngrafica:"Peso x Mes",
+                                                                                    subtitulo: subtitulo,
+                                                                                    transporte: transporte,
+                                                                                    listeners: {                                                                                        
+                                                                                        render: function (ct, position) {
+                                                                                            var me = this;
+                                                                                            this.add({
+                                                                                                xtype: 'Colsys.Indicadores.grDatosPeso',
+                                                                                                id: me.idgrafica + indice + idform,
+                                                                                                name: me.idgrafica,                                                                                                
+                                                                                                filtro: "peso",                                                                                                
+                                                                                                fields: res[indice].y,
+                                                                                                tipo: 'xMes',
+                                                                                                res: res                                                                                                
+                                                                                            });                                                                                            
+                                                                                        }
+                                                                                    }
+                                                                                })                                                                                 
                                                                             );
 
-                                                                            //Oculta la gráfica de Volumen LCL y Desconsolidación cuándo no hay negocios LCL                                                                            
+                                                                            /*Oculta la gráfica de Volumen LCL y Desconsolidación cuándo no hay negocios LCL*/
                                                                             if(jQuery.isEmptyObject(res[indice].gridvolumen)){
                                                                                 $('#grafica1' + indice + idform + "-panel").hide();
                                                                                 $('#grafica6' + indice + idform + "-panel").hide();
                                                                             }
 
-                                                                            //Oculta la gráfica cuándo no hay negocios FCL
+                                                                            /*Oculta la gráfica cuándo no hay negocios FCL*/
                                                                             if(jQuery.isEmptyObject(res[indice].gridvolumenFCL)){
                                                                                 $('#grafica1FCL' + indice + idform + "-panel").hide();
                                                                             }
 
-                                                                            //Oculta la gráfica cuándo no mide Coordinación de Embarque
+                                                                            /*Oculta la gráfica cuándo no mide Coordinación de Embarque*/
                                                                             if(res[indice].clienteEmbarque==null){
                                                                                 $('#grafica8' + indice + idform + "-panel").hide();
                                                                             }
-
-                                                                            ///GRAFICA 1///
-                                                                            asignarinfo(gr1, res[indice].root);
-                                                                            gr1.asignarAxes(gr1, indice, idform, res[indice].y, "LCL");
-                                                                            gr1.asignarSeries(gr1, res[indice].y, "LCL");
-
-                                                                            asignarinfo(gr1FCL, res[indice].datosFCL);
-                                                                            gr1FCL.asignarAxes(gr1FCL, indice, idform, res[indice].y, "FCL");
-                                                                            gr1FCL.asignarSeries(gr1FCL, res[indice].y, "FCL", idform, indice);
-
-                                                                            ///GRAFICA 2///
-                                                                            asignarinfo(gr3, res[indice].zarpe);
-                                                                            gr3.asignarSeries(gr3);
-                                                                            ajustarEjeY(gr3, res[indice].zarpe);
-                                                                            ///GRAFICA 4///
-                                                                            asignarinfo(gr4, res[indice].llegada);
-                                                                            gr4.asignarSeries(gr4);
-                                                                            ajustarEjeY(gr4, res[indice].llegada);
-                                                                            ///GRAFICA 5///
-                                                                            asignarinfo(gr5, res[indice].facturacion);
-                                                                            gr5.asignarSeries(gr5);
-                                                                            ajustarEjeY(gr5, res[indice].facturacion);
-                                                                            ///GRAFICA 6///
-                                                                            asignarinfo(gr8, res[indice].coordembarque);
-                                                                            gr8.asignarSeries(gr8);
-                                                                            ajustarEjeY(gr8, res[indice].coordembarque);
-                                                                            //////
-                                                                            asignarinfo(gr6, res[indice].vaciado);
-                                                                            gr6.asignarSeries(gr6);
-                                                                            ajustarEjeY(gr6, res[indice].vaciado);
-                                                                            ///GRAFICA 7///
-                                                                            //gr7.getStore().setData(res[indice].datospie);
-                                                                            asignarinfo(gr7, res[indice].datospie);
-                                                                            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////                                           
-//                                                                            gr2.addSeries([{
-//                                                                                type: 'bar3d',
-//                                                                                style: {
-//                                                                                    maxBarWidth: 200,
-//                                                                                    minBarWidth: 8
-//                                                                                },
-//                                                                                axis: 'left',
-//                                                                                stacked: false,
-//                                                                                xField: 'name',
-//                                                                                yField: res[indice].y,
-//                                                                                tooltip: {
-//                                                                                    trackMouse: true,
-//                                                                                    width: 140,
-//                                                                                    height: 28,
-//                                                                                    renderer: function (toolTip, record, ctx) {
-//                                                                                        toolTip.setHtml(ctx.field + ': ' + record.get(ctx.field) + " Negocios");
-//                                                                                    }
-//                                                                                },
-//                                                                                listeners: {
-//                                                                                    itemdblclick: function (series, item, event, eOpts) {
-//                                                                                        mostrardatostraficomes("transito", item.record.data.name, item.field);
-//                                                                                    }
-//                                                                                }
-//                                                                            },
-//                                                                            {
-//                                                                                type: 'line',
-//                                                                                axis: 'right',
-//                                                                                xField: 'name',
-//                                                                                yField: ['porcentaje'],
-//                                                                                stacked: false,
-//                                                                                marker: true,
-//                                                                                label: {
-//                                                                                    field: ['porcentaje'],
-//                                                                                    display: 'over',
-//                                                                                    font: '10px Helvetica',
-//                                                                                    renderer: function (text, label, labelCfg, data, index) {
-//                                                                                        var record = data.store.getAt(index);
-//                                                                                        return record.get('porcentaje') + '%';
-//                                                                                    }
-//                                                                                },
-//                                                                                tooltip: {
-//                                                                                    trackMouse: true,
-//                                                                                    width: 140,
-//                                                                                    height: 28,
-//                                                                                    renderer: function (toolTip, record, ctx) {
-//                                                                                        toolTip.setHtml("<b>" + ctx.field + "</b>" + ': ' + record.get(ctx.field) + "%");
-//                                                                                    }
-//                                                                                }
-//                                                                            }]);
-//                                                                            str = Ext.create('Ext.data.Store', {
-//                                                                                id: 'strgr2' + indice + idform,
-//                                                                                model: Ext.create('Ext.data.Model', {
-//                                                                                    fields: [res[indice].modelgrafica2],
-//                                                                                    id: 'mdlgrf2' + indice + idform
-//                                                                                }),
-//                                                                                data: res[indice].grafica2
-//                                                                            });
-//                                                                            gr2.setStore(str);
-                                                                            //ajustarEjeY(gr2, res[indice].grafica2);
                                                                             myMsg.close();    
                                                                         }
                                                                     });                                                                                
@@ -955,6 +668,9 @@ Ext.define('Colsys.Indicadores.FormFiltro', {
                                         })]
                                     }).show();                                            
                                 }
+//                                b = $('.tabgraficas' + indice + idform);
+//                                a = $("<div></div>").text("AAAAAAAAA");
+//                                a.appendTo(b);
                                 tabpanel.setActiveTab('tabgraficas' + indice + idform);                                        
                             } else {
                                 Ext.MessageBox.alert("Error", "Debe Ingresar Rango de Fechas");
@@ -963,7 +679,7 @@ Ext.define('Colsys.Indicadores.FormFiltro', {
                     }]
                 },{
                     xtype: 'tabpanel',
-                    id: 'tab-panel-graficas' + idform + idform
+                    id: 'tab-panel-graficas' + idform + idform,                    
                 }]
             });
             Ext.getCmp(idform).add();
@@ -979,6 +695,7 @@ function agregarFooter(panel, titulo, subtitulo, transporte) {
     });
     tb.add(
             Ext.create('Ext.Panel', {
+                id: 'footer-'+panel.id,
                 border: false,
                 width: '100%',
                 style: {
@@ -1023,7 +740,7 @@ function ajustarEjeY(grafica, datastore){
 
 function mostrardatos(filtro, param1, param2) {
     data = [];
-
+    
     if (filtro != "embarque") {
         for (var i = 0; i < datos.length; i++) {
 
@@ -1064,6 +781,11 @@ function mostrardatos(filtro, param1, param2) {
                     data.push(datos[i]);
                 }
             }
+            if(filtro == "factxorigen"){
+                if (datos[i]['mes'] == param1 && datos[i]['traorigen'] == param2) {
+                    data.push(datos[i]);
+                }
+            }
         }
 
 
@@ -1084,14 +806,14 @@ function mostrardatos(filtro, param1, param2) {
                 winindicadores = null;
             }
         }
-    }).show();
+    });
     //Ext.getCmp('gridindicadores1').columns[0].setVisible(false);
     Ext.getCmp('gridindicadores1').filtro = filtro;
     Ext.getCmp('gridindicadores1').ocultar(filtro);
     winindicadores.show();
 }
 
-function mostrardatosVolumen(param1, param2, param3, filtro) {
+function mostrardatosVolumen(param1, param2, param3, filtro, datos) {
     data = [];
     for (var i = 0; i < datos.length; i++) {
         if(datos[i]["modalidad"]== param3){
@@ -1103,8 +825,6 @@ function mostrardatosVolumen(param1, param2, param3, filtro) {
             }
     }
     
-    console.log(data);
-    
     winindicadores = Ext.create('Colsys.Indicadores.winIndicadores', {
         id: 'winIndicadores' + idform,
         datos: data,
@@ -1113,7 +833,7 @@ function mostrardatosVolumen(param1, param2, param3, filtro) {
                 winindicadores = null;
             }
         }
-    }).show();
+    });
     
     Ext.getCmp('gridindicadores1').filtro = filtro;
     Ext.getCmp('gridindicadores1').ocultar(filtro);
@@ -1197,7 +917,7 @@ function mostrardatosVolumen(param1, param2, param3, filtro) {
 
 function mostrardatosMes(filtro, param1) {
     data = [];
-    console.log(datos);
+    
     if(filtro == "vaciado"){
         for (var i = 0; i < datos.length; i++) {
             if(datos[i]["modalidad"]=="LCL"){
@@ -1230,31 +950,34 @@ function mostrardatosMes(filtro, param1) {
                 winindicadores = null;
             }
         }
-    }).show();
+    });
     Ext.getCmp('gridindicadores1').filtro = filtro;
     Ext.getCmp('gridindicadores1').ocultar(filtro);
     winindicadores.show();
 }
 
-function mostrardatostraficomes(filtro, param1, pais) {
-    data = [];
+function mostrardatostraficomes(filtro, param1, pais, idform, datos) {
+    data = [];    
 
-    for (var i = 0; i < datos.length; i++) {
-        if (datos[i]["mes"] == param1 && datos[i]["traorigen"] == pais) {
-            data.push(datos[i]);
-        }
-    }
-
-    winindicadores = Ext.create('Colsys.Indicadores.winIndicadores', {
-        id: 'winIndicadores' + idform,        
-        datos: data,
-        listeners: {
-            destroy: function () {
-                winindicadores = null;
+    if(winindicadores == null){
+        for (var i = 0; i < datos.length; i++) {
+            if (datos[i]["mes"] == param1 && datos[i]["traorigen"] == pais) {
+                data.push(datos[i]);
             }
         }
-    }).show();
-    Ext.getCmp('gridindicadores1').filtro = filtro;    
-    Ext.getCmp('gridindicadores1').ocultar(filtro);
-    winindicadores.show();
+
+        winindicadores = Ext.create('Colsys.Indicadores.winIndicadores', {
+            id: 'winIndicadores' + idform,        
+            datos: data,
+            listeners: {
+                destroy: function () {
+                    winindicadores = null;
+                }
+            }
+        });
+        Ext.getCmp('gridindicadores1').filtro = filtro;    
+        Ext.getCmp('gridindicadores1').ocultar(filtro);
+        winindicadores.show();
+    }
+    
 }

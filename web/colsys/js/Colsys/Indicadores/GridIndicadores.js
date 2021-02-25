@@ -16,7 +16,7 @@ Ext.define('Colsys.Indicadores.GridIndicadores', {
             switch (this.up().filtro) {
                 case "volumen":
                     break;
-                case "transito":                                        
+                case "transito":
                     var idg = record.get('metatransito') - record.get('idgtiempotransito');
                     
                     if (idg < 0 || record.get('metatransito') == "SIN META") {                        
@@ -248,7 +248,7 @@ Ext.define('Colsys.Indicadores.GridIndicadores', {
                             sortable: false,
                             hideable: false,
                             hidden: true
-                        },                        
+                        },
                         {
                             text: "Fch.<br/> Facturacion",
                             dataIndex: 'fch_factura',
