@@ -19,52 +19,8 @@ Ext.define('Colsys.Riesgos.ChartRiesgo', {
     width: '100%',    
     insetPadding: 40,
     legend: {
-        docked: 'bottom'
+        docked: 'right'
     },    
-    dockedItems: [{
-        xtype: 'toolbar',
-        dock: 'top',
-        items: [{
-            xtype: 'button',
-            text: 'Descargar Imagen',
-            handler: function(btn, e, eOpts) {                
-                this.up("cartesian").downloadCanvas();
-            }
-        }, {
-            xtype: 'button',
-            text: 'Vista Previa',
-            handler: function(btn, e, eOpts) {
-               this.up("cartesian").preview();
-            }
-        },{
-            text: 'Ver Tabla',
-            iconCls: 'table',
-            handler: function () {
-                if(winNivel == null){
-                    winNivel = Ext.create('Ext.window.Window',{
-                        width: 300,
-                        height: 260,
-                        id:'winNivel',                    
-                        name:'winNivel',                        
-                        title: 'NIVEL DE RIESGO',
-                        layout: 'anchor',
-                        html: htmlN,
-                        closeAction: 'hide',
-                        listeners: {
-                            afterrender: function(ct, position){                                            
-                                $(".parrafo").css({'font-weight': 'bold','font-size': '10px', 'text-align':'center'});
-                                $(".descripcion").css({'text-align':'center'});
-                                $(".valor").css({'min-width':'80px','font-size': '10px','text-align':'center'});                                
-                                $(".tabla_escala").css({'border-radius':'5px','border':'1px solid #CCCCCC', 'border-collapse': 'collapse'});                                
-                                $(".tabla_escala tr td").css({'border':'1px solid #CCCCCC','line-height':'10px'});
-                            }
-                        }
-                   })
-                }
-                winNivel.show(); 
-            }
-        }]
-    }],
     axes: [{
         type: 'numeric',
         fields: 'x', // Serie Area               
@@ -119,6 +75,9 @@ Ext.define('Colsys.Riesgos.ChartRiesgo', {
     listeners:{
         beforerender: function (me, eOpts) {            
             var idriesgo = me.idriesgo;
+            var idproceso = me.idproceso;
+            var idempresa = me.idempresa;
+            
             
             me.setStore( 
                 Ext.create('Ext.data.JsonStore', {                                            
@@ -126,7 +85,9 @@ Ext.define('Colsys.Riesgos.ChartRiesgo', {
                     proxy: {
                         url: '/riesgos/datosGraficaAreaxRiesgo',
                         extraParams: {
-                            idriesgo: idriesgo
+                            idriesgo: idriesgo,
+                            idproceso: idproceso,
+                            idempresa: idempresa
                         },
                         type: 'ajax',                            
                         reader: {
@@ -136,10 +97,12 @@ Ext.define('Colsys.Riesgos.ChartRiesgo', {
                     },
                     autoLoad: true
                 })
-            );                                  
+            );
         },
         afterrender: function(){
             var chart = this;
+            labelIcon = this.labelIcon;
+            var indexId = this.indexId;
 
             var serie = [{
                 type: 'scatter',
@@ -160,15 +123,171 @@ Ext.define('Colsys.Riesgos.ChartRiesgo', {
                     }
                 },
                 label: {
-                    field: 'score',
+                    field: labelIcon,
                     display: 'over',                                                                                    
                     font: '6px',   
                     fillStyle: 'black',
                     translationY: 18
                 }
             }];
+        
+            var panelHtml = '<div style="width:100%;height:1px;border:solid;border-color :#38610B;border-bottom-color:#868A08;"></div>'+
+                             '<div style="width:100%;height:20px;padding:0;margin:2px;">'+
+                                '<div>'+
+                                    '<p style="width:100%;height:20px;text-align:center;font-weight:bold;font-size:20px;">'+
+                                        '<b>' + "Mapa de Calor / " + '</b> '+
+                                        '<b style="font-size:20px;">' + chart.subtitulo + ' / </b> '+
+                                        '<b style="font-size:20px;">' + chart.ano +
+                                    '</p>'+
+                                '</div>'+
+                            '</div>';
 
+            
             chart.addSeries(serie);
+            tbar = [{
+                xtype: 'toolbar',
+                dock: 'top',
+                id: 'bar-top-chart-' + indexId,
+                items: [{
+                    xtype: 'button',
+                    id: 'btn-chart-download-'  + indexId,
+                    text: 'Descargar Imagen',
+                    handler: function(btn, e, eOpts) {                
+                        chart.downloadCanvas("Mapa de Calor", chart.subtitulo, chart.ano);
+                    }
+                }, {
+                    xtype: 'button',
+                    id: 'btn-chart-preview-'  + indexId,
+                    text: 'Vista Previa',
+                    handler: function(btn, e, eOpts) {
+                       chart.previewIndicadores("Mapa de Calor", chart.subtitulo, chart.ano);
+                    }
+                },{
+                    text: 'Ver Tabla',
+                    id: 'btn-chart-tabla-'  + indexId,
+                    iconCls: 'table',
+                    handler: function () {
+                        if(winNivel == null){
+                            winNivel = Ext.create('Ext.window.Window',{
+                                width: 300,
+                                height: 260,
+                                id:'winNivel',                    
+                                name:'winNivel',                        
+                                title: 'NIVEL DE RIESGO',
+                                layout: 'anchor',
+                                html: htmlN,
+                                closeAction: 'hide',
+                                listeners: {
+                                    afterrender: function(ct, position){                                            
+                                        $(".parrafo").css({'font-weight': 'bold','font-size': '10px', 'text-align':'center'});
+                                        $(".descripcion").css({'text-align':'center'});
+                                        $(".valor").css({'min-width':'80px','font-size': '10px','text-align':'center'});                                
+                                        $(".tabla_escala").css({'border-radius':'5px','border':'1px solid #CCCCCC', 'border-collapse': 'collapse'});                                
+                                        $(".tabla_escala tr td").css({'border':'1px solid #CCCCCC','line-height':'10px'});
+                                    }
+                                }
+                           })
+                        }
+                        winNivel.show(); 
+                    }
+                },{
+                    xtype: 'Colsys.Indicadores.Internos.Widget.ComboCheckbox',
+                    width: 300,                    
+                    id:'ca_clasificacion-chart-'+ indexId,                    
+                    store: Ext.create('Ext.data.Store', {
+                        fields: [{type: 'string', name: 'name'},{type: 'integer',name: 'id'}],
+                        proxy: {
+                            type: 'ajax',
+                            url: '/widgets5/datosParametros',
+                            extraParams:{
+                                caso_uso: 'CU286'
+                            },
+                            reader: {
+                                type: 'json',
+                                rootProperty: 'root'
+                            }
+                        },
+                        autoLoad: true
+                    }),
+                    listeners:{
+                        change: function (me, newValue, oldValue, eOpts){                            
+                            me.nextSibling('button').enable();
+                        }
+                    }
+                },
+                {
+                    xtype: 'button',
+                    id:'button-chart-'+ indexId,
+                    hideLabel: false,
+                    text: 'Clasificar por',
+                    iconCls: 'search',
+                    width: 120,
+                    tooltip: 'Filtrar',
+                    disabled: true,
+                    allowBlank: false,                
+                    handler: function(me, e) {                    
+                        idclasificacion = JSON.stringify(me.previousSibling('combobox').getValue());                        
+                        var store =  me.up("chart").getStore();                        
+                        if(store.getProxy().extraParams){
+                            store.getProxy().extraParams.idclasificacion =  idclasificacion;
+                            store.load();
+                        }
+                    } 
+                }]
+            },{
+                xtype: 'toolbar',
+                dock: 'bottom',
+                id: 'bar-botton-chart-' + indexId,
+                items: [
+                    Ext.create('Ext.Panel', {
+                        id: 'footer-' + chart.indexId,
+                        border: false,
+                        flex: 1,
+                        width: '100%',
+                        /*style: {
+                            border: 'none',
+                            height: '10px',
+                            width: '100%'
+                        },*/
+                        html: panelHtml,
+                        listeners: {
+                            render: function (ct, position) {
+                                this.setBorder(0);
+                            }
+                        }
+                    })
+                ]
+            }]
+            chart.addDocked(tbar);   
+//            console.log("footerchart",chart.id);
+//            console.log("charttb0",this.getDockedItems()[0]) ;
+//            console.log("charttb1",this.getDockedItems()[1]) ;
+//            
+//            tbtop = this.getDockedItems()[0];            
+//            tbtop.id = 'tbar-top-' + chart.indexId,
+//            tbtop.add();
+//            
+//            tbdown = this.getDockedItems()[1];            
+//            tbdown.id = 'tbar-down-' + chart.indexId,
+//            tbdown.add(
+//                Ext.create('Ext.Panel', {
+//                    id: 'footer-' + chart.indexId,
+//                    border: false,
+//                    flex: 1,
+//                    width: '100%',
+//                    style: {
+//                        border: 'none',
+//                        height: '20px',
+//                        width: '100%'
+//                    },
+//                    html: '<div style="width:100%;height:2px;border:solid;border-color :#38610B;border-bottom-color:#868A08;"></div><div style="width:100%;height:60px;padding:0;margin:10px;"><div><p style="width:100%;height:60px;text-align:center;font-weight:bold;font-size:22px;"><b>' + "Mapa de Calor" + '</b><br><b style="font-size:10px;">' + chart.subtitulo + '</b><br><b style="font-size:10px;">' + chart.ano + '</b></p></div></div>',
+//                    listeners: {
+//                        render: function (ct, position) {
+//                            this.setBorder(0);
+//                        }
+//                    }
+//                })
+//            );            
         }
-    }            
+    }
 });

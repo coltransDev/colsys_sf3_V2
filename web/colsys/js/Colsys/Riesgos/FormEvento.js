@@ -3,7 +3,7 @@ Ext.define('Colsys.Riesgos.FormEvento', {
     alias: 'widget.Colsys.Riesgos.FormEvento',
     controller: 'form-evento',
     bodyPadding: 10,
-    autoScroll: true,
+//    autoScroll: true,
     frame: true,
     defaults: {        
         bodyStyle:'padding:4px',
@@ -304,7 +304,7 @@ Ext.define('Colsys.view.form.FormEventoController', {
                     }
                 },
                 failure: function(form, action) {
-                    /*Ext.Msg.alert('Failed', action.result.msg);*/
+                    Ext.Msg.alert('Failed', action.result.errorInfo);
                 }
             });
         }else{

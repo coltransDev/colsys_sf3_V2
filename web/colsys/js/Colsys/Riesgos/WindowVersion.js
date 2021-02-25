@@ -49,14 +49,15 @@ Ext.define('Colsys.Riesgos.WindowVersion', {
                             if (form.isValid()) {   
                                 console.log("dfas");
                                 form.submit({
+                                    waitMsg: 'Procesando el archivo, por favor espere un momento...',
                                     params: {
                                         idproceso: me.idproceso,
                                         tipo: 'repos'
                                     },
                                     success: function(form, action) {
                                        me.close();
-                                       Ext.getCmp('window-pdf-'+me.idproceso).close();
-                                       Ext.getCmp('tree-id').getStore().reload();
+                                       //Ext.getCmp('winversion-'+me.idproceso).close();
+                                       //Ext.getCmp('tree-id').getStore().reload();
                                        Ext.Msg.alert('Mensaje', action.result.mensaje);
                                     },
                                     failure: function(form, action) {
@@ -72,15 +73,14 @@ Ext.define('Colsys.Riesgos.WindowVersion', {
                             
                             var idproceso = me.up("window").idproceso;                            
                             if(idproceso){
-                                var f = this.getForm();
-                                console.log(f);
+                                var f = this.getForm();                                
                                 f.load({
-                                    url: '/riesgos/datosVersiones',
+                                    url: '/riesgos/datosFormVersiones',
                                     params: {
                                         idproceso: idproceso
                                     },
-                                    success: function(response, options){ 
-                                        res = Ext.JSON.decode(options.response.responseText);                                        
+                                    success: function(response, options){                                         
+                                        res = Ext.JSON.decode(options.response.responseText);                                                                                
                                         Ext.getCmp('form-version-'+idproceso).child('label[id=labelv]').setText("Version # "+res.data.version);
                                     }
                                 });

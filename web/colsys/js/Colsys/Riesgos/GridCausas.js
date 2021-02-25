@@ -147,7 +147,7 @@ Ext.define('Colsys.view.grid.CellEditingController', {
             winCausa = Ext.create('Ext.window.Window', {
                 title: titulo,
                 width: 400,
-                height: 260,
+                //height: 260,
                 id: 'winCausa',                
                 bodyPadding: 10,
                 maximizable: true,

@@ -11,32 +11,41 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
     },
     fieldDefaults: {
         labelAlign: 'right',
-        labelWidth: 90,
-        msgTarget: Ext.supports.Touch ? 'side' : 'qtip'
+        labelWidth: 90/*,
+        msgTarget: Ext.supports.Touch ? 'side' : 'qtip'*/
     },
     tbar: [{ 
         xtype: 'button', 
         text: 'Guardar',
-        iconCls: 'disk',
+        iconCls: 'fa fa-save',
         handler: 'onSaveForm'        
     },
     { 
         xtype: 'button', 
+        text: 'Cerrar',
+        iconCls: 'fa fa-window-close',
+        handler: 'onClose'        
+    },
+    { 
+        xtype: 'button', 
         text: 'Expandir',        
+        iconCls: 'fa fa-arrows-alt-v',
         handler: 'onToggle'
     }],
     listeners: {        
         render: function (me, eOpts) {
+            console.log("permisisdesdeformriesgo", me.permisos);
             var expandir = true;
+            var itemId = me.itemId;
             if(this.nuevo){
-                expandir = false;
+                expandir = false;                
             }
             this.add(
-            {xtype: 'hidden', id: 'idriesgo', name: 'idriesgo', value: this.idriesgo},
-            {xtype: 'hidden', id: 'ca_idproceso', name: 'ca_idproceso', value: this.idproceso},
+            {xtype: 'hidden', id: 'idriesgo' + itemId, name: 'idriesgo', value: this.idriesgo},
+            {xtype: 'hidden', id: 'ca_idproceso' + itemId, name: 'ca_idproceso', value: this.idproceso},
                 {
                 xtype: 'container',
-                id:'form-container',
+                id:'form-container-' + itemId,
                 layout: {
                     type: 'vbox',
                     pack: 'start',
@@ -56,39 +65,65 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                 },
                 items: [{                    
                     title: 'General',                    
-                    id: 'fieldset-1',
+                    id: 'fieldset-1' + itemId,
                     items: [{
                         xtype: 'container',
-                        layout: 'hbox',
-                        defaultType: 'textfield',                        
-                        items: [{                            
-                            fieldLabel: 'C\u00F3digo',
-                            id:'ca_codigo',
-                            name:'ca_codigo',                            
-                            flex: 1,
-                            allowBlank: false
-                        }, {
-                            xtype:'checkboxfield',
-                            fieldLabel: 'LA/FT-FPADM',                            
-                            width: 150,
-                            id:'ca_laft',
-                            name:'ca_laft'
+                        layout: {
+                            type: 'vbox', // Arrange child items vertically
+                            align: 'stretch',    // Each takes up full width ,
+                            pack: 'start'
+                        },
+                        items: [{
+                            xtype: 'container',
+                            layout: 'hbox',
+                            defaultType: 'textfield',
+                            flex:1,
+                            items: [{                            
+                                fieldLabel: 'C\u00F3digo',
+                                id:'ca_codigo' + itemId,
+                                name:'ca_codigo',                            
+                                flex: 1,
+                                allowBlank: false
+                            },{
+                                xtype:'checkboxfield',
+                                fieldLabel: 'Activo',                            
+                                width: 120,
+                                //disabled: !me.permisos.riesgos.eliminar,
+                                id:'ca_activo' + itemId,
+                                name:'ca_activo'
+                            }]
                         },{
-                            xtype:'checkboxfield',
-                            fieldLabel: 'Activo',                            
-                            width: 150,
-                            id:'ca_activo',
-                            name:'ca_activo'
+                            xtype: 'Colsys.Indicadores.Internos.Widget.ComboCheckbox',
+                            flex:1,
+                            margin: '10 10 10 0',
+                            id:'ca_clasificacion' + itemId,
+                            name:'ca_clasificacion',                            
+                            fieldLabel: 'Clasificaci&oacute;n',                            
+                            store: Ext.create('Ext.data.Store', {
+                                fields: [{type: 'string', name: 'name'},{type: 'integer',name: 'id'}],
+                                proxy: {
+                                    type: 'ajax',
+                                    url: '/widgets5/datosParametros',
+                                    extraParams:{
+                                        caso_uso: 'CU286'
+                                    },
+                                    reader: {
+                                        type: 'json',
+                                        rootProperty: 'root'
+                                    }
+                                },
+                                autoLoad: true
+                            })
                         }]
                     }]
                 },
                 {
                     title: 'Riesgo',                    
-                    id: 'fieldset-2',
+                    id: 'fieldset-2' + itemId,
                     items:[{
                         xtype: 'htmleditor',
                         height: 100,
-                        id: 'ca_riesgo',
+                        id: 'ca_riesgo' + itemId,
                         name: 'ca_riesgo',
                         enableFont: false,
                         enableFontSize: false,
@@ -96,12 +131,44 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         enableAlignments : false,
                         enableLinks: false,
                         enableLists: false,
-                        enableSourceEdit: false
+                        enableSourceEdit: false,
+                        fontFamilies : ['Courier New'],
+                        listeners: {                    
+                            render:function(){                                
+                                /*Oculta el botón de background color del texto*/
+                                Ext.Array.each(this.getToolbar().getChildItemsToDisable(), function(name, index, countriesItSelf) {
+                                    if(name.itemId === "backcolor"){                                        
+                                        name.hide();                                        
+                                    }   
+                                });
+                            },
+                            afterrender: function(editor) {
+                                var toolbar = editor.getToolbar();                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Borrar',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {
+                                        this.up("htmleditor").setHtml('<div></div>');
+                                    }
+                                });
+                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Formatear datos',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {                                        
+                                        html = this.up("htmleditor").value;                                        
+                                        this.up("htmleditor").setValue('<div>'+Ext.util.Format.stripTags(html)+'</div>');
+                                    }
+                                });
+                            }
+                        }
                     }]
                 },
                 {
                     title: 'Factor Generador',
-                    id: 'fieldset-3',
+                    id: 'fieldset-3' + itemId,
                     disabled: this.nuevo,
                     items:[{
                         xtype: 'container',
@@ -112,11 +179,13 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         },                        
                         items: [{                            
                             xtype: 'treepanel',
+                            checkPropagation: 'both',
                             margin: '0 15 0 0',
-                            controller: 'treepanel-list',
+                            controller: 'check-tree-factores',    
+                            itemId: itemId,
                             flex: 1,
                             tbar: [
-                                { xtype: 'button', 'iconCls':'refresh',text: 'Refrescar', handler: 'onRefresh' }
+                                { xtype: 'button', 'iconCls':'fa fa-sync',text: 'Refrescar', handler: 'onRefresh' }
                             ],
                             store: {
                                 type: 'tree',
@@ -135,7 +204,11 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                                     direction: 'ASC'
                                 }]
                             },
-                            viewConfig: {
+                            frame: true,
+                            useArrows: true,
+                            bufferedRenderer: false,
+                            animate: true,
+                            /*viewConfig: {
                                 plugins: {
                                     treeviewdragdrop: {
                                         ddGroup: 'two-trees-drag-drop',
@@ -144,20 +217,29 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                                         containerScroll: true
                                     }
                                 }
-                            }
+                            },*/
+                            listeners: {
+                                beforecheckchange: 'onBeforeCheckChange'
+                            },
+                            tbar: [{
+                                text: 'Agregar Factores',
+                                iconCls: 'fa fa-user-plus',
+                                handler: 'onCheckedNodesClick'
+                            }]
                         },{
                             xtype: 'treepanel',
                             controller: 'treepanel-list',
-                            flex: 1,
-                            id: 'treeFactor',
-                            //name: 'ca_factor',
+                            flex: 1,                            
+                            id: 'treeFactor' + itemId,
+                            itemId: 'treefactor-'+ itemId,                            
                             idriesgo: this.idriesgo,
                             tbar: [
-                                { xtype: 'button', 'iconCls':'refresh',text: 'Refrescar', handler: 'onRefresh' },
-                                { xtype: 'button', 'iconCls':'disk',text: 'Guardar Factores', handler: 'onSave' }
+                                { xtype: 'button', 'iconCls':'fa fa-sync',text: 'Refrescar', handler: 'onRefresh' },
+                                { xtype: 'button', 'iconCls':'fa fa-save',text: 'Guardar Factores', handler: 'onSave' }
                             ],
                             store: {
                                 type: 'tree',
+                                clearOnLoad: true,
                                 proxy: {
                                     type: 'ajax',
                                     url: '/riesgos/datosTreeFactorRiesgo',
@@ -178,7 +260,7 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                                     direction: 'ASC'
                                 }]
                             },
-                            viewConfig: {
+                            /*viewConfig: {
                                 plugins: {
                                     treeviewdragdrop: {
                                         ddGroup: 'two-trees-drag-drop',
@@ -188,7 +270,7 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                                         allowContainerDrops: true
                                     }
                                 }
-                            },
+                            },*/
                             listeners:{                                
                                 itemcontextmenu: function ( t, record, item, index, e, eOpts ){                                    
                                     e.stopEvent();                                    
@@ -200,22 +282,40 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                                     factor.push(obj);
                                     var str = JSON.stringify(factor);                                    
                                     
+                                    var nuevo = record.data.nuevo;
+                                    
                                     var menu = new Ext.menu.Menu({
                                         id: 'menuContextual',
-                                        items: [{
+                                        items: []
+                                    });
+                                            
+                                    if(nuevo){
+                                        menu.add({
+                                            text: 'Quitar',
+                                            iconCls: 'fa fa-trash',
+                                            id: 'button-quitar',                                            
+                                            handler: function() {
+                                                var rootNode = Ext.getCmp('treeFactor' + itemId).getRootNode();
+                                                rootNode.removeChild(record, true);
+                                            }
+                                        });
+                                    }else{
+                                        menu.add({
                                             text: 'Eliminar Factor',
-                                            iconCls: 'delete',
+                                            iconCls: 'fa fa-user-minus',
                                             id: 'button1-',
                                             //disabled: !permisos,
                                             handler: function() {
                                                 Ext.MessageBox.confirm('Confirmaci\u00F3n de Eliminaci\u00F3n', 'Est\u00E1 seguro que desea eliminar el factor: '+ record.data.text+' ?', function (choice) {
                                                     if (choice == 'yes') {
-                                                        Ext.getCmp("treeFactor").getController().onActualizarFactores(idriesgo, str, "eliminar");
+                                                        Ext.getCmp("treeFactor" + itemId).getController().onActualizarFactores(idriesgo, str, "eliminar", t);
                                                     }
                                                 });
                                             }
-                                        }]
-                                    }).showAt(e.getXY());
+                                        });
+                                    }
+                                            
+                                    menu.showAt(e.getXY());
                                 }
                             }
                         }]
@@ -223,11 +323,11 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                 },
                 {
                     title: 'Etapa del Proceso',
-                    id: 'fieldset-4',
+                    id: 'fieldset-4' + itemId,
                     items:[{
                         xtype: 'htmleditor',
                         height: 100,
-                        id: 'ca_etapa',
+                        id: 'ca_etapa' + itemId,
                         name: 'ca_etapa',
                         enableFont: false,
                         enableFontSize: false,
@@ -235,16 +335,48 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         enableAlignments : false,
                         enableLinks: false,
                         enableLists: false,
-                        enableSourceEdit: false
+                        enableSourceEdit: false,
+                        fontFamilies : ['Courier New'],
+                        listeners: {                    
+                            render:function(){                                
+                                /*Oculta el botón de background color del texto*/
+                                Ext.Array.each(this.getToolbar().getChildItemsToDisable(), function(name, index, countriesItSelf) {
+                                    if(name.itemId === "backcolor"){                                        
+                                        name.hide();                                        
+                                    }   
+                                });
+                            },
+                            afterrender: function(editor) {
+                                var toolbar = editor.getToolbar();                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Borrar',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {
+                                        this.up("htmleditor").setHtml('<div></div>');
+                                    }
+                                });
+                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Formatear datos',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {                                        
+                                        html = this.up("htmleditor").value;                                        
+                                        this.up("htmleditor").setValue('<div>'+Ext.util.Format.stripTags(html)+'</div>');
+                                    }
+                                });
+                            }
+                        }
                     }]
                 },
                 {
                     title: 'Factor Potenciador',
-                    id: 'fieldset-5',
+                    id: 'fieldset-5' + itemId,
                     items:[{
                         xtype: 'htmleditor',
                         height: 100,
-                        id: 'ca_potenciador',
+                        id: 'ca_potenciador' + itemId,
                         name: 'ca_potenciador',                        
                         enableFont: false,
                         enableFontSize: false,
@@ -252,12 +384,44 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         enableAlignments : false,
                         enableLinks: false,
                         enableLists: false,
-                        enableSourceEdit: false
+                        enableSourceEdit: false,
+                        fontFamilies : ['Courier New'],
+                        listeners: {                    
+                            render:function(){                                
+                                /*Oculta el botón de background color del texto*/
+                                Ext.Array.each(this.getToolbar().getChildItemsToDisable(), function(name, index, countriesItSelf) {
+                                    if(name.itemId === "backcolor"){                                        
+                                        name.hide();                                        
+                                    }   
+                                });
+                            },
+                            afterrender: function(editor) {
+                                var toolbar = editor.getToolbar();                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Borrar',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {
+                                        this.up("htmleditor").setHtml('<div></div>');
+                                    }
+                                });
+                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Formatear datos',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {                                        
+                                        html = this.up("htmleditor").value;                                        
+                                        this.up("htmleditor").setValue('<div>'+Ext.util.Format.stripTags(html)+'</div>');
+                                    }
+                                });
+                            }
+                        }
                     }]
                 },
                 {
                     title: 'Causas',
-                    id: 'fieldset-6',
+                    id: 'fieldset-6' + itemId,
                     disabled: this.nuevo,
                     items:[
                         Ext.create('Colsys.Riesgos.GridCausas',{
@@ -270,11 +434,11 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                 },
                 {
                     title: 'Controles',
-                    id: 'fieldset-7',
+                    id: 'fieldset-7' + itemId,
                     items:[{
                         xtype: 'htmleditor',
                         height: 300,
-                        id: 'ca_controles',
+                        id: 'ca_controles' + itemId,
                         name: 'ca_controles',                        
                         enableFont: false,
                         enableFontSize: false,
@@ -282,16 +446,48 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         enableAlignments : false,
                         enableLinks: false,
                         enableLists: false,
-                        enableSourceEdit: false
+                        enableSourceEdit: false,
+                        fontFamilies : ['Courier New'],
+                        listeners: {                    
+                            render:function(){                                
+                                /*Oculta el botón de background color del texto*/
+                                Ext.Array.each(this.getToolbar().getChildItemsToDisable(), function(name, index, countriesItSelf) {
+                                    if(name.itemId === "backcolor"){                                        
+                                        name.hide();                                        
+                                    }   
+                                });
+                            },
+                            afterrender: function(editor) {
+                                var toolbar = editor.getToolbar();                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Borrar',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {
+                                        this.up("htmleditor").setHtml('<div></div>');
+                                    }
+                                });
+                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Formatear datos',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {                                        
+                                        html = this.up("htmleditor").value;                                        
+                                        this.up("htmleditor").setValue('<div>'+Ext.util.Format.stripTags(html)+'</div>');
+                                    }
+                                });
+                            }
+                        }
                     }]
                 },
                 {
                     title: 'AP',
-                    id: 'fieldset-8',
+                    id: 'fieldset-8' + itemId,
                     items:[{
                         xtype: 'htmleditor',
                         height: 300,
-                        id: 'ca_ap',
+                        id: 'ca_ap' + itemId,
                         name: 'ca_ap',                        
                         enableFont: false,
                         enableFontSize: false,
@@ -299,16 +495,48 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         enableAlignments : false,
                         enableLinks: false,
                         enableLists: false,
-                        enableSourceEdit: false
+                        enableSourceEdit: false,
+                        fontFamilies : ['Courier New'],
+                        listeners: {                    
+                            render:function(){                                
+                                /*Oculta el botón de background color del texto*/
+                                Ext.Array.each(this.getToolbar().getChildItemsToDisable(), function(name, index, countriesItSelf) {
+                                    if(name.itemId === "backcolor"){                                        
+                                        name.hide();                                        
+                                    }   
+                                });
+                            },
+                            afterrender: function(editor) {
+                                var toolbar = editor.getToolbar();                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Borrar',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {
+                                        this.up("htmleditor").setHtml('<div></div>');
+                                    }
+                                });
+                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Formatear datos',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {                                        
+                                        html = this.up("htmleditor").value;                                        
+                                        this.up("htmleditor").setValue('<div>'+Ext.util.Format.stripTags(html)+'</div>');
+                                    }
+                                });
+                            }
+                        }
                     }]
                 },
                 {
                     title: 'Contingencia',
-                    id: 'fieldset-9',
+                    id: 'fieldset-9' + itemId,
                     items:[{
                         xtype: 'htmleditor',
                         height: 300,
-                        id: 'ca_contingencia',
+                        id: 'ca_contingencia' + itemId,
                         name: 'ca_contingencia',                        
                         enableFont: false,
                         enableFontSize: false,
@@ -316,19 +544,56 @@ Ext.define('Colsys.Riesgos.FormRiesgo', {
                         enableAlignments : false,
                         enableLinks: false,
                         enableLists: false,
-                        enableSourceEdit: false
+                        enableSourceEdit: false,
+                        fontFamilies : ['Courier New'],
+                        listeners: {                    
+                            render:function(){                                
+                                /*Oculta el botón de background color del texto*/
+                                Ext.Array.each(this.getToolbar().getChildItemsToDisable(), function(name, index, countriesItSelf) {
+                                    if(name.itemId === "backcolor"){                                        
+                                        name.hide();                                        
+                                    }   
+                                });
+                            },
+                            afterrender: function(editor) {
+                                var toolbar = editor.getToolbar();                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Borrar',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {
+                                        this.up("htmleditor").setHtml('<div></div>');
+                                    }
+                                });
+                                
+                                toolbar.add({
+                                    xtype: 'button',
+                                    text   : 'Formatear datos',
+                                    iconCls: 'fa fa-eraser',
+                                    handler: function() {                                        
+                                        html = this.up("htmleditor").value;                                        
+                                        this.up("htmleditor").setValue('<div>'+Ext.util.Format.stripTags(html)+'</div>');
+                                    }
+                                });
+                            }
+                        }
                     }]
                 }]
             });
         },
-        afterrender: function(me, eOpts){
-            var f = Ext.getCmp('form-riesgo').getForm();            
+        afterrender: function(me, eOpts){           
+            
+            var f = me.getForm();            
             f.load({
-                url: '/riesgos/datosFormGeneral',
+                url: '/riesgos/datosFormRiesgo',
                 params: {
                     idriesgo : this.idriesgo
                 },
-                success: function () {
+                success: function (response, options) {
+                    var res = Ext.JSON.decode(options.response.responseText);
+                    console.log("performriesgo",me.permisos);
+                    if(!me.permisos.riesgos.eliminar)
+                        Ext.getCmp('ca_activo' + me.itemId).setReadOnly(true);                    
                     //alert("si");
                 },
                 failure: function(){
@@ -344,7 +609,7 @@ Ext.define('Colsys.view.form.FormRiesgoController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.form-riesgo',
     onSaveForm: function(t,eOpts){
-        var form = t.up('form');
+        var form = t.up('form');               
         var idriesgo = form.idriesgo;
         
         var data = form.getForm().getValues();
@@ -353,7 +618,7 @@ Ext.define('Colsys.view.form.FormRiesgoController', {
         if (form.isValid()) {
             Ext.Ajax.request({
                 waitMsg: 'Guardando cambios...',
-                url: '/riesgos/guardarFormGeneral',
+                url: '/riesgos/guardarFormRiesgo',
                 params: {
                     datos: str
                 },
@@ -370,6 +635,7 @@ Ext.define('Colsys.view.form.FormRiesgoController', {
                     if(res.success==false){
                         Ext.MessageBox.alert('Error Message', "Se ha presentado un error"+res.errorInfo);
                     }else{
+                        form.up().close();
                         if(res.nuevo){                                        
                             var tabpanel = Ext.getCmp('view-Riesgos').down('tabpanel');                                        
                             Ext.getCmp('tree-id').getStore().reload();                                        
@@ -387,15 +653,17 @@ Ext.define('Colsys.view.form.FormRiesgoController', {
                                         id:"general"+indice,
                                         name:"general"+indice,
                                         idriesgo: indice,                                                            
-                                        text: res.text
+                                        text: res.text,
+                                        permisos: form.permisos
                                     }]
                                 }).show();
                             }
-                        }else{
-                            me = Ext.getCmp("subpanel-general"+idriesgo);                                
-                            Ext.getCmp('general'+idriesgo).cargar(me, idriesgo);
+                        }else{                                                       
+                            me = Ext.getCmp("subpanel-general"+idriesgo);
+                            if(me)
+                                Ext.getCmp('general'+idriesgo).cargar(me, idriesgo);                            
                         }
-                        Ext.getCmp('winRiesgo').close();                                
+                        Ext.getCmp("tree-id").getStore().reload();
                         Ext.MessageBox.alert("Mensaje", 'Los cambios se han guardado \u00E9xitosamente');                                  
                     }                                
                 }
@@ -403,22 +671,29 @@ Ext.define('Colsys.view.form.FormRiesgoController', {
         }
         
     },
+    onClose: function(t,eOpts){
+        var form = t.up('form');               
+        form.up().close();
+    },
     onToggle: function(t,eOpts){
+        
+        //console.log("formtoggle",itemId);
+        var itemId = t.up("form").itemId
         
         var tipo = t.text;
         var nFieldset = 9;        
         switch(tipo){
             case "Expandir":
                 for(var i=1; i<=nFieldset; i++){
-                    t.up("form").child('container[id=form-container]').child('fieldset[id=fieldset-'+i+']').expand();            
+                    t.up("form").child('container[id=form-container-' + itemId + ']').child('fieldset[id=fieldset-' + i + itemId + ']').expand();            
                 }
-                t.setText("Contraer");
+                t.setText("Contraer");                
                 break;
             case "Contraer":
                 for(var i=1; i<=nFieldset; i++){
-                    t.up("form").child('container[id=form-container]').child('fieldset[id=fieldset-'+i+']').collapse(); 
+                    t.up("form").child('container[id=form-container-' + itemId + ']').child('fieldset[id=fieldset-' + i + itemId + ']').collapse(); 
                 }
-                t.setText("Expandir");
+                t.setText("Expandir");                
                 break;
         }
     }
@@ -427,8 +702,12 @@ Ext.define('Colsys.view.form.FormRiesgoController', {
 Ext.define('Colsys.view.treepanel.TreepanelListController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.treepanel-list',
-    onRefresh: function (item,event) {
-        item.up("treepanel").getStore().reload();
+    onRefresh: function (item,event) {        
+        item.up("treepanel").getStore().reload({
+            callback: function(records, options, success) {
+                console.log("ok");
+            }            
+        });
     },
     onSave: function (item,event) {
         var storeTree = item.up("treepanel").getStore();
@@ -445,14 +724,12 @@ Ext.define('Colsys.view.treepanel.TreepanelListController', {
                 }
             }
             var str = JSON.stringify(changes);
-
-            this.onActualizarFactores(idriesgo, str, "agregar");
+            this.onActualizarFactores(idriesgo, str, "agregar", item);
         }else{
             Ext.MessageBox.alert("Mensaje", "Por favor crear el riesgo antes de guardar los factores asociados");
         }
     },    
-    onActualizarFactores(idriesgo, str, tipo){
-        
+    onActualizarFactores: function(idriesgo, str, tipo, item){
         Ext.Ajax.request({
             url: '/riesgos/actualizarFactores',
             params:{
@@ -468,9 +745,15 @@ Ext.define('Colsys.view.treepanel.TreepanelListController', {
                 }else{
                     Ext.MessageBox.alert("Error", obj.errorInfo);
                 }                
-                Ext.getCmp("treeFactor").getStore().reload();
-                me = Ext.getCmp("subpanel-general"+idriesgo);                                
-                Ext.getCmp('general'+idriesgo).cargar(me, idriesgo);
+                item.up("treepanel").getStore().reload({
+                    callback: function(records, options, success) {
+                        if (success) {
+                            me = Ext.getCmp("subpanel-general"+idriesgo);                                
+                            Ext.getCmp('general'+idriesgo).cargar(me, idriesgo);
+                        }
+                    }
+                });
+               
             },
 
             failure: function(response, opts) {
@@ -478,5 +761,48 @@ Ext.define('Colsys.view.treepanel.TreepanelListController', {
                 Ext.MessageBox.alert("Error", response.status);
             }
         });        
+    }
+});
+
+Ext.define('Colsys.view.tree.CheckTreeFactoresController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.check-tree-factores',
+    onBeforeCheckChange: function(record, checkedState, e) {
+        if (record.get('text') === 'Take a nap' && !checkedState) {
+            Ext.toast('No rest for the weary!', null, 't');
+            return false;
+        }
+    },
+    onCheckedNodesClick: function() {
+        var recordsTree = this.getView().getChecked(),
+            factores = [];
+            titles = [];
+            idgs = [];
+            impoexpos = [];
+            transportes = [];
+            datos = [];            
+        
+        var itemId = this.getView().itemId;        
+        var rootNode = Ext.getCmp('treeFactor' + itemId).getRootNode();
+        
+        Ext.getCmp('treeFactor' + itemId).getStore().reload({
+            callback: function(records, options, success) {
+                if (success) {
+                    Ext.each(recordsTree, function(r, index){
+                        var factor = {
+                            "text": r.data.text,
+                            "iconCls" : "fa fa-database",
+                            "leaf":true,
+                            "nuevo":true,
+                        }
+                        factores.push(factor);
+                    });
+
+                    Ext.each(factores, function(factor, index){
+                        rootNode.insertChild(index,factor);
+                    });
+                }
+            }            
+        });
     }
 });

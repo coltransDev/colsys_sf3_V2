@@ -4,13 +4,13 @@ Ext.define('Colsys.Riesgos.GridCriticos', {
     autoHeight: true,
     autoScroll: true,
     frame: true,    
-    requires: [
+    /*requires: [
         'Ext.grid.plugin.Exporter',
         'Ext.view.grid.ExporterController'
     ],
     plugins:{
         gridexporter: true
-    },
+    },*/
     viewConfig: {
         getRowClass: function (record, rowIndex, rowParams, store) {
             return record.get('color');                            
@@ -132,7 +132,7 @@ Ext.define('Colsys.Riesgos.GridCriticos', {
                     handler : function(){
                         this.up("grid").getStore().reload();
                     }
-                },{
+                },/*{
                     text:   'Excel',
                     iconCls: 'csv',
                     cfg: {
@@ -146,6 +146,36 @@ Ext.define('Colsys.Riesgos.GridCriticos', {
                         }, this.cfg);
                         
                         this.up("grid").saveDocumentAs(cfg);
+                    }
+                }*/{
+                    xtype: 'button',
+                    text: 'Exportar XLXS',
+                    iconCls: 'csv',
+                    cfg: {
+                        type: 'excel07',
+                        ext: 'xlsx'
+                    },
+                    handler: function(){
+                        var grid = this.up("grid");
+                        var cfg = Ext.merge({
+                            title: 'Listado de Cargos Críticos',
+                            fileName: 'Cargos Criticos' + '.' + (this.cfg.ext || this.cfg.type)
+                        }, this.cfg);
+
+                        var myMask = new Ext.LoadMask({
+                            msg    : 'Generando archivo, por favor espere...',
+                            target : grid
+                        });
+                        myMask.show(); 
+                        
+                        Ext.syncRequire(['Ext.grid.plugin.Exporter','Ext.view.grid.ExporterController'], function() {
+                            
+                            myMask.hide();
+                            grid.addPlugin({
+                                ptype: 'gridexporter'
+                            });
+                            grid.saveDocumentAs(cfg);                            
+                        }, {prop: 'value'});
                     }
                 }]
             }

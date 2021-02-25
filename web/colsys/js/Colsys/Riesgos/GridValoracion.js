@@ -44,9 +44,22 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
     selModel: {
         selType: 'cellmodel'
     },
-    //headerBorders: false,
+    features: [{
+        id: 'feature-valoracion',
+        ftype: 'groupingsummary',
+        startCollapsed: true,
+        hideGroupedHeader: true
+    }],    
     viewConfig: {
-        enableTextSelection: true
+        enableTextSelection: true,        
+        listeners : {
+            cellclick : function(view, cell, cellIndex, record,row, rowIndex, e) {                
+                var clickedDataIndex = view.panel.headerCt.getHeaderAtIndex(cellIndex).dataIndex;                
+                if(clickedDataIndex.indexOf("score")>-1){
+                    view.up("grid").actualizarGrafico(record.get("idriesgo"),record.get("idvaloracion"),record.get("ano"));
+                }
+            }
+        }    
     },
     listeners: {
         activate: function(ct, position){
@@ -64,25 +77,50 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
             var idriesgo = this.idriesgo;
             var permisos = this.permisos;
             
+            console.log("gridvaloracion",this);
+            console.log("permisosvaloracion",permisos);
+            
+            this.getView().getFeature('feature-valoracion').setConfig({
+                groupHeaderTpl: [
+                    '{columnName}: {name} Score: <span style="color:blue;"><b>{[values.children[0].data["\promedioscorexano'+idriesgo+'\"]]}</b></span>'                                        
+                ]
+            });
+            
+            this.getView().getFeature('feature-valoracion').disable();
+            
             //if(this.permisos === true){
                 tbar = [{
                     xtype: 'toolbar',
                     dock: 'top',
                     id: 'bar-val-'+idriesgo,                                    
                     items: [{
+                        text: 'Ver Anual',                        
+                        iconCls: 'switch',                    
+                        id: 'btn-anual-'+idriesgo,
+                        handler : function(t){
+                            var me = t;                        
+                            t.up('grid').onToggle(me);
+                        }
+                    },{
                         text: 'Agregar',
                         iconCls: 'add',
-                        disabled: !permisos,
-                        handler : function(){
+                        id: 'btn-add-'+idriesgo,
+                        disabled: !permisos.valoracion.crear,
+                        handler : function(){                            
+                            this.up('grid').getView().getFeature('feature-valoracion').disable();
                             var store = this.up("grid").getStore();
                             var r = Ext.create(store.getModel());            
+                            r.set('nuevo', true);
                             store.insert(0, r);
+                            Ext.getCmp('btn-save-'+idriesgo).enable();
                         }
                     },{
                         text: 'Guardar',
+                        id: 'btn-save-'+idriesgo,
                         iconCls: 'disk',
-                        disabled: !permisos,
+                        disabled: !permisos.valoracion.editar,
                         handler : function(){
+                            
                             error = 0;
                             var store = this.up('grid').getStore();
                             var idriesgo = this.up('grid').idriesgo;
@@ -99,17 +137,22 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                             changes = [];
                             changes1 = [];
                             for (var i = 0; i < records.length; i++) {
-                                r = records[i];
-                                records[i].data.id = r.id
-                                changes1[i] = records[i].data;
-                                row = new Object();
-                                for (j = 0; j < fields.length; j++){                    
-                                    eval("row." + fields[j] + "=records[i].data." + fields[j] + idriesgo + ";")                    
+                                r = records[i];                                
+                                if(r.data.nuevo || permisos.valoracion.editar){
+                                    records[i].data.id = r.id
+                                    changes1[i] = records[i].data;
+                                    row = new Object();
+                                    for (j = 0; j < fields.length; j++){                    
+                                        eval("row." + fields[j] + "=records[i].data." + fields[j] + idriesgo + ";")                    
+                                    }
+                                    row.id = r.id;
+                                    row.idriesgo = idriesgo;
+                                    changes[i] = row;
+                                }else{                                    
+                                    error++;
                                 }
-                                row.id = r.id;
-                                row.idriesgo = idriesgo;
-                                changes[i] = row;
                             }
+                            //exit;
 
                             if (error == 0) {
                                 var str = JSON.stringify(changes);                
@@ -131,7 +174,8 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                                                         rec.set(("idvaloracion" + idriesgo), res.idvals[i]);
                                                         rec.commit();                                        
                                                     }
-                                                    Ext.MessageBox.alert("Mensaje", 'Informaci\u00F3n almacenada correctamente<br>');
+                                                    
+                                                    Ext.MessageBox.alert("Mensaje", res.mensaje);
                                                     Ext.getCmp("grid-val"+idriesgo).getStore().reload();
                                                     Ext.getCmp("grafica"+idriesgo).getStore().reload();
                                                 }
@@ -141,6 +185,8 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                                         }
                                     });
                                 }
+                            }else{
+                                Ext.MessageBox.alert("Error", 'Usted no tiene permisos para editar valoraciones previas. Por favor comun&iacute;quese con el Administrador del m&oacute;dulo de riesgos.');
                             }
                         }
                     },
@@ -218,18 +264,34 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
             }
         },
         beforerender: function(ct, position){
+            
+            var me = this;
+            
+            comboBoxRenderer = function (combo) {
+                return function (value) {
+                    var idx = combo.store.find(combo.valueField, value);
+                    var rec = combo.store.getAt(idx);
+                    return (rec === null ? value : rec.get(combo.displayField));
+                };
+            };
             this.reconfigure(
                 store =  Ext.create('Ext.data.Store', {
                 fields: [
-                   {name: 'idvaloracion'+this.idriesgo, type: 'int',        mapping: 'idvaloracion'},
-                   {name: 'ano'+this.idriesgo,          type: 'int',        mapping: 'ano'},
-                   {name: 'peso'+this.idriesgo,         type: 'integer',    mapping: 'peso'},
-                   {name: 'operativo'+this.idriesgo,    type: 'integer',    mapping: 'operativo'},
-                   {name: 'legal'+this.idriesgo,        type: 'string',     mapping: 'legal'},
-                   {name: 'economico'+this.idriesgo,    type: 'integer',    mapping: 'economico'},
-                   {name: 'comercial'+this.idriesgo,    type: 'string',     mapping: 'comercial'},
-                   {name: 'impacto'+this.idriesgo,      type: 'float',      mapping: 'impacto'},
-                   {name: 'score'+this.idriesgo,        type: 'float',      mapping: 'score'}                   
+                    {name: 'idriesgo' + this.idriesgo, type: 'int', mapping: 'idriesgo'},
+                    {name: 'idvaloracion' + this.idriesgo, type: 'int', mapping: 'idvaloracion'},
+                    {name: 'idsucursal' + this.idriesgo, type: 'string', mapping: 'idsucursal'},
+                    {name: 'sucursal' + this.idriesgo, type: 'string', mapping: 'sucursal'},
+                    {name: 'ano' + this.idriesgo, type: 'int', mapping: 'ano'},
+                    {name: 'peso' + this.idriesgo, type: 'integer', mapping: 'peso'},
+                    {name: 'operativo' + this.idriesgo, type: 'integer', mapping: 'operativo'},
+                    {name: 'legal' + this.idriesgo, type: 'string', mapping: 'legal'},
+                    {name: 'economico' + this.idriesgo, type: 'integer', mapping: 'economico'},
+                    {name: 'comercial' + this.idriesgo, type: 'string', mapping: 'comercial'},
+                    {name: 'impacto' + this.idriesgo, type: 'float', mapping: 'impacto'},
+                    {name: 'score' + this.idriesgo, type: 'float', mapping: 'score'},
+                    {name: 'promedioscorexano' + this.idriesgo, type: 'float', mapping: 'promedioscorexano'},
+                    {name: 'porcentajexsucursal' + this.idriesgo, type: 'float', mapping: 'porcentajexsucursal'},
+                    {name: 'porcentajepromedioanual' + this.idriesgo, type: 'float', mapping: 'porcentajepromedioanual'}                   
                 ],
                 proxy: {
                     type: 'ajax',
@@ -242,18 +304,24 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                         rootProperty: 'root',
                         totalProperty: 'total'
                     }
-                },        
+                },   
+                remoteSort: true,
+                groupField: 'ano'+this.idriesgo,
                 sorters: [{
                     property: 'ano',
-                    direction: 'ASC'
+                    direction: 'DESC'
                 }],
                 autoLoad: false
             }),
             [
                 {
                     xtype: 'hidden',
+                    dataIndex: 'idriesgo'+this.idriesgo
+                },
+                {
+                    xtype: 'hidden',
                     dataIndex: 'idvaloracion'+this.idriesgo
-                },                
+                },
                 {
                     header: "A\u00F1o",
                     dataIndex: 'ano'+this.idriesgo,                    
@@ -276,7 +344,26 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                         forceSelection: true,                        
                         mode: 'local',
                         listClass: 'x-combo-list-small'
-                    })
+                    })                    
+                },
+                {
+                    header: "Sucursal",
+                    dataIndex: 'sucursal' + this.idriesgo,                    
+                    sortable: true,
+                    flex: 1,
+                    editor: Ext.create('Colsys.Widgets.WgSucursalesEmpresa',{
+                        id: 'sucursal' + this.idriesgo,                        
+                        empresa: me.idempresa?me.idempresa:2,
+                        listeners:{
+                            select: function (a, record, idx){                                
+                                var selected = this.up('grid').getSelectionModel().getSelection()[0];
+                                var row = this.up('grid').store.indexOf(selected);
+                                var store = this.up('grid').getStore();
+                                store.data.items[row].set('idsucursal' + this.up('grid').idriesgo, record.data.id);
+                            }
+                        }
+                    }),
+                    renderer: comboBoxRenderer(Ext.getCmp('sucursal' + this.idriesgo))
                 }, 
                 {
                     header: "Probabilidad",
@@ -350,12 +437,7 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     sortable: true,
                     flex: 1,
                     align: 'right',
-                    renderer: Ext.util.Format.numberRenderer('0,0.00'),        
-                    summaryType: 'sum',
-                    summaryRenderer: function(value, summaryData, dataIndex) {
-                            return "<span style='font-weight: bold;'> "+Ext.util.Format.usMoney(value)+"</span>";
-                        }
-
+                    renderer: Ext.util.Format.numberRenderer('0,0.00')
                 },
                 {
                     header: "Score",
@@ -364,15 +446,34 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
                     sortable: true,
                     flex: 1,
                     align: 'right',
-                    renderer: Ext.util.Format.numberRenderer('0,0.00'),        
-                    summaryType: 'sum',
-                    summaryRenderer: function(value, summaryData, dataIndex) {
-                            return "<span style='font-weight: bold;'> "+Ext.util.Format.usMoney(value)+"</span>";
-                        }
-
+//                    renderer: Ext.util.Format.numberRenderer('0,0.00'),
+                    summaryType: 'average',
+                    summaryRenderer: function(value){
+                        return "<span style='font-weight: bold;'> "+value+"</span>";
+                    },
+                    renderer: function(value){
+                        return "<span style='font-weight: bold;'>"+Ext.util.Format.number(value,'0,0.00')+"</span>  <img src='/images/fam/chart_bar.png'/>";
+                    }
+                },
+                {
+                    header: "Var(%)",
+                    dataIndex: 'porcentajexsucursal'+this.idriesgo,                    
+                    hideable: false,
+                    sortable: true,
+                    flex: 1,
+                    align: 'right',
+                    renderer: Ext.util.Format.numberRenderer('0.##%')                    ,
+                    summaryType: function(records){
+                        var totals = records.reduce(function(sums, record){
+                            console.log("procentajepromedioanual",record.data.porcentajepromedioanual);
+                            return record.data.porcentajepromedioanual;
+                        }, [0,0]);
+                        var color = totals> 0?"red":"green";
+                        return "<span style='font-weight: bold;color:"+color+"'> "+totals+"%</span>";
+                    }
                 }
-            ])
-        }
+            ])  
+        }        
     },
     validarEscala: function(val){            
         if(val == 1 || val%5 == 0){
@@ -380,5 +481,38 @@ Ext.define('Colsys.Riesgos.GridValoracion', {
         }else{
             return "El valor debe ser una escala v\u00e1lida";
         }            
+    },
+    onToggle: function(t,eOpts){
+         
+        var tipo = t.text;        
+        switch(tipo){
+            case "Ver Anual":                
+                t.setText("Ver General");                
+                t.up('grid').getView().getFeature('feature-valoracion').enable();                
+                t.up("grid").actualizarGrafico(t.up("grid").idriesgo);
+                break;
+            case "Ver General":         
+                t.setText("Ver Anual");
+                t.up('grid').getView().getFeature('feature-valoracion').disable();
+                break;
+        }
+    },
+    actualizarGrafico: function(idriesgo,idvaloracion, ano){
+        eval('var graficaRiesgo = Ext.getCmp("grafica'+idriesgo+'");');
+        graficaRiesgo.ano = ano;
+        if(idvaloracion){
+            graficaRiesgo.store.load({
+                params: {
+                    idvaloracion: idvaloracion,
+                    ano: ano
+                }
+            });
+        }else{
+            graficaRiesgo.store.load({
+                params: {
+                    idriesgo: idriesgo
+                }
+            });
+        }
     }
 });
