@@ -6,7 +6,7 @@ $data = $sf_data->getRaw("data");
 switch ($tipo){
     case 1:
         ?>
-        <h3>Normatividad Vigente</h1>
+        <h3>Normatividad Vigente</h3>
         <ul>
             <li><a href="<?=url_for('images/docs')?>/Ley_1010_de_2006.pdf" target="_blank"><b>Ley 1010 de Enero 23 de 2010</b></a></li>
             <li><a href="<?=url_for('images/docs')?>/Resolucion_2646_2008.pdf" target="_blank"><b>Resolución 2646 de Julio 16 de 2008</b></a></li>
@@ -16,32 +16,49 @@ switch ($tipo){
         <?
         break;
     case 2:
+        $i=0;
         ?>
         <table class="tableList" width="100%">
-            <th>REPRESENTANTES GRUPO EMPRESARIAL</th>
-            <?
-            foreach ($data as $empresa => $val) {
-                foreach ($val["Empresa"] as $nombre) {
-                    ?>
-                    <tr><td><?= $nombre?></td></tr>
-                    <?
-                }
-            }
-            ?>
-            <th>REPRESENTANTES EMPLEADOS</th>
+            <tr><th colspan="4">REPRESENTANTES GRUPO EMPRESARIAL</th></tr>
             <?
             foreach ($data as $empresa => $val) {
                 ?>
-                    <tr><th><?= $empresa ?></th></tr>
+            <tr><th rowspan="<?=count($val["Empresa"])+count($val["Empleados"])?>" style="background: #EBEBEB;"><?= $empresa ?></th>
+                <th rowspan="<?=count($val["Empresa"])?>" style="background: #EBEBEB;">Empleador</th>
                 <?
-                foreach ($val["Empleados"] as $nombre) {
+                foreach ($val["Empresa"] as $gr) {
+                    $adicional = $gr["adicional"]?" (".$gr["adicional"].")":null;
+                    $fila = $i>0?"<tr>":null;                    
                     ?>
-                        <tr><td><?= $nombre ?></td></tr>
-                    <?
+                    <?=$fila?><td><a href="/intranet/adminUsers/viewUser/login/<?=$gr["login"]?>" target="_blank"><?= $gr["nombres"].$adicional?></a></td><td><?= $gr["tipo"]?></td></tr>
+                    <?                    
                 }
+                $i=0;
+                ?>
+                <tr>
+                <th rowspan="<?=count($val["Empleados"])?>" style="background: #EBEBEB;">Empleados</th>
+                <?
+                foreach ($val["Empleados"] as $gr1) {
+                    $adicional = $gr1["adicional"]?" (".$gr1["adicional"].")":null;
+                    $fila = $i>0?"<tr>":null;
+                    ?>
+                        <?=$fila?><td><a href="/intranet/adminUsers/viewUser/login/<?=$gr1["login"]?>" target="_blank"><?= $gr1["nombres"].$adicional?></a></td><td><?= $gr1["tipo"]?></td></tr>
+                    <?
+                }            
             }
             ?>
         </table>
+        <?
+        break;
+    case 3:
+        ?>
+        <h3>REGLAMENTO INTERNO</h3>
+        <ul>
+            <li><a href="<?=url_for('images/docs')?>/REGLAMENTO_COMITE_DE_CONVIVENCIA_COLTRANS.pdf" target="_blank"><b>COLTRANS S.A.S.</b></a></li>
+            <li><a href="<?=url_for('images/docs')?>/REGLAMENTO_COMITE_DE_CONVIVENCIA_COLMAS.pdf" target="_blank"><b>COLMAS S.A.S.</b></a></li>
+            <li><a href="<?=url_for('images/docs')?>/REGLAMENTO_COMITE_DE_CONVIVENCIA_COLOTM.pdf" target="_blank"><b>COLOTM S.A.S.</b></a></li>
+            <li><a href="<?=url_for('images/docs')?>/REGLAMENTO_COMITE_DE_CONVIVENCIA_COLDEPOSITOS.pdf" target="_blank"><b>COLDEPOSITOS S.A.S.</b></a></li>
+        </ul>
         <?
         break;
     case 4:
@@ -144,6 +161,17 @@ switch ($tipo){
             }
             ?>
         </table>
+        <?
+        break;
+    case 7:        
+        ?>
+        <h3>FORMATO DE RECEPCI&Oacute;N DE QUEJAS</h3>
+        <ul>
+            <li><a href="<?=url_for('images/docs')?>/FORMATO_QUEJAS_COLTRANS.pdf" target="_blank"><b>COLTRANS S.A.S.</b></a></li>
+            <li><a href="<?=url_for('images/docs')?>/FORMATO_QUEJAS_COLMAS.pdf" target="_blank"><b>COLMAS S.A.S.</b></a></li>
+            <li><a href="<?=url_for('images/docs')?>/FORMATO_QUEJAS_COLOTM.pdf" target="_blank"><b>COLOTM S.A.S.</b></a></li>
+            <li><a href="<?=url_for('images/docs')?>/FORMATO_QUEJAS_COLDEPOSITOS.pdf" target="_blank"><b>COLDEPOSITOS S.A.S.</b></a></li>
+        </ul>
         <?
         break;
 }

@@ -7,9 +7,9 @@ $user = $sf_data->getRaw("user");
 <ul>
     <li><b><a href="documentos/tipo/1">Normatividad Vigente</a></b></li>
     <li><b><a href="documentos/tipo/2">Integrantes</a></b></li>
-    <li><b><a href="<?=url_for('images/docs')?>/REGLAMENTO_COMITE_DE_CONVIVENCIA.pdf" target="_blank">Reglamento Interno</a></b></li>        
-    <li><b><a href="documentos/tipo/4">Formulario para presentar su Queja (online)</a></b></li>
-    <li><b><a href="<?=url_for('images/docs')?>/Formato_de_presentacion_de_quejas.pdf" target="_blank">Formulario para presentar su Queja (versi&oacute;n Impresa)</a></b></li>
+    <li><b><a href="documentos/tipo/3">Reglamento Interno</a></b></li>    
+    <li><b><a href="documentos/tipo/4">Formulario para presentar su Queja (online)</a></b></li>    
+    <li><b><a href="documentos/tipo/7">Formulario para presentar su Queja (versi&oacute;n Impresa)</a></b></li>    
     <li><b><a href="documentos/tipo/5">Mis Quejas</a></b></li>
     <?    
     if(in_array($user->getUserId(),$permitidos)){?>
