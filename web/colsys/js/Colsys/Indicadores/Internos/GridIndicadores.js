@@ -483,8 +483,7 @@ Ext.define('Colsys.Indicadores.Internos.GridIndicadores', {
                                 });      
 
                                 windowpdf.show();
-                            }
-                            console.log(this);
+                            }                            
                         }, {prop: 'value'});
                     }
                 },
@@ -515,8 +514,7 @@ Ext.define('Colsys.Indicadores.Internos.GridIndicadores', {
                             grid.addPlugin({
                                 ptype: 'gridexporter'
                             });
-                            grid.saveDocumentAs(cfg);
-                            console.log(this);
+                            grid.saveDocumentAs(cfg);                            
                         }, {prop: 'value'});
                     }
                 },
@@ -630,8 +628,7 @@ Ext.define('Colsys.Indicadores.Internos.GridIndicadores', {
             this.addDocked(tbar);    
         },
         beforeedit ( editor, context, eOpts ){            
-            var record = context.record;
-            console.log(record);
+            var record = context.record;            
             if(record.data.ca_id > 0 && record.data.ca_color == "pink")
                 return true;
             else
@@ -641,7 +638,7 @@ Ext.define('Colsys.Indicadores.Internos.GridIndicadores', {
     saveComments(){
         var store = this.getStore();
         var me = this;
-        //console.log(store)
+        
         var r = Ext.create(store.getModel());
         var fields = new Array();
 
@@ -651,7 +648,7 @@ Ext.define('Colsys.Indicadores.Internos.GridIndicadores', {
         
         for (var i = 0; i < records.length; i++) {
             r = records[i];
-            console.log(r);
+            
             row = new Object();
             if (r.isValid()) {
                 row.id = r.data.ca_id;
@@ -661,8 +658,7 @@ Ext.define('Colsys.Indicadores.Internos.GridIndicadores', {
             }
         }
 
-        var str = JSON.stringify(changes);
-        console.log(changes);
+        var str = JSON.stringify(changes);        
 
         if (changes.length > 0) {
 
