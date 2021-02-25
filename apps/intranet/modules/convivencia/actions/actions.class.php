@@ -86,15 +86,27 @@ class convivenciaActions extends sfActions {
                 ->where("ub.ca_comites like ?","%" . 2 . "%")
                 ->andWhereIn("e.ca_idempresa", $grupoEmp)
                 ->andWhere("u.ca_activo =?", true)
+                ->orderBy("e.ca_idsap, ub.ca_propiedades")
                 ->execute();
         
         $this->data = array();
         
         foreach($integrantes as $integrante){
-            if(strpos($integrante->getUsuBrigadas()->getCaPropiedades(),"Empleados")){                
-                $this->data[$integrante->getSucursal()->getEmpresa()->getCaNombre()]["Empleados"][] = $integrante->getCaNombre()."<b> ".$integrante->getCaCargo()."</b>";
-            }else if(strpos($integrante->getUsuBrigadas()->getCaPropiedades(),"Empresa")){
-                $this->data[$integrante->getSucursal()->getEmpresa()->getCaNombre()]["Empresa"][] = $integrante->getCaNombre() ."<b> ".$integrante->getCaCargo()."  -  ".strtoupper($integrante->getSucursal()->getEmpresa()->getCaNombre())."</b>";
+            $datos = explode("|", $integrante->getUsuBrigadas()->getProperty("comite2"));
+            if(strpos($integrante->getUsuBrigadas()->getCaPropiedades(),"Empleados")){                                
+                $this->data[$integrante->getSucursal()->getEmpresa()->getCaNombre()]["Empleados"][] = array(
+                    "nombres"=>"<b>".$integrante->getCaNombre()."</b>",
+                    "login"=>$integrante->getCaLogin(),
+                    "tipo"=>$datos[1],
+                    "adicional"=>$datos[2]
+                );
+            }else if(strpos($integrante->getUsuBrigadas()->getCaPropiedades(),"Empresa")){                
+                $this->data[$integrante->getSucursal()->getEmpresa()->getCaNombre()]["Empresa"][] = array(
+                    "nombres"=>"<b>".$integrante->getCaNombre()."</b>",
+                    "login"=>$integrante->getCaLogin(),
+                    "tipo"=>$datos[1],
+                    "adicional"=>$datos[2]
+                );
             }
         }
     }
@@ -131,7 +143,10 @@ class convivenciaActions extends sfActions {
                 $q = Doctrine::getTable("Usuario")
                         ->createQuery("u")
                         ->leftJoin("u.UsuBrigadas ub")
-                        ->addWhere("ub.ca_comites LIKE ? AND (ub.ca_propiedades LIKE ? OR ub.ca_propiedades LIKE ?)", array('%2%','%Representante Principal - Empresa%','%Secretario%'));
+                        ->leftJoin("u.Sucursal s")
+                        ->where("ca_email IS NOT NULL")
+                        ->addWhere("ub.ca_comites LIKE ? AND ub.ca_propiedades LIKE ? AND (ub.ca_propiedades LIKE ? OR ub.ca_propiedades LIKE ?  )", array('%2%','%Empresa%', '%Secretario%', '%Presidente%'))                        
+                        ->addWhere("s.ca_idempresa = ?", $usuario->getSucursal()->getCaIdempresa());;
                 
                 $usersxEmpresa = $q->execute();
                      
@@ -140,42 +155,56 @@ class convivenciaActions extends sfActions {
                         ->createQuery("u")
                         ->leftJoin("u.UsuBrigadas ub")
                         ->leftJoin("u.Sucursal s")                        
-                        ->where("ub.ca_comites LIKE ? AND ub.ca_propiedades LIKE ?", array('%2%','%Representante Principal - Empleados%'))
+                        ->addWhere("ub.ca_comites LIKE ? AND ub.ca_propiedades LIKE ? AND (ub.ca_propiedades LIKE ? OR ub.ca_propiedades LIKE ?  )", array('%2%','%Empleados%', '%Secretario%', '%Presidente%'))
                         ->addWhere("s.ca_idempresa = ?", $usuario->getSucursal()->getCaIdempresa());
                 
-                $usersxEmpleados = $q->execute();                        
+                $usersxEmpleados = $q->execute();    
                 
-                if($form->getCaId()){
-                    $email = new Email();
-                    $email->setCaUsuenvio("Administrador");
-                    $email->setCaTipo("Convivencia");
-                    $email->setCaIdcaso($form->getCaId());
-                    $email->setCaFrom("no-reply@coltrans.com.co");
-                    $email->setCaFromname($usuario->getCaNombre());
-                    $email->setCaSubject("COMITE DE CONVIVENCIA - REPORTE DE QUEJAS: Formulario No ".$form->getCaId());
-                    
-                    $request = sfContext::getInstance()->getRequest();
-                    $request->setParameter("id", $form->getCaId());
-                    $request->setParameter("format", 'email');
-                    $texto.= sfContext::getInstance()->getController()->getPresentationFor('convivencia', 'verFormulario');
-                    $email->setCaBodyhtml($texto);
-                    $email->setCaAttachment($attachment);
-                    //$email->addTo("pizquierdo@coltrans.com.co");
-                    foreach($usersxEmpresa as $user){
-                        $email->addTo($user->getCaEmail());
-                    }
-                    
-                    foreach($usersxEmpleados as $user){
-                        $email->addTo($user->getCaEmail());
-                    }
-                    $email->save($conn);
+                $emails = [];
+                        
+                foreach($usersxEmpresa as $user){  
+                    if(!in_array($user->getCaEmail(), $emails))
+                        $emails[] = $user->getCaEmail();
                 }
-                $conn->commit();
+
+                foreach($usersxEmpleados as $user){
+                    if(!in_array($user->getCaEmail(), $emails))
+                        $emails[] = $user->getCaEmail();
+                }
                 
-                $this->responseArray = array( "success" => true, "idform" => $form->getCaId(), "directorio" => $directorio, "login" => $login);
+                if(count($emails)<=0){
+                    $conn->rollback();
+                    $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("Agradecemos diligenciar éste formulario por escrito dado que los representantes del comité no están habilitados para recibirlo electrónicamente."));
+                }else{
+
+                    if($form->getCaId()){
+                        $email = new Email();
+                        $email->setCaUsuenvio("Administrador");
+                        $email->setCaTipo("Convivencia");
+                        $email->setCaIdcaso($form->getCaId());
+                        $email->setCaFrom("no-reply@coltrans.com.co");
+                        $email->setCaFromname($usuario->getCaNombre());
+                        $email->setCaSubject("COMITE DE CONVIVENCIA - REPORTE DE QUEJAS: Formulario No ".$form->getCaId());
+
+                        $request = sfContext::getInstance()->getRequest();
+                        $request->setParameter("id", $form->getCaId());
+                        $request->setParameter("format", 'email');
+                        $texto.= sfContext::getInstance()->getController()->getPresentationFor('convivencia', 'verFormulario');
+                        $email->setCaBodyhtml($texto);
+                        $email->setCaAttachment($attachment);
+                        
+                        foreach($emails as $key => $val){
+                            $email->addTo($val);
+                        }
+                        $email->save($conn);
+                    }
+                    $conn->commit();
+
+                    $this->responseArray = array( "success" => true, "idform" => $form->getCaId(), "directorio" => $directorio, "login" => $login);
+                }
             } catch (Exception $e) {
                 $conn->rollback();
-                $this->responseArray = array("success" => false, "errorInfo" => $e->getMessage());
+                $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
             }
         }else{
             $this->responseArray = array("success" => false, "errorInfo" => "Debe diligenciar completamente el formulario");
