@@ -65,7 +65,7 @@ class indicadoresActions extends sfActions{
 
        $indicadores = Doctrine::getTable("Idg")
                 ->createQuery("i")
-                ->innerJoin("i.IdgProcesos p")
+                ->innerJoin("i.RsgoProcesos p")
 //                ->where("i.ca_activo = true")
                 ->orderBy("p.ca_nombre ASC, i.ca_nombre ASC")
                 ->execute();
@@ -75,14 +75,14 @@ class indicadoresActions extends sfActions{
         foreach($indicadores as $indicador){
             
             if ($lastProc) {                
-                $proceso = utf8_encode($indicador->getIdgProcesos()->getCaNombre());                
+                $proceso = utf8_encode($indicador->getRsgoProcesos()->getCaNombre());                
                 $idproceso = $indicador->getCaIdproceso();
                 $lastProc = false;                                
             }
             
-            if ($proceso != utf8_encode($indicador->getIdgProcesos()->getCaNombre())) {                  
+            if ($proceso != utf8_encode($indicador->getRsgoProcesos()->getCaNombre())) {                  
                 $data[] = array("text" => $proceso, "idproceso"=>$idproceso,"expanded" => false, "checked"=>false, "children" => $childrens);
-                $proceso = utf8_encode($indicador->getIdgProcesos()->getCaNombre());
+                $proceso = utf8_encode($indicador->getRsgoProcesos()->getCaNombre());
                 $idproceso = $indicador->getCaIdproceso();                
                 $childrens = array();                
             }
@@ -131,7 +131,7 @@ class indicadoresActions extends sfActions{
         $arrayOrigen = explode(",", $origenes);        
         
         $indicador = Doctrine::getTable("Idg")->find($idg);
-        $proceso = $indicador->getIdgProcesos();
+        $proceso = $indicador->getRsgoProcesos();
         $datos = json_decode(utf8_encode($indicador->getCaDatos()),1);
         
         $options["idg"] = $idg;
@@ -181,7 +181,8 @@ class indicadoresActions extends sfActions{
                     "Falla en sistema de facturación",
                     "Requisitos Cliente",
                     "Cliente no creado en sistema contable",
-                    "Fuerza Mayor Salubridad"
+                    "Fuerza Mayor Salubridad",
+                    "Facturación Electrónica"
                 );
                 $filtroUsuario = "ca_usuenvio";
                 break;
@@ -214,7 +215,8 @@ class indicadoresActions extends sfActions{
                     "Cierre contable de Clientes",
                     "Cierre contable de Clientes",
                     "Exclusión Temporal",
-                    "Rollover"
+                    "Rollover",
+                    "Facturación Electrónica"
                 );
                 $filtroUsuario = "ca_usuenvio";
                 break;
@@ -248,7 +250,8 @@ class indicadoresActions extends sfActions{
                     "Falla en sistema de facturación",
                     "Requisitos Cliente",
                     "Cliente no creado en sistema contable",
-                    "Rollover"
+                    "Rollover",
+                    "Facturación Electrónica"
                 );
                 $filtroUsuario = "ca_usuenvio";
                 break;                
@@ -293,7 +296,7 @@ class indicadoresActions extends sfActions{
         $registros = $q->execute();
         $contador = 0;
         
-        if(count($registros)>0){            
+        if(count($registros)>0){
             foreach($registros as $d){
                 
                 $color = "";
@@ -339,7 +342,7 @@ class indicadoresActions extends sfActions{
                         break;
                     case 37:
                     case 38:                    
-                    case 39:                        
+                    case 39:                   
                         $master = Doctrine::getTable("InoMaster")->find($d["v_ca_idmaster"]);
                         if(count($master->getFacturasIngreso())== 0){
                             $excluir = true;
@@ -351,6 +354,15 @@ class indicadoresActions extends sfActions{
                         
                         if($d["v_ca_aplicaidg"] == "NO"){
                             $excluir = true;
+                        }
+                        /*Para Facturas de Agente que tienen más de 1 house*/
+                        
+                        if($d["v_ca_aplicaidg"] == "FACTURA AL AGENTE"){                            
+                            $factagente[$d["v_ca_referencia"]] += $d["v_ca_idgval"];                            
+                            if($d["v_ca_idgval"] == null && $factagente[$d["v_ca_referencia"]] > 0){
+                                $d["v_ca_observaciones"] = "Se envía una sola factura al Agente por todos los house.";
+                                $excluir = true;
+                            }
                         }
                         $idgval = $d["v_ca_idgval"];  
                         $idgest = $d["v_ca_idgest"];    
@@ -377,7 +389,7 @@ class indicadoresActions extends sfActions{
                 }
                 
                 if (in_array(trim($d["v_ca_exclusion"]), $exclusiones) || $excluir) {
-                    $array_avg[] = 0;   
+                    //$array_avg[] = 0;   
                 }else{
                     if($datos["tipodiff"]=="d"){
                         $array_avg[] = $idgval?$idgval:48; 
@@ -442,7 +454,10 @@ class indicadoresActions extends sfActions{
             
             /*Resumen de datos*/
             if ($datos["tipodiff"] == "d") {
-                $promedio_general = TimeUtils::array_avg($array_avg);
+                if(is_array($array_avg))
+                    $promedio_general = TimeUtils::array_avg($array_avg);
+                else
+                    $promedio_general = 0;
             } else if ($array_avg < "24:00:00") {
                 $promedio_general = date($datos["tipodiff"], TimeUtils::array_avg($array_avg));
             } else {
@@ -460,8 +475,8 @@ class indicadoresActions extends sfActions{
 
             $summary = array();
             $summary["pnc_count"] = count($array_pnc);        
-            $summary["pnc_perc"] = count($array_avg)>0?Utils::formatNumber(round(count($array_pnc) / (count($array_avg)-count($array_null)) * 100, 2), 2):0;
-            $summary["avg_count"] = count($array_avg)-count($array_null);
+            $summary["pnc_perc"] = count($array_avg)>0?Utils::formatNumber(round(count($array_pnc) / (count($array_avg)) * 100, 2), 2):0;
+            $summary["avg_count"] = count($array_avg);//-count($array_null);
             $summary["avg_perc"] = $promedio_general;
             $summary["exc_count"] = count($array_null);
             $summary["exc_perc"] = Utils::formatNumber(round(count($array_null) / $contador * 100, 2), 2); 
@@ -741,7 +756,7 @@ class indicadoresActions extends sfActions{
         
         try{
             $indicador = Doctrine::getTable("Idg")->find($request->getParameter("idg"));
-            $proceso = $indicador->getIdgProcesos();  
+            $proceso = $indicador->getRsgoProcesos();  
             $indice = $request->getParameter("indice");
             $filenameTemp = "Archivo temporal Indicador ".$indice.'.pdf';
 
@@ -821,7 +836,7 @@ class indicadoresActions extends sfActions{
         $idg = $request->getParameter("idg");  
         
         $indicador = Doctrine::getTable("Idg")->find($idg);
-        $proceso = $indicador->getIdgProcesos();
+        $proceso = $indicador->getRsgoProcesos();
         
         $ano = $request->getParameter("ano");
         $mes = $request->getParameter("mes");        
@@ -841,7 +856,7 @@ class indicadoresActions extends sfActions{
         $idg = $request->getParameter("idg");  
         
         $indicador = Doctrine::getTable("Idg")->find($idg);
-        $proceso = $indicador->getIdgProcesos();
+        $proceso = $indicador->getRsgoProcesos();
         
         $conn = Doctrine::getTable("IdgArchivo")->getConnection();
         $conn->beginTransaction();
@@ -881,7 +896,7 @@ class indicadoresActions extends sfActions{
         $data = array();
         
         $indicador = Doctrine::getTable("Idg")->find($idg);
-        $proceso = $indicador->getIdgProcesos();
+        $proceso = $indicador->getRsgoProcesos();
         
         $conn = Doctrine::getTable("IdgArchivo")->getConnection();
         $conn->beginTransaction();
@@ -961,7 +976,7 @@ class indicadoresActions extends sfActions{
         
         try{
             
-            $q = Doctrine::getTable("IdgProcesos")
+            $q = Doctrine::getTable("RsgoProcesos")
                     ->createQuery("ip")
                     ->select("ip.ca_nombre, ip.ca_idproceso")
                     ->innerJoin("ip.Idg i")
@@ -982,7 +997,7 @@ class indicadoresActions extends sfActions{
                 foreach($indicadores as $idg){
 
                     $indicador = Doctrine::getTable("Idg")->find($idg->getCaIdg());
-                    $proceso = $indicador->getIdgProcesos();
+                    $proceso = $indicador->getRsgoProcesos();
 
                     $archivos = Doctrine::getTable("IdgArchivo")
                             ->createQuery("ia")
@@ -1138,32 +1153,71 @@ class indicadoresActions extends sfActions{
 
         
         try{
-            
+//            IDG EXPOADUANA COLMAS
             $sql = "
-                SELECT m.ca_referencia, rp.ca_idreporte, rp.ca_consecutivo, eta.ca_fchenvio
-                FROM tb_brk_maestra m
+            SELECT m.ca_referencia, rp.ca_idreporte, rp.ca_consecutivo, eta.ca_fchenvio
+            FROM tb_brk_maestra m
                     INNER JOIN tb_brk_expo ex ON ex.ca_referencia = m.ca_referencia
                     INNER JOIN tb_reportes rp ON rp.ca_idreporte = ex.ca_idreporte
-                    RIGHT JOIN ( SELECT sf.ca_consecutivo,
-                        sta.ca_fchenvio AS ca_fchenvio
-                       FROM tb_repstatus sta
-                         RIGHT JOIN ( SELECT p.ca_consecutivo,
-                                min(sta_1.ca_idstatus) AS ca_idstatus
-                               FROM tb_repstatus sta_1
-                                 JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte
-                              WHERE sta_1.ca_idetapa = 'EFADU'
-                              GROUP BY p.ca_consecutivo) sf ON sta.ca_idstatus = sf.ca_idstatus) eta ON rp.ca_consecutivo::text = eta.ca_consecutivo::text	
-                WHERE m.ca_referencia in ('330.50.05.0004.20')";
+                    RIGHT JOIN (
+                            SELECT sf.ca_consecutivo, sta.ca_fchenvio AS ca_fchenvio
+                            FROM tb_repstatus sta
+                                    RIGHT JOIN (
+                                            SELECT p.ca_consecutivo, min(sta_1.ca_idstatus) AS ca_idstatus
+                                            FROM tb_repstatus sta_1
+                                                    JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte                            
+                                            WHERE sta_1.ca_idetapa = 'EFADU'
+                                            GROUP BY p.ca_consecutivo
+                                    ) sf ON sta.ca_idstatus = sf.ca_idstatus
+                    ) eta ON rp.ca_consecutivo::text = eta.ca_consecutivo::text	
+            WHERE m.ca_referencia in (
+                    '300.50.10.0056.20'
+            )";            
+//
+            //            IDG EXPO COLTRANS
+//            $sql ="
+//                SELECT m.ca_referencia, rp.ca_idreporte, rp.ca_consecutivo, eta.ca_fchenvio, c.ca_idcomprobante
+//                FROM ino.tb_master m
+//                        INNER JOIN ino.tb_house h ON h.ca_idmaster = m.ca_idmaster
+//                        INNER JOIN tb_reportes rp ON rp.ca_idreporte = h.ca_idreporte
+//                        LEFT JOIN ino.tb_comprobantes c ON c.ca_idhouse = h.ca_idhouse and c.ca_estado = 5
+//                        RIGHT JOIN (
+//                                SELECT sf.ca_consecutivo, sta.ca_fchenvio AS ca_fchenvio
+//                        FROM tb_repstatus sta
+//                                RIGHT JOIN (
+//                                        SELECT p.ca_consecutivo, min(sta_1.ca_idstatus) AS ca_idstatus
+//                            FROM tb_repstatus sta_1
+//                                                JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte							   
+//                                        WHERE sta_1.ca_idetapa = 'EEFFL'
+//                                        GROUP BY p.ca_consecutivo
+//                                ) sf ON sta.ca_idstatus = sf.ca_idstatus
+//                        ) eta ON rp.ca_consecutivo::text = eta.ca_consecutivo::text	
+//                WHERE m.ca_referencia in (
+//                    '320.20.09.0005.20'
+//                )";
+
+            
+            //            IDG FACTURA AL AGENTE
+            
+//            $sql ="
+//                SELECT m.ca_referencia, h.ca_idhouse, rp.ca_idreporte, rp.ca_consecutivo, e.ca_fchenvio, c.ca_idcomprobante                
+//                FROM ino.tb_master m
+//                        INNER JOIN ino.tb_house h ON h.ca_idmaster = m.ca_idmaster
+//                        LEFT JOIN ino.tb_comprobantes c ON c.ca_idhouse = h.ca_idhouse
+//                        INNER JOIN tb_reportes rp ON rp.ca_idreporte = h.ca_idreporte                    
+//                        RIGHT JOIN tb_emails e ON e.ca_idcaso = rp.ca_idreporte AND ca_tipo = 'Status Terceros'
+//                                where ca_referencia in(                        
+//                        '330.20.08.0013.20'
+//                ) and c.ca_id = m.ca_idagente";
 
             $rs = $con->execute($sql);
             $refs = $rs->fetchAll();
-            
-            $i=1;
+
             foreach ($refs as $r){
-                //echo $r["ca_referencia"];
-                //exit;
-//                echo $i." ".$r["ca_referencia"]."-".$r["ca_consecutivo"]."<br/>";
-//                echo $r["ca_consecutivo"]."<br/>";
+////                echo $r["ca_referencia"];                
+////                echo $i." ".$r["ca_referencia"]."-".$r["ca_consecutivo"]."<br/>";
+////                echo $r["ca_consecutivo"]."<br/>";                
+//                /*IDG EXPO ADUANA*/
                 $refAduana = Doctrine::getTable("InoMaestraAdu")->find($r["ca_referencia"]);
 
                 if ($refAduana->getRequiereIdgAduana()) {
@@ -1173,15 +1227,112 @@ class indicadoresActions extends sfActions{
 
                     $options["fecha"] = $fchini;
                     $options["idexclusion"] = $request->getParameter("exclusiones_idg");
-                    $options["observaciones"] = "Indicador registrado manualmente Ticket 89541";
+                    $options["observaciones"] = "Indicador registrado manualmente Ticket 98997";
                     
                     $idg = $refAduana->generarIdg($options, $conn);                    
                     echo "<pre>";print_r($idg);echo "</pre>";
                 }
-                $i++;
-
+//                
+//                /*IDG COLTRANS*/
+//                $idcomprobante = $r["ca_idcomprobante"];
+//                if($idcomprobante){
+//                    $comprobante = Doctrine::getTable("InoComprobante")->find($idcomprobante);                
+//
+//                    list($year, $month, $day) = sscanf($r["ca_fchenvio"], "%d-%d-%d");                
+//                    $fchini = date('Y-m-d', mktime(0,0,0, $month, $day, $year));
+//                    $options["fecha"] = $fchini;
+//                    $options["observaciones"] = "Indicador registrado manualmente";
+//
+//                    $cumple = $comprobante->generarIdg($options, $conn);
+//
+//                    $resultado["cumple"] = $cumple;
+//                    $resultado["referencia"] = $r["ca_referencia"];
+//                    $resultado["reporte"] = $r["ca_consecutivo"];
+//                }
+//                $i++;
+//                echo "<pre>";print_r($resultado);echo "</pre>";
             }
+            
             $conn->commit();
+            
+            
+            /*IDG EXPO COLLECT*/
+//            $idreporte = $request->getParameter("idreporte");
+//            $reporte = Doctrine::getTable("Reporte")->find($idreporte);
+//            
+//            $repstatus = Doctrine::getTable("RepStatus")->findByDql("ca_idreporte = ? AND ca_idetapa = ?", array($reporte->getCaIdreporte(),'EEETD'))->getFirst();
+//            
+//            echo $repstatus->getCaFchenvio();
+//            
+//            if($repstatus){
+//                $house = Doctrine::getTable("InoHouse")
+//                            ->createQuery("h")
+//                            ->innerJoin("h.Reporte r")
+//                            ->where("ca_consecutivo = ?", $reporte->getCaConsecutivo())
+//                            ->fetchOne();  
+//
+//                if($house){
+//                    /*Verifica si es collect*/
+//                    if($house->getInoMaster()->getRequiereIdg($repstatus->getCaIdetapa())){
+//
+////                        $conn = Doctrine::getConnectionByTableName("InoIndicadores");
+////                        $conn->beginTransaction();
+//
+//                        $master = $house->getInoMaster();
+//
+//                        $options["fecha"] = $repstatus->getCaFchenvio();  
+//                        $options["sigla"] = "OFC";
+//                        $options["idcaso"] = $reporte->getCaConsecutivo();
+//                        //$options["idexclusion"] = $request->getParameter("exclusiones_idg");
+////                        $options["observaciones"] = "Calculo Manual COLLECT. Etapa ETD";
+//                        $options["idetapa"] = $repstatus->getCaIdetapa();
+//
+//                        $infoeventos = $master->getInfoEventos();
+//                        $options["eventos"] = $infoeventos["tb_eventos"];
+//                        $options["fchini"] = $master->getFchUltimoEvento();
+//                        $options["eventos"] = $master->getInfoeventos();
+//                        $data["eventos"] = $options["eventos"];
+//                        if($options["fchini"] == null)
+//                            $cumple =  array("cumplio"=>"No", "mensaje"=>"La referencia no tiene eventos creados. No es posible calcular el indicador");                                
+//                        $options["fchend"] = $repstatus->getCaFchenvio();
+//
+//                        $idgConfig = $house->getIdgxHouse($options);
+//                        $calculo = $idgConfig->calcularIndicador($options);        
+//                        $cumple = $idgConfig->evaluarIndicador($calculo["estado"], $calculo["val"], $options, $conn);
+//                        
+////                        $indicador = new InoIndicadores();
+////                        $indicador->setCaTipo(2);
+//////                        $indicador->setCaIdcaso($options["idcaso"]);
+//////                        $indicador->setCaFecha($options["fecha"]);
+//////                        $indicador->setCaIdindicador(37);
+//////                        $indicador->setCaFchinicial($options["fchini"]);
+//////                        $indicador->setCaFchfinal($options["fecha"]);
+//////                        $indicador->setCaIdg(2);
+//////                        //$indicador->setCaIdexclusion($idexclusion?$idexclusion:null);
+//////                        $indicador->setCaEstado(true);
+//////                        $indicador->setCaUsuario("pperdomo");
+//////                        //$indicador->setCaDatos(json_encode($data));
+//////                        $indicador->setCaIdetapa($options["idetapa"]);
+////                        $indicador->save();
+//                        $conn->commit();
+//                        
+//                        $resultado[] = $cumple;
+////                        echo $indicador->getCaId();
+//                        
+//                        
+//                        
+//                        echo "<pre>";print_r($calculo);echo "</pre>";
+//                        echo "<pre>";print_r($resultado);echo "</pre>";
+////                        $bindValues["idgcollect"] = $cumple;
+////                        if($bindValues["idgcollect"]["cumplio"]!="No"){                            
+////                            $conn->commit();
+////                        }
+//                    }
+//                }
+//            }
+            
+            
+            
         }catch(Exception $e){
             $conn->rollback();
             echo $e->getMessage();
