@@ -817,5 +817,55 @@ class Utils {
         }
     }
 
+    public static function formatHtml($textHtml) {
+        $a = htmlentities($textHtml);
+        $b = html_entity_decode($a);                
+        $html = str_replace('color="FF0000"', 'color="#ff0000"', $b);
+        $html = str_replace('</div>', '<br/>', $html);
+        $html = str_replace('</span>', '<br/>', $html);
+        $html = utf8_decode(strip_tags($html,"<font><br>")); 
+        
+        return $html;        
+    }
+    
+    /* Función que elimina las tildes y los acentos
+     * @params
+     * $cadena: Se debe pasar la cadena sin codificaciones
+     */
+    public static function eliminarTildes($cadena){
+     
+        $cadena = str_replace(
+            array('á', '?', 'ä', 'â', '?', 'Á', '?', 'Â', 'Ä'),
+            array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),
+            $cadena
+        );
+        
+        $cadena = str_replace(
+            array('é', '?', 'ë', '?', 'É', '?', '?', 'Ë'),
+            array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'),
+            $cadena );
+        
+        $cadena = str_replace(
+            array('í', '?', '?', 'î', 'Í', '?', '?', 'Î'),
+            array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'),
+            $cadena );
+        
+        $cadena = str_replace(
+            array('ó', '?', 'ö', 'ô', 'Ó', '?', 'Ö', 'Ô'),
+            array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'),
+            $cadena );
+        
+        $cadena = str_replace(
+            array('ú', '?', 'ü', '?', 'Ú', '?', '?', 'Ü'),
+            array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'),
+            $cadena );
+        
+        $cadena = str_replace(
+            array('?', '?', 'ç', 'Ç'),
+            array('n', 'N', 'c', 'C'),
+            utf8_decode($cadena));
+
+        return $cadena;
+    }
 }
 ?>
