@@ -1,0 +1,452 @@
+Riesgos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_riesgos
+  columns:
+    ca_idriesgo:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idproceso: 
+      type: integer
+      notnull: true
+    ca_codigo: 
+      type: string(10)
+      notnull: true
+    ca_riesgo: string
+    ca_etapa: string
+    ca_potenciador: string
+    ca_controles: string    
+    ca_ap: string
+    ca_contingencia: string
+    ca_usucreado: string(15)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(15)
+    ca_fchactualizado: timestamp
+    ca_impresion: integer
+    ca_laft: boolean    
+    ca_activo: boolean
+    ca_aprobado: boolean
+    ca_clasificacion: text
+  relations:
+    RsgoProcesos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: one
+    RsgoFactor:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: many
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      
+RsgoProcesos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_procesos
+  columns:
+    ca_idproceso:
+      type: integer
+      primary: true
+      autoincrement: true    
+    ca_nombre: string(30)    
+    ca_idempresa: integer
+    ca_orden: integer
+    ca_prefijo: string(5)
+    ca_activo: boolean
+  relations:
+    Riesgos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: many    
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+
+RsgoValoracion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_valoracion
+  columns:
+    ca_idvaloracion:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idriesgo: integer
+    ca_ano: integer    
+    ca_operativo: integer
+    ca_legal: integer
+    ca_economico: integer
+    ca_comercial: integer
+    ca_peso: integer
+    ca_usucreado: string(15)
+    ca_fchcreado: timestamp
+    ca_usuactualizado: string(15)
+    ca_fchactualizado: timestamp
+    ca_datos: jsonb
+    ca_idsucursal: string(3)
+  relations:
+    Riesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    Sucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+ 
+RsgoEventos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_eventos
+  columns:
+    ca_idevento:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idriesgo: integer
+    ca_idcausa: integer
+    ca_fchevento: date
+    ca_descripcion: string
+    ca_tipo_doc: string
+    ca_documento:  string
+    ca_idcliente: integer
+    ca_idsucursal: string
+    ca_perdida_tot: decimal
+    ca_perdida_ope: decimal
+    ca_perdida_leg: decimal
+    ca_perdida_eco: decimal
+    ca_perdida_com: decimal
+    ca_fchcreado: timestamp
+    ca_usucreado: string
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string
+    ca_pa: string
+  relations:
+    Riesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one
+    RsgoCausas:
+      local: ca_idcausa
+      foreign: ca_idcausa
+      type: one    
+    Cliente:
+      local: ca_idcliente
+      foreign: ca_idcliente
+      type: one
+    Sucursal:
+      local: ca_idsucursal
+      foreign: ca_idsucursal
+      type: one
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+    RsgoEventoCausa:
+      local: ca_idevento
+      foreign: ca_idevento
+      type: many
+      
+RsgoCausas:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_causas
+  columns:
+    ca_idcausa:
+      type: integer
+      primary: true
+      autoincrement: true
+    ca_idriesgo: integer
+    ca_causa: string
+    ca_fchcreado: timestamp
+    ca_usucreado: string(15)
+    ca_fchactualizado: timestamp
+    ca_usuactualizado: string(15)
+    ca_nueva: boolean
+    ca_orden: integer
+  relations:
+    Riesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one
+    UsuCreado:
+      class: Usuario
+      local: ca_usucreado
+      foreign: ca_login
+      type: one
+    UsuActualizado:
+      class: Usuario
+      local: ca_usuactualizado
+      foreign: ca_login
+      type: one
+      
+RsgoUsuProcesos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_usuprocesos
+  columns:
+    ca_idproceso:
+      type: integer
+      primary: true
+    ca_login:
+      type: string
+      primary: true  
+    ca_idperfil:        
+      type: integer
+      primary: true
+  relations:
+    RsgoProcesos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: one
+    Usuario:
+      local: ca_login
+      foreign: ca_login
+      type: one
+    Parametro:      
+      local: ca_idperfil
+      foreign: ca_identificacion
+      type: one
+      
+RsgoFactor:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_factores
+  columns:    
+    ca_idriesgo:
+      type: integer
+      primary: true
+    ca_factor:
+      type: string
+      primary: true
+  relations:
+    Riesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one    
+      
+RsgoEventoCausa:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_eventos_causas
+  columns:    
+    ca_idevento:
+      type: integer
+      primary: true
+    ca_idcausa:
+      type: integer
+      primary: true
+  relations:
+      RsgoEventos:
+        local: ca_idevento
+        foreign: ca_idevento
+        type: one
+      RsgoCausas:
+        local: ca_idcausa
+        foreign: ca_idcausa
+        type: many  
+
+RsgoVersion:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_versiones
+  columns:    
+    ca_id:
+      type: integer
+      primary: true
+    ca_version: integer
+    ca_idproceso: integer
+    ca_nombre: string
+    ca_observaciones: text
+    ca_fchcreado: timestamp
+    ca_usucreado: string(15)
+    ca_fcheliminado: timestamp
+    ca_usueliminado: string(15)      
+  relations:
+      RsgoProcesos:
+        local: ca_idproceso
+        foreign: ca_idproceso
+        type: one
+      UsuCreado:
+        class: Usuario
+        local: ca_usucreado
+        foreign: ca_login
+        type: one
+      UsuEliminado:
+        class: Usuario
+        local: ca_usueliminado
+        foreign: ca_login
+        type: one
+        
+RsgoPermisos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.tb_permisos
+  columns:    
+    ca_idproceso:
+        type: integer
+        primary: true
+    ca_login:
+        type: string
+        primary: true
+    ca_riesgos_view: boolean
+    ca_riesgos_new: boolean
+    ca_riesgos_edit: boolean
+    ca_riesgos_delete: boolean
+    ca_riesgos_approval: boolean
+    ca_valoracion_view: boolean
+    ca_valoracion_new: boolean
+    ca_valoracion_edit: boolean
+    ca_valoracion_delete: boolean
+    ca_eventos_view: boolean
+    ca_eventos_new: boolean
+    ca_eventos_edit: boolean
+    ca_eventos_delete: boolean
+    ca_informes_view: boolean
+    ca_informes_new: boolean    
+    ca_idperfil: integer
+    ca_usucreado: string
+    ca_fchcreado: date
+    ca_usuactualizado: string
+    ca_fchactualizado: date
+  relations:
+      RsgoProcesos:
+        local: ca_idproceso
+        foreign: ca_idproceso
+        type: one
+      Usuario:
+        local: ca_login
+        foreign: ca_login
+        type: one
+      UsuCreado:
+        class: Usuario
+        local: ca_usucreado
+        foreign: ca_login
+        type: one
+      UsuActualizado:
+        class: Usuario
+        local: ca_usuactualizado
+        foreign: ca_login
+        type: one
+        
+RsgoViRiesgos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.vi_riesgos
+  columns:      
+      ca_empresa: string
+      ca_idproceso:
+        type: integer
+        primary: true        
+      ca_nombre: string(30)    
+      ca_idempresa: integer
+      ca_orden: integer
+      ca_prefijo: string(5)
+      ca_activo: boolean
+      ca_idriesgo:
+        type: integer
+        primary: true
+      ca_codigo: string
+      ca_riesgo: string
+      ca_clasificacion: string
+      ca_activo_riesgo: boolean
+      ca_aprobado: boolean
+  relations:
+    RsgoProcesos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: one
+    Riesgos:
+      local: ca_idriesgo
+      foreign: ca_idriesgo
+      type: one    
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one  
+
+RsgoViProcesos:
+  options:
+    symfony:
+      form: false
+      filter: false
+  generatePath: riesgos
+  tableName: riesgos.vi_procesos
+  columns:      
+      ca_empresa: string
+      ca_idproceso:
+        type: integer
+        primary: true        
+      ca_nombre: string(30)    
+      ca_idempresa: integer
+      ca_orden: integer
+      ca_prefijo: string(5)
+      ca_activo: boolean      
+  relations:       
+    Empresa:
+      local: ca_idempresa
+      foreign: ca_idempresa
+      type: one
+    RsgoProcesos:
+      local: ca_idproceso
+      foreign: ca_idproceso
+      type: one
