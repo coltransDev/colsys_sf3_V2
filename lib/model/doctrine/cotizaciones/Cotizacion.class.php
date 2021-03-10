@@ -321,4 +321,9 @@ class Cotizacion extends BaseCotizacion {
         
         return false;
     }
+
+    public function getValidaciones() {
+        $datos = json_decode(utf8_encode($this->getCaDatos()));
+        return $datos->validaciones;
+    }
 }
