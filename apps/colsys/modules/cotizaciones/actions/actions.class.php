@@ -53,6 +53,7 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeBusquedaCotizacion() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $user = $this->getUser();
         $criterio = $this->getRequestParameter("criterio");
         $cadena = $this->getRequestParameter("cadena");
@@ -66,12 +67,11 @@ class cotizacionesActions extends sfActions {
         $modalidad = $this->getRequestParameter("modalidad");
 
         $q = Doctrine_Query::create()
-                        ->select("c.*,EXTRACT(YEAR FROM c.ca_fchcreado),to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')")
+                        ->select("c.*,EXTRACT(YEAR FROM c.ca_fchcreado),to_number(split_part(ca_consecutivo,'-',1),'999999')")
                         ->from('Cotizacion c');
         $q->where("c.ca_consecutivo IS NOT NULL ");
         $q->orderBy("EXTRACT(YEAR FROM c.ca_fchcreado) DESC  ");
-//            $q->addOrderBy("to_number(SUBSTR(c.ca_consecutivo, POSITION(c.ca_consecutivo, '-') + 1, length(c.ca_consecutivo) - (POSITION(c.ca_consecutivo, '-') - 1)), '999999')  desc");
-        $q->addOrderBy("to_number(SUBSTR(c.ca_consecutivo , 1 , (POSITION('-' in c.ca_consecutivo)-1) ),'999999')  desc");
+        $q->addOrderBy("to_number(split_part(ca_consecutivo,'-',1),'999999') desc");
         $q->addOrderBy("c.ca_version  desc");
 
         switch ($criterio) {
@@ -176,6 +176,7 @@ class cotizacionesActions extends sfActions {
      */   
 
     public function executeConsultaCotizacion() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $response = sfContext::getInstance()->getResponse();
         $response->addJavaScript("extExtras/RowExpander", 'last');
         $response->addJavaScript("extExtras/myRowExpander", 'last');
@@ -188,14 +189,17 @@ class cotizacionesActions extends sfActions {
             $this->editable = $this->getRequestParameter("editable");
             $this->option = $this->getRequestParameter("option");
 
-            $this->tarea = $cotizacion->getTareaIDGEnvioOportuno();
-            if ($this->tarea && $this->tarea->getCaFchterminada()) {
-                $this->redirect("cotizaciones/verCotizacion?id=" . $cotizacion->getCaIdcotizacion());
-            }
+            //if($id_cotizacion!="87820")
+            {
+                $this->tarea = $cotizacion->getTareaIDGEnvioOportuno();
+                if ($this->tarea && $this->tarea->getCaFchterminada()) {
+                    $this->redirect("cotizaciones/verCotizacion?id=" . $cotizacion->getCaIdcotizacion());
+                }
 
 
-            if ($cotizacion->getCaUsuanulado()) {
-                $this->redirect("cotizaciones/verCotizacion?id=" . $cotizacion->getCaIdcotizacion());
+                if ($cotizacion->getCaUsuanulado()) {
+                    $this->redirect("cotizaciones/verCotizacion?id=" . $cotizacion->getCaIdcotizacion());
+                }
             }
 
             $this->cotizacion = $cotizacion;
@@ -247,6 +251,8 @@ class cotizacionesActions extends sfActions {
                     $cotizacion->setCaUsuario($vendedor);
                 }
             }
+            $datos = json_decode(utf8_encode($cotizacion->getCaDatos()));
+            $datos->validaciones = $this->getRequestParameter("validacion");
 
             $cotizacion->setCaIdcontacto($this->getRequestParameter("idconcliente"));
             $cotizacion->setCaAsunto(utf8_decode($this->getRequestParameter("asunto")));
@@ -254,9 +260,14 @@ class cotizacionesActions extends sfActions {
             $cotizacion->setCaEntrada(utf8_decode($this->getRequestParameter("entrada")));
             $cotizacion->setCaDespedida(utf8_decode($this->getRequestParameter("despedida")));
             $cotizacion->setCaAnexos(utf8_decode($this->getRequestParameter("anexos")));
+            $cotizacion->setCaDatos(json_encode($datos));
 
             if ($this->getRequestParameter("fuente")) {
                 $cotizacion->setCaFuente($this->getRequestParameter("fuente"));
+            }
+
+            if ($this->getRequestParameter("facturacion")) {
+                $cotizacion->setCaFacturacion($this->getRequestParameter("facturacion"));
             }
 
             if (!$cotizacion->getCaIdcotizacion()) {
@@ -401,6 +412,7 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeDatosAgentes() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("idcotizacion"));
         $this->forward404Unless($cotizacion);
@@ -558,7 +570,15 @@ class cotizacionesActions extends sfActions {
 
     public function executeVerCotizacion() {
         //$this->redirect( "cotizaciones/consultaCotizacion?id=".$this->getRequestParameter("id") );
-        $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
+        
+        if($this->getRequestParameter("idreporte"))
+        {
+            $rn = Doctrine::getTable("Reporte")->find($this->getRequestParameter("idreporte"));
+            $this->cotizacion = Doctrine::getTable("Cotizacion")->findOneBy("ca_consecutivo",$rn->getCaIdcotizacion());            
+        }
+        else
+            $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
+        
         $this->forward404Unless($this->cotizacion);
         
         $this->getUser()->log( "Consulta Cotizacion" );
@@ -577,13 +597,20 @@ class cotizacionesActions extends sfActions {
         $this->asunto = sprintf($textos['asuntoEmail'], strtoupper($this->cotizacion->getCaEmpresa()), $this->cotizacion->getCaConsecutivo());
         $this->mensaje = sprintf($mensajeEmail , $this->cotizacion->getContacto()->getNombre(), $this->cotizacion->getCaConsecutivo());
         $this->tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
-
+        
+        $validaciones = ParametroTable::retrieveByCaso("CU278", null, ($this->cotizacion->getCaEmpresa()=="Colmas"?$this->cotizacion->getCaEmpresa():"Coltrans"));
+        $this->validaciones = array();
+        foreach( $validaciones as $validacion ){
+            $this->validaciones[] = $validacion->getCaValor();
+        }
+        
         $this->observacionesIdg = ParametroTable::retrieveByCaso("CU076");
         $this->notas = sfYaml::load(sfConfig::get('sf_app_module_dir') . DIRECTORY_SEPARATOR . "cotizaciones" . DIRECTORY_SEPARATOR . "config" . DIRECTORY_SEPARATOR . "notas.yml");
     }
 
 
     public function executeGenerarPDFColtrans() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));        
         $this->forward404Unless($this->cotizacion);
 
@@ -621,6 +648,7 @@ class cotizacionesActions extends sfActions {
     
 
     public function executeGenerarPDFColmas() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
         $this->forward404Unless($this->cotizacion);     
 
@@ -629,6 +657,7 @@ class cotizacionesActions extends sfActions {
     }
     
     public function executeGenerarPDFColdepositos() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
         $this->forward404Unless($this->cotizacion);     
 
@@ -637,6 +666,7 @@ class cotizacionesActions extends sfActions {
     }
     
     public function executeGenerarPDFTPLogistics() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
         $this->forward404Unless($this->cotizacion);
 
@@ -661,6 +691,7 @@ class cotizacionesActions extends sfActions {
     }
 
     public function executeGenerarPDF() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
         $this->forward404Unless($this->cotizacion);
 
@@ -692,6 +723,7 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeGenerarPDFNotas() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
         $this->forward404Unless($this->cotizacion);
 
@@ -714,7 +746,15 @@ class cotizacionesActions extends sfActions {
 
     public function executeEnviarCotizacionEmail($request) {
         $this->cotizacion = Doctrine::getTable("Cotizacion")->find($this->getRequestParameter("id"));
+        $validaciones = $this->getRequestParameter("validaciones");
+        if ($validaciones) {
+            $datos = json_decode(utf8_encode($this->cotizacion->getCaDatos()));
+            $datos->validaciones = $validaciones;
 
+            $this->cotizacion->setCaDatos(json_encode($datos));
+            $this->cotizacion->save();
+        }
+        
         $user = $this->getUser();
         //Crea el correo electronico
         $email = new Email();
@@ -798,7 +838,7 @@ class cotizacionesActions extends sfActions {
             ///home/abotero/Desarrollo/digitalFile//Attachements/307189/status860003168.xls|reportes/12513-2009//IMOCOM -CORFERIAS HBL.pdf|reportes/14000-2009//CHUAN HBL.pdf
             $email->addAttachment($email->getDirectorioBase() . $fileName);
         }
-
+        Doctrine_Manager::getInstance()->setCurrentConnection('master');
         $attachments = $this->getRequestParameter("attachments");
         if ($attachments) {
             $directorioCotizaciones = $this->cotizacion->getDirectorioBase();
@@ -807,8 +847,7 @@ class cotizacionesActions extends sfActions {
                 $email->addAttachment($directorioCotizaciones . DIRECTORY_SEPARATOR . $fileName);
             }
         }
-        $email->save();
-        //$email->send();
+        $email->save();        
 
         $tarea = $this->cotizacion->getTareaIDGEnvioOportuno();
 
@@ -842,8 +881,10 @@ class cotizacionesActions extends sfActions {
             $newCotizacion = $cotizacion->copy(false); //La copia recursiva se hace paso a paso por que las llaves son naturales
             $user = $this->getUser();
             $nv = $this->getRequestParameter("nv");
-            //echo $nv;
-            //exit;
+            
+            $config = sfConfig::get('sf_app_module_dir').DIRECTORY_SEPARATOR."cotizaciones".DIRECTORY_SEPARATOR."config".DIRECTORY_SEPARATOR."textos.yml";
+            $textos = sfYaml::load($config);
+            
             if (isset($nv) && ($nv == "true" || $nv == true)) {
                 
                 $sql =  "select (count(*)+1) as next from tb_cotizaciones where ca_consecutivo= '".$cotizacion->getCaConsecutivo()."'";
@@ -858,6 +899,13 @@ class cotizacionesActions extends sfActions {
                 $newCotizacion->setCaVersion(1);
             }
             //$newCotizacion->setCaConsecutivo( $sig );
+            $entrada = ($cotizacion->getCaEmpresa()!="Coltrans")?trim('entrada'.$cotizacion->getCaEmpresa()):'entrada';
+            $anno = (int) date("Y");
+            $next = (date("Y-m-d") > date("Y-m-d", mktime(0, 0, 0, 12, 0, $anno)))?1:0;
+            $textos[$entrada] = str_replace("{inicio}", "01 de Enero de " . ($anno + $next), $textos[$entrada]);
+            $textos[$entrada] = str_replace("{final}", "31 de Diciembre de " . ($anno + $next), $textos[$entrada]);
+            
+            $newCotizacion->setCaEntrada($textos[$entrada]);
             $newCotizacion->setCaIdgEnvioOportuno(null);
             $newCotizacion->setCaFchcreado(date("Y-m-d H:i:s"));
             $newCotizacion->setCaUsucreado($user->getUserId());
@@ -1274,6 +1322,7 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeGrillaProductosData() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $id = $this->getRequestParameter("idcotizacion");
         $idproducto = $this->getRequestParameter("idproducto");
@@ -1282,7 +1331,8 @@ class cotizacionesActions extends sfActions {
 
         $cotProductos = $cotizacion->getCotProductos();
         $modo = $this->getRequestParameter("modo");
-
+        $main_concept = ($cotizacion->getCaEmpresa()=="Coltrans")?"International Freight":($cotizacion->getCaEmpresa()=="Colmas"?"Agenciamiento Aduanero":($cotizacion->getCaEmpresa()=="Coldepósitos"?"Depósitos":""));
+        
         $this->productos = array();
 
         foreach ($cotProductos as $producto) {
@@ -1369,6 +1419,7 @@ class cotizacionesActions extends sfActions {
                 $row['idopcion'] = $opcion->getCaIdopcion();
                 $row['iditem'] = $opcion->getCaIdconcepto();
                 $row['item'] = utf8_encode($concepto->getCaConcepto());
+                $row['facturacion'] = utf8_encode($main_concept);
                 $row['valor_tar'] = $opcion->getCaValorTar();
                 $row['aplica_tar'] = utf8_encode($opcion->getCaAplicaTar());
                 $row['valor_min'] = $opcion->getCaValorMin();
@@ -1392,6 +1443,7 @@ class cotizacionesActions extends sfActions {
                     $row['idopcion'] = $opcion->getCaIdopcion();
                     $row['iditem'] = $tipoRecargo->getCaIdrecargo();
                     $row['item'] = utf8_encode($tipoRecargo->getCaRecargo());
+                    $row['facturacion'] = utf8_encode($tipoRecargo->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEng());
                     $row['idconcepto'] = $recargo->getCaIdconcepto();
                     $row['valor_tar'] = $recargo->getCaValorTar();
                     $row['aplica_tar'] = utf8_encode($recargo->getCaAplicaTar());
@@ -1414,6 +1466,7 @@ class cotizacionesActions extends sfActions {
                 $row['idopcion'] = 999;
                 $row['iditem'] = 9999;
                 $row['item'] = "Recargos generales del trayecto";
+                $row['facturacion'] = "Recargos generales del trayecto";
                 $row['idconcepto'] = '9999';
                 $row['valor_tar'] = '';
                 $row['aplica_tar'] = '';
@@ -1437,6 +1490,7 @@ class cotizacionesActions extends sfActions {
                 $row['idopcion'] = 999;
                 $row['iditem'] = $tipoRecargo->getCaIdrecargo();
                 $row['item'] = utf8_encode($tipoRecargo->getCaRecargo());
+                $row['facturacion'] = utf8_encode($tipoRecargo->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEng());
                 $row['idconcepto'] = $recargo->getCaIdconcepto();
                 $row['valor_tar'] = $recargo->getCaValorTar();
                 $row['aplica_tar'] = utf8_encode($recargo->getCaAplicaTar());
@@ -1459,6 +1513,7 @@ class cotizacionesActions extends sfActions {
                 $row['idopcion'] = "";
                 $row['iditem'] = "";
                 $row['item'] = "+";
+                $row['facturacion'] = "";
                 $row['idconcepto'] = "";
                 $row['valor_tar'] = "";
                 $row['aplica_tar'] = "";
@@ -1577,6 +1632,7 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeDatosGrillaRecargos() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idcotizacion = $this->getRequestParameter("idcotizacion");
         $idproducto = $this->getRequestParameter("idproducto");
         $modo = $this->getRequestParameter("modo");
@@ -1689,6 +1745,7 @@ class cotizacionesActions extends sfActions {
                         'transporte' => utf8_encode($transporte),
                         'idrecargo' => $recargo->getCaIdrecargo(),
                         'recargo' => utf8_encode($tipoRecargo->getCaRecargo()),
+                        'facturacion' => utf8_encode($tipoRecargo->getInoConcepto()->getInoMaestraConceptos()->getCaConceptoEng()),
                         'idequipo' => $recargo->getCaIdequipo(),
                         'equipo' => $recargo->getEquipo()->getCaConcepto(),
                         'valor_tar' => $recargo->getCaValorTar(),
@@ -1712,6 +1769,7 @@ class cotizacionesActions extends sfActions {
                         'transporte' => utf8_encode($transporte),
                         'idrecargo' => '',
                         'recargo' => '+',
+                        'facturacion' => '',
                         'valor_tar' => '',
                         'aplica_tar' => '',
                         'valor_min' => '',
@@ -1832,6 +1890,7 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeDatosContinuacionViaje() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $id = $this->getRequestParameter("idcotizacion");
 
@@ -2070,6 +2129,45 @@ class cotizacionesActions extends sfActions {
      * Guarda los cambios realizados en la Plantilla Aduanas
      * @author Carlos G. López M.
      */
+    public function executeDatosAduanas($request) {
+        $id = $request->getParameter("idcotizacion");
+        
+        $aduanas = Doctrine::getTable("CotAduana")
+                        ->createQuery("s")
+                        ->where("s.ca_idcotizacion = ? ", $id)
+                        ->execute();
+        
+        $this->aplicaciones = ParametroTable::retrieveByCaso("CU228");
+        $datos = array();
+
+        foreach ($aduanas as $aduana) {
+            if ($this->impoexpo == "Exportacion") {
+                $transportes = utf8_encode(($aduana->getCosto()->getCaTransporte()==Constantes::MARITIMO)?"Nacionalización en Puerto":(($aduana->getCosto()->getCaTransporte()==Constantes::AEREO)?"Nacionalización Aéreo/OTM":""));
+            } else {
+                $transportes = utf8_encode($aduana->getCosto()->getCaTransporte());
+            }
+            $datos[] = array('oid' => $aduana->getCaIdaduana(),
+                'idcotizacion' => $aduana->getCaIdcotizacion(),
+                'transporte' => utf8_encode($aduana->getCosto()->getCaTransporte()),
+                'transportes' => $transportes,
+                'idconcepto' => $aduana->getCaIdconcepto(),
+                'concepto' => utf8_encode($aduana->getCosto()->getCaCosto()),
+                'valor' => $aduana->getCaValor(),
+                'valorminimo' => $aduana->getCaValorminimo(),
+                'aplicacion' => utf8_encode($aduana->getCaAplicacion()),
+                'aplicacionminimo' => utf8_encode($aduana->getCaAplicacionminimo()),
+                'parametro' => utf8_encode($aduana->getCaParametro()),
+                'fchini' => $aduana->getCaFchini(),
+                'fchfin' => $aduana->getCaFchfin(),
+                'observaciones' => utf8_encode($aduana->getCaObservaciones()),
+            );
+        }
+        
+        $modo = $request->getParameter("modo")?$request->getParameter("modo"):"";
+
+        $this->responseArray = array("success" => true, "aduanas" => $datos, "total" => count($aduanas), "modo" => $modo);
+        $this->setTemplate("responseTemplate");
+    }
 
     public function executeObserveAduanasManagement() {
 
@@ -2081,7 +2179,6 @@ class cotizacionesActions extends sfActions {
         {
             $user_id = $this->getUser()->getUserId();
             $id = $this->getRequestParameter("id");
-            $observaciones = $this->getRequestParameter("observaciones");
             if ($this->getRequestParameter("oid")) {
 
                 $aduana = Doctrine::getTable("CotAduana")->find($this->getRequestParameter("oid"));
@@ -2129,7 +2226,7 @@ class cotizacionesActions extends sfActions {
                 }else{
                     $aduana->setCaObservaciones(utf8_decode($this->getRequestParameter("observaciones")));
                 }
-            }    
+            }
 
             if (!$this->getRequestParameter("oid")) {
                 $aduana->setCaFchcreado(date("Y-m-d H:i:s"));
@@ -2371,6 +2468,7 @@ class cotizacionesActions extends sfActions {
      */
 
     public function executeDatosModalidades() {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $transport_parameter = utf8_decode($this->getRequestParameter("transporte"));
         $impoexpo_parameter = utf8_decode($this->getRequestParameter("impoexpo"));
 
@@ -2394,6 +2492,7 @@ class cotizacionesActions extends sfActions {
     
 
     public function executeDatosParametros(sfWebRequest $request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $data = array();
 
         $parametro = Doctrine::getTable("Costo")->find($request->getParameter("idconcepto"));
@@ -2489,6 +2588,7 @@ class cotizacionesActions extends sfActions {
     
 
     public function executeReporteCotizaciones($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $this->vendedor = $this->getUser()->getUserId();
         $this->usuarios = Doctrine::getTable("Usuario")
@@ -2562,6 +2662,7 @@ class cotizacionesActions extends sfActions {
     }
 
     public function executeDatosEncabezado($request) {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
         $idcotizacion = $request->getParameter("idcotizacion");
         $data = array();
         try {
@@ -2633,6 +2734,10 @@ class cotizacionesActions extends sfActions {
                     $data["horaPresentacion"] = Utils::parseDate($cotizacion->getFchpresentacion(), "H:i:s");
                     $data["observaciones_idg"] = $tarea ? $tarea->getCaObservaciones() : "";
                     $data["fuente_id"] = $cotizacion->getCaFuente() ? $cotizacion->getCaFuente() : "Tahoma";
+                    $data["facturacion"] = $cotizacion->getCaFacturacion();
+                    
+                    $datos = json_decode(utf8_encode($cotizacion->getCaDatos()));
+                    $data["validacion"] = $datos->validaciones;
                 }
             }
             $this->responseArray = array("success" => true, "data" => $data);
