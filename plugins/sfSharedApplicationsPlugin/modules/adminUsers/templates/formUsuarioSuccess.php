@@ -1,3 +1,18 @@
+<style>
+    input:invalid {
+        border: 1px solid red;
+    }
+
+    input:invalid:required {
+        border: 1px solid red;    
+    }
+
+    /*input:valid {
+        border: 1px solid black;
+    }*/
+    
+</style>
+
     <?
 if($app=="intranet"){
     sfContext::getInstance()->getResponse()->removeStylesheet("/js/ext4/resources/css/ext-all-neptune.css");
@@ -17,7 +32,7 @@ $jefes = $sf_data->getRaw("jefes");
 //$teloficinas = $sf_data->getRaw("teloficinas");
 //$hijos = $sf_data->getRaw("hijos");
 
-//echo $nivel;
+//echo $nivel."key =>".$key;
 
 ?>
 <script language="javascript" type="text/javascript">
@@ -84,13 +99,95 @@ $jefes = $sf_data->getRaw("jefes");
         } 
 
     function checkForm(){
-        if( document.getElementById('auth_method').value=="sha1"){
-            if( document.getElementById("passwd1").value!= document.getElementById("passwd2").value ){
-                alert( "La claves no coinciden" );
-                return false;
-            }
+        <?
+        if($key == "new"){
+            ?>
+            var nombres = $("#nombres").val();
+            var papellido = $("#papellido").val();
+
+            Ext.Ajax.request({
+                waitMsg: 'Enviando...',
+                url: '/intranet/adminUsers/validarLogin',
+                params: {
+                    nombres: nombres,
+                    papellido: papellido
+                },
+                failure: function (response, options) {
+                    alert(response.responseText);
+                    Ext.Msg.hide();
+                    alert("Surgio un problema al tratar de registrar el login.")
+                    return false;
+                },
+                success: function (response, options) {
+                    var res = Ext.util.JSON.decode(response.responseText);
+
+                    if(res.success){
+                        Ext.MessageBox.show({
+                            title: 'Validar Login',
+                            msg: 'Por favor verifique que el login: <span style="color:blue; font-size:15px;">'+res.login+'</span> este correcto. Si le parece inapropiado o está mal elaborado, verifique el nombre del colaborador o sugiera un nuevo login en este espacio:',
+                            buttons:{
+                                ok: "Login OK!",
+                                no: "Sugerir Nuevo Login!",
+                                cancel: "Cancelar"
+                            },                        
+                            multiline: true,
+                            fn: function(btn, text, opt){            
+                                if( btn == "ok"){
+                                   $("#login").val(opt.login); 
+                                   document.getElementById("formUser").submit();
+                                }else if(btn == "no"){                
+                                    if( text.trim()==""){
+                                        alert("Debe colocar login válido");
+                                        return false;
+                                    }else{
+                                        Ext.Ajax.request({
+                                            waitMsg: 'Enviando...',
+                                            url: '/intranet/adminUsers/validarLogin',
+                                            params: {
+                                                nuevologin: text
+                                            },
+                                            failure: function (response, options) {
+                                                alert(response.responseText);
+                                                Ext.Msg.hide();
+                                                alert("Surgio un problema al tratar de registrar el login.")
+                                                return false;
+                                            },
+                                            success: function (response, options) {
+                                                var res = Ext.util.JSON.decode(response.responseText);
+
+                                                if(res.success){
+                                                    $("#login").val(res.login); 
+                                                    Ext.Msg.alert('Login Sugerido OK', 'Se ha asignado al formulario el login sugerido: <span style="color:blue; font-size:15px;">'+res.login+'</span>');
+                                                    document.getElementById("formUser").submit();
+                                                }else{
+                                                   Ext.Msg.alert('Login Inv&aacute;lido', res.errorInfo);
+                                                   return false;
+                                                }
+                                            }
+                                        });
+                                    }
+                                }else{
+                                   $("#login").val(null);
+                                   return false;
+                                }
+                            },
+                            animEl: 'form-login',
+                            modal: true,
+                            login: res.login
+                        });
+                    }else{
+                       Ext.Msg.alert('Login Inv&aacute;lido', 'Por favor valide el nombre del colaborador &oacute; comun&iacute;quese con el &aacute;rea de sistemas.');
+                       return false;
+                    }
+                }
+            });
+            <?
+        }else{
+            ?>
+            document.getElementById("formUser").submit();
+            <?
         }
-       return true;
+        ?>         
     }
 
 
@@ -177,7 +274,7 @@ $jefes = $sf_data->getRaw("jefes");
         for( i in jefes ){
             if( typeof(jefes[i]['j_ca_cargo'])!="undefined" ){
                 //alert(defaultValJef);
-                if( idempresa == jefes[i]['c_ca_idempresa'] || idempresa == 1 || idempresa == 2 || idempresa == 8){
+                if( idempresa == jefes[i]['c_ca_idempresa'] || idempresa == 1 || idempresa == 2 || idempresa == 8 || idempresa == 11 || idempresa == 12){
                     //alert(jefes[i]["j_ca_login"]);
 
                     if( defaultValJef == jefes[i]["j_ca_login"]){
@@ -195,18 +292,24 @@ $jefes = $sf_data->getRaw("jefes");
 
 
 
-    }
-
+    }    
 </script>
 
 <?if($key){$param="key=".$key;}else{$param="";}?>
 
-<form name="form1" action="<?=url_for("adminUsers/guardarUsuario?".$param)?>" method="post" onsubmit="return checkForm()" enctype="multipart/form-data" >
+<form name="form1" action="<?=url_for("adminUsers/guardarUsuario?".$param)?>" method="post" id="formUser" onsubmit='return false;' enctype="multipart/form-data" >
 <div class="content" align="center">
     
     <table width="100%" border="0" class="tableList">
         <tr>
-            <th colspan="4" scope="col"><?=$usuario?"Edici&oacute;n de ":"Creaci&oacute;n de "?>usuario</th>
+            <th colspan="4" scope="col"><?=!$key?"Edici&oacute;n de ":"Creaci&oacute;n de "?>usuario</th>
+            <?
+            if($key){
+                ?>
+                <td width="5" style="border:none; border-bottom: 1px solid #D0D0D0;text-align:right" align="right" title="Editar"><a href="/intranet/images/docs/CONSTRUCCION_LOGIN_INTRANET.pdf" target="_blank"><img src="/intranet/images/help.png"/></a></td>
+                <?
+            }   
+            ?>
         </tr>
         <tr>
             <td width="100">
@@ -253,7 +356,7 @@ $jefes = $sf_data->getRaw("jefes");
                                             echo $usuario->getCaLogin();
                                         }else{
                                             ?>
-                                            <input type="text" name="login" value="<?=$usuario->getCaLogin()?>" />
+                                            <input type="text" readonly="readonly" id="login" name="login" required="required" value="<?=$usuario->getCaLogin()?>" />
                                             <?
                                         }
                                     ?>
@@ -269,7 +372,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="text" size="30" name="nombres" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaNombres()?>"/>
+                                        <input type="text" size="30" id="nombres" required="required" name="nombres" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaNombres()?>"/>
                                     </div>
                                 </td>
                             </tr>
@@ -282,7 +385,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="text" size="30" name="papellido" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaPapellido()?>" />
+                                        <input type="text" size="30" id="papellido" required="required" name="papellido" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaPapellido()?>" />
                                     </div>
                                 </td>
                             </tr>
@@ -308,7 +411,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <input type="text" size="30" name="nombre" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaNombre()?>" />
+                                        <input type="text" size="30" required="required" name="nombre" <?if($nivel==0){?>disabled="disabled"<?}?> value="<?=$usuario->getCaNombre()?>" />
                                     </div>
                                 </td>
                             </tr>
@@ -321,7 +424,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <select name="empresa" id="empresa" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>')">
+                                        <select name="empresa" required="required" id="empresa" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValores('<?=$usuario->getCaIdsucursal()?>','<?=$usuario->getCaDepartamento()?>','<?=$usuario->getCaCargo()?>','<?=$usuario->getCaManager()?>')">
                                             <?
                                             foreach( $empresas as $empresa ){
                                                 ?>
@@ -361,7 +464,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <select name="idsucursal" id="idsucursal" <?if($nivel==0){?>disabled="disabled"<?}?>>
+                                        <select name="idsucursal" required="required" id="idsucursal" <?if($nivel==0){?>disabled="disabled"<?}?>>
                                         </select>
                                     </div>
                                 </td>
@@ -375,7 +478,7 @@ $jefes = $sf_data->getRaw("jefes");
                                     </td>
                                     <td>
                                         <div align="left">
-                                            <select name="departamento" id="departamento" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValoresManager('<?=$usuario->getCaManager()?>')">
+                                            <select name="departamento" required="required" id="departamento" <?if($nivel==0){?>disabled="disabled"<?}?> onChange="cambiarValoresManager('<?=$usuario->getCaManager()?>')">
                                             </select>
                                         </div>
                                     </td>
@@ -389,7 +492,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <select name="cargo" id="cargo" <?if($nivel==0){?>disabled="disabled"<?}?>>												
+                                        <select name="cargo" required="required" id="cargo" <?if($nivel==0){?>disabled="disabled"<?}?>>												
                                         </select>
                                     </div>
                                 </td>
@@ -403,7 +506,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 </td>
                                 <td>
                                     <div align="left">
-                                        <select name="manager" id="manager" <?if($nivel==0){?>disabled="disabled"<?}?>>
+                                        <select name="manager" required="required" id="manager" <?if($nivel==0){?>disabled="disabled"<?}?>>
                                         </select>
                                     </div>
                                 </td>
@@ -1065,7 +1168,7 @@ $jefes = $sf_data->getRaw("jefes");
         <tr>
             <td colspan="2">
                 <div align="center">
-                    <input type="submit" value="Guardar" class="button" />&nbsp;
+                    <input type="submit" value="Guardar" class="button" onClick="javascript:checkForm()" />&nbsp;
                     <input type="button" value="Cancelar" class="button" onclick="document.location='<?=url_for("adminUsers/directory")?>'" />&nbsp;
                 </div>
             </td>
