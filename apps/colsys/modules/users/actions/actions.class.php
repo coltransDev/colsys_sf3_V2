@@ -374,7 +374,12 @@ class usersActions extends sfActions
 			if ($this->form->isValid()){
 				
 				$username = $request->getParameter('username');				
-				$user = Doctrine::getTable("Usuario")->find( $username );
+				//$user = Doctrine::getTable("Usuario")->find( $username );
+                                $user = Doctrine::getTable("Usuario")
+                                    ->createQuery("u")
+                                    ->select("ca_login,ca_authmethod")
+                                    ->where("u.ca_login = ?", $username)
+                                    ->fetchOne();
 				if( $user->getCaAuthmethod()=="ldap" ){
 					$this->getUser()->signInLDAP( $username );				
 				}else{
@@ -424,28 +429,33 @@ class usersActions extends sfActions
 	* Verifica si el usuario esta logueado.
 	*/
 	public function executeValidateLogin( $request ){
-        $this->responseArray = array( "success"=>true, "login"=>false );
+            $this->responseArray = array( "success"=>true, "login"=>false );
 
-        $username = $request->getParameter("username");
-        $passwd = $request->getParameter("passwd");
+            $username = $request->getParameter("username");
+            $passwd = $request->getParameter("passwd");
 
-        if( $username && $passwd ){
+            if( $username && $passwd ){
 
-			$usuario = Doctrine::getTable("Usuario")->find( $username );
-			if( $usuario && $usuario->checkPasswd( $passwd ) ){
-				if( $usuario->getCaAuthmethod()=="ldap" ){
-                    sfContext::getInstance()->getUser()->signInLDAP( $username );
-                    $this->responseArray["login"] = true;
-				}
+                ///$usuario = Doctrine::getTable("Usuario")->find( $username );
+                $usuario = Doctrine::getTable("Usuario")
+                    ->createQuery("u")
+                    ->select("ca_login,ca_authmethod")
+                    ->where("u.ca_login = ?", $username)
+                    ->fetchOne();
+                if( $usuario && $usuario->checkPasswd( $passwd ) ){
+                    if( $usuario->getCaAuthmethod()=="ldap" ){
+                        sfContext::getInstance()->getUser()->signInLDAP( $username );
+                        $this->responseArray["login"] = true;
+                    }
 
-				if( $usuario->getCaAuthmethod()=="sha1" ){
-                    sfContext::getInstance()->getUser()->signInAlternative( $username );
-                    $this->responseArray["login"] = true;
-				}
-			}
-		}
-
-        $this->setTemplate("responseTemplate");
+                    if( $usuario->getCaAuthmethod()=="sha1" )
+                    {
+                        sfContext::getInstance()->getUser()->signInAlternative( $username );
+                        $this->responseArray["login"] = true;
+                    }
+                }
+            }
+            $this->setTemplate("responseTemplate");
 	}
 
 
@@ -458,7 +468,12 @@ class usersActions extends sfActions
         $username=$request->getParameter('username');
         $tamano=$request->getParameter('tamano');
 
-        $user=Doctrine::getTable('Usuario')->find($username);
+        //$user=Doctrine::getTable('Usuario')->find($username);
+        $user = Doctrine::getTable("Usuario")
+            ->createQuery("u")
+            ->select("ca_login")
+            ->where("u.ca_login = ?", $username)
+            ->fetchOne();
         $this->imagen=$user->getImagen($tamano);
     }
     public function executeLoggedInUsers(){
@@ -553,7 +568,7 @@ class usersActions extends sfActions
     }
 
 
-    public function executeParamUsuariosExt4( $request ){
+    public function executeParamUsuariosExt5( $request ){
         
     }
     
@@ -561,26 +576,189 @@ class usersActions extends sfActions
         
         //$impoexpo= Constantes::IMPO;
         //$transporte=Constantes::MARITIMO;
-        $q=Doctrine::getTable("UsuParametros")
+        
+        $this->user = $this->getUser();
+        
+        $q1=Doctrine::getTable("UsuParametros")
                     ->createQuery("r")
-                    ->select("r.*,u.ca_nombre as ca_usuario,t.ca_nombre as trafico,c.ca_ciudad as ciudad,cl.ca_compania as cliente")
+                    ->select("r.*,u.ca_nombre as ca_usuario,s.ca_nombre as idsucursal,u.ca_departamento as depto,t.ca_nombre as trafico,c.ca_ciudad as ciudad,cl.ca_compania as cliente")
                     ->leftJoin("r.Usuario u")
+                    ->leftJoin("u.Sucursal s")                    
                     ->leftJoin("r.Trafico t")
                     ->leftJoin("r.Ciudad c")
                     ->leftJoin("r.Cliente cl")
                     //->where("r.ca_impoexpo = ? and r.ca_transporte = ?   ", array( $impoexpo , $transporte ) )
-                    ->addOrderBy("r.ca_ciudad DESC,r.ca_trafico ")
-                    ->fetchArray();
+                    ->addOrderBy("r.ca_ciudad DESC,r.ca_trafico ");
+         
+        if($this->getUser()->getIddepartamento()!= "13")//depto de sistemas, sistemas ve todas las sucursales
+            $q1->addWhere("s.ca_idsucursal = ?", $this->user->getIdSucursal());
+                
+        $q=$q1->fetchArray();
         
+        
+        
+        //echo count($q);
+        //exit;
         for($i=0;$i<count($q);$i++)
         {
-            $q[$i]["ca_usuario"] =  utf8_encode($q[$i]["ca_usuario"]);
+            $q[$i]["ca_usuario"] =  "(".$q[$i]["idsucursal"]."-".$q[$i]["depto"].")".utf8_encode( $q[$i]["ca_usuario"]);
             $q[$i]["ca_impoexpo"] =  utf8_encode($q[$i]["ca_impoexpo"]);
-            $q[$i]["ca_transporte"] =  utf8_encode($q[$i]["ca_transporte"]);
+            $q[$i]["ca_transporte"] =  utf8_encode($q[$i]["ca_transporte"]);            
+            $q[$i]["ca_modalidad"] =  utf8_encode($q[$i]["ca_modalidad"]);
+            $q[$i]["ca_ciudad"] =  utf8_encode($q[$i]["ca_ciudad"]);
+            $q[$i]["ca_usuario"] =  utf8_encode($q[$i]["ca_usuario"]);
+            $q[$i]["trafico"] =  utf8_encode($q[$i]["trafico"]);
+            $q[$i]["cliente"] =  utf8_encode($q[$i]["cliente"]);
+            $q[$i]["ciudad"] =  utf8_encode($q[$i]["ciudad"]);
+            $q[$i]["idsucursal"] =  utf8_encode($q[$i]["idsucursal"]);
+            $q[$i]["depto"] =  utf8_encode($q[$i]["depto"]);
         }
 
-        $this->responseArray = array("success" => true,"root"=>$q);
+        //echo "<pre>";print_r($q);echo "</pre>";
+        $this->responseArray = array("success" => true,"debug"=>$q1->getSqlQuery(),"root"=>$q);
         $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeGuardarParamUsers(sfWebRequest $request) {
+        
+        $datos= json_decode($request->getParameter("parametros"));
+        
+        $ids = array(); 
+        foreach ($datos as $d) {
+            
+            $param = Doctrine::getTable("UsuParametros")->find( $d->ca_idusuparametros );
+            //echo $param->getCaIdusuparametros();
+            
+            if(!$param)
+            {
+                $param= new UsuParametros();
+                $param->setCaIdusuario($d->ca_idusuario);
+            }
+            //echo "<pre>";print_r($d);echo "</pre>";
+            
+            //echo $d->ca_transporte."<br>".utf8_decode($d->ca_transporte)."<br>".utf8_encode($d->ca_transporte)."<br>";exit;
+            
+            if($d->ca_ciudad!="")
+                $param->setCaCiudad($d->ca_ciudad);
+            else
+                $param->setCaCiudad(null);
+
+            if($d->ca_idcliente!="")
+                $param->setCaIdcliente($d->ca_idcliente);
+            else
+                $param->setCaIdcliente(null);
+
+            if($d->ca_modalidad!="")
+                $param->setCaModalidad($d->ca_modalidad);
+            else
+                $param->setCaModalidad(null);
+
+            if($d->ca_trafico!="")
+                $param->setCaTrafico($d->ca_trafico);
+            else
+                $param->setCaTrafico(null);
+
+            
+            if($d->ca_transporte!="")
+            {
+                $param->setCaTransporte(utf8_decode($d->ca_transporte));
+                //echo $d->ca_transporte;
+            }
+            else
+                $param->setCaTransporte(null);
+
+            if($d->ca_impoexpo!="")
+                $param->setCaImpoexpo(utf8_decode($d->ca_impoexpo));
+            else
+                $param->setCaImpoexpo(null);
+
+            $param->save();
+            $ids[] = $d->id;
+                
+        }        
+        
+        $this->responseArray = array("success" => true , "ids" => $ids);
+        $this->setTemplate("responseTemplate");
+        
+        
+    }
+    
+    public function executeGuardarParametros(sfWebRequest $request) {
+        
+        $ca_usuario = $request->getParameter("ca_usuario");
+        $ca_ciudad = utf8_decode($request->getParameter("ca_ciudad"));
+        $ca_cliente = $request->getParameter("ca_cliente");
+        $ca_modalidad = utf8_decode($request->getParameter("ca_modalidad"));
+        $ca_trafico = utf8_decode($request->getParameter("ca_trafico"));
+        $ca_transporte = utf8_decode($request->getParameter("ca_transporte"));
+        $ca_impoexpo = utf8_decode($request->getParameter("ca_impoexpo"));
+        
+        $ca_idusuparametros = utf8_decode($request->getParameter("ca_idusuparametros"));
+        
+        $param = Doctrine::getTable("Usuario")->find( $ca_idusuparametros );
+        
+        if(!$param)
+            $param= new UsuParametros();
+        
+        $param->setCaIdusuario($ca_usuario);
+        if($ca_ciudad!="")
+            $param->setCaCiudad($ca_ciudad);
+        else
+            $param->setCaCiudad(null);
+        
+        if($ca_cliente!="")
+            $param->setCaIdcliente($ca_cliente);
+        else
+            $param->setCaIdcliente(null);
+        
+        if($ca_modalidad!="")
+            $param->setCaModalidad($ca_modalidad);
+        else
+            $param->setCaModalidad(null);
+        
+        if($ca_trafico!="")
+            $param->setCaTrafico($ca_trafico);
+        else
+            $param->setCaTrafico(null);
+        
+        if($ca_transporte!="")
+            $param->setCaTransporte($ca_transporte);
+        else
+            $param->setCaTransporte(null);
+        
+        if($ca_impoexpo!="")
+            $param->setCaImpoexpo($ca_impoexpo);
+        else
+            $param->setCaImpoexpo(null);
+        
+        $param->save();
+        
+        $this->responseArray = array("success" => true);
+        $this->setTemplate("responseTemplate");
+        
+    }
+    
+    
+    public function executeEliminarParamUsuario(sfWebRequest $request) {
+        
+        $idparametro = $request->getParameter("idparametro");
+        $param = Doctrine::getTable("UsuParametros")->find( $idparametro );
+        $errorInfo="";
+        $success=true;
+        if($param)
+        {
+            $param->delete();
+        }
+        else
+        {
+            $errorInfo="no se pudo elimiar el registro";
+            $success=false;
+        }
+        
+        
+        $this->responseArray = array("success" => $success,"errorInfo"=>$errorInfo);
+        $this->setTemplate("responseTemplate");
+        
     }
 
     public function executeAdminMetodosExt5(sfWebRequest $request) {
@@ -633,6 +811,7 @@ class usersActions extends sfActions
         foreach ($perfiles as $perfil) {
             $accesoperfil = Doctrine::getTable("AccesoPerfil")
                     ->createQuery("a")
+                    ->select("ca_acceso")
                     ->addWhere("a.ca_perfil = ?", $perfil->getCaPerfil())
                     ->addWhere("a.ca_rutina = ?", $idrutina)
                     ->fetchOne();
@@ -681,6 +860,7 @@ class usersActions extends sfActions
 
         $accesousuario = Doctrine::getTable("AccesoUsuario")
                 ->createQuery("a")
+                ->select("ca_acceso,ca_denegar")
                 ->addWhere("a.ca_login = ?", $idusuario)
                 ->addWhere("a.ca_rutina = ?", $idrutina)
                 ->fetchOne();
@@ -909,6 +1089,7 @@ class usersActions extends sfActions
 
         $accesoperfil = Doctrine::getTable("AccesoPerfil")
                 ->createQuery("a")
+                ->select("ca_acceso")
                 ->addWhere("a.ca_perfil = ?", $idperfil)
                 ->addWhere("a.ca_rutina = ?", $idrutina)
                 ->fetchOne();
@@ -923,8 +1104,6 @@ class usersActions extends sfActions
         $i = 0;
         $cadena = "";
         $accesobinario = strrev($accesobinario);
-
-
 
 
         foreach ($datos as $dato) {
@@ -1162,7 +1341,7 @@ class usersActions extends sfActions
                     $RutinaNivel->setCaNivel(utf8_decode($record->ca_nivel));
                     $RutinaNivel->setCaDescripcion(utf8_decode($record->ca_descripcion));
                     $RutinaNivel->setCaValor(utf8_decode($record->ca_valor));
-                    $RutinaNivel->save();
+                    $RutinaNivel->save($conn);
                     $ids[] = $record->id;
                 }
             }
@@ -1172,6 +1351,18 @@ class usersActions extends sfActions
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo" => utf8_encode($e->getMessage()));
         }
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeModuloEnMantenimiento(sfWebRequest $request) {
+
+//        $idcomprobante = $request->getParameter("idcomprobante");
+//        
+//        $this->responseArray=$this->EnviarSiigoConect($idcomprobante);
+        echo "Modulo en mantenimiento!. Información adicional en el área de auditoría.";
+
+        //$this->responseArray = array("success" => true, "consecutivo" => $consecutivo, "indincor" => $indincor, "wsdl" => $result, "info" => $info);
+        $this->setLayout("mantenimiento");
         $this->setTemplate("responseTemplate");
     }
 
