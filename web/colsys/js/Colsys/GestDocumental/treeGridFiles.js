@@ -7,11 +7,9 @@
  *               idimpoexpo: impoexpo
  *               referencia: numero de referencia
  *               
- 
+ 330.20.06.0011.20
  * @date:  2016-04-07
  */
-
-
 
 
 var constrainedWin2 = null;
@@ -44,7 +42,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
         autoLoad: false
     }),
     multiSelect: true,
-    singleExpand: true,
+    //singleExpand: true,
     columnLines: true,
     clicksToEdit: 1,
     lines: true,
@@ -78,19 +76,23 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
             },
             afterRender: function () {
 
-                console.log(this.up('panel'));
-                console.log(this);
+                //console.log(this.up('panel'));
+                //console.log(this);
                 ref1 = (this.up('panel').idreferencia!=""?this.up('panel').idreferencia:this.idreporte);
                 idtrans = this.up('panel').idtransporte;
                 impo = this.up('panel').idimpoexpo;
                 serie = this.up('panel').idsserie;
+                exacto =  this.up('panel').exacto?this.up('panel').exacto:"false";
+                idmod= this.up('panel').idmodalidad;
 
                 this.store.load({
                     params: {
                         ref1: ref1,
                         idtransporte: idtrans,
                         idimpoexpo: impo,
-                        idsserie: serie
+                        idsserie: serie,
+                        idmodalidad: idmod,
+                        exacto: exacto
                     }
                 });
 
@@ -112,7 +114,34 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                 return 'row_green';
         }
     },
-    columns: [{
+    columns: [
+        {
+            xtype: 'checkcolumn',
+            header: '',
+            dataIndex: 'active',
+            width: 40,
+            editor: {
+                xtype: 'checkbox',
+                cls: 'x-grid-checkheader-editor'
+            },
+            renderer: function (value, metaData, record, row, col, store, gridView) {
+                //console.log(record.data);
+                ///renderer: function(value, meta, rec) {
+                if (record.get("idarchivo") == record.get("nombre"))
+                {
+                    //console.log("128");
+                    console.log(record.get("idarchivo") +" : "+ record.get("nombre"));
+                    return "_";
+                } else
+                {
+                    //console.log("133");
+                    console.log(record.get("idarchivo") +" : "+ record.get("nombre"));
+                    //return value;
+                    return  new Ext.grid.column.Check().renderer(value);
+                }
+            }
+        },
+        {
             xtype: 'treecolumn',
             text: 'Nombre',
             flex: 1,
@@ -280,8 +309,8 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
 
                         winformsubirarchivos = new Ext.Window({
                             title: 'Documentos',
-                            width: 535,
-                            height: 185,
+                            width: 600,
+                            height: 220,
                             closeAction: 'destroy',
                             items: {
                                 autoScroll: true,
@@ -294,7 +323,8 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                                         idimpoexpo: impo,
                                         idreferencia: ref1,
                                         idmaster: id,
-                                        idsserie: serie
+                                        idsserie: serie,
+                                        idmodalidad: idmod
                                     }
                                 ]
                             },
@@ -315,7 +345,38 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                     handler: function () {
                         this.up().up().getStore().reload();
                     }
-                }]
+                },
+                {
+                    text: 'Notificar',
+                    iconCls: 'email',
+                    handler: function () {
+                        //this.up().up().getStore().reload();
+                        arrayeliminar = [];
+                        
+                        var store = this.up().up().getStore();
+                        console.log(store.data);
+                        for (var i = 0; i < store.getCount(); i++) {
+                            record = store.getAt(i);
+                            console.log(record);
+                            if (record.get('active') == true) {
+                                arrayeliminar.push(record.data.idarchivo);
+                            }
+                        }
+                        
+                        //console.log(arrayeliminar);
+                        //console.log(arrayeliminar.toString());
+                        ref1 = (this.up('panel').idreferencia!=""?this.up('panel').idreferencia:this.idreporte);
+                        
+                        var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {                                            
+                            id: 'window-envio-docs-'+this.up('panel').idreferencia,
+                            width: 900,
+                            title: 'Notificacion Documentos '+ ref1,
+                            sorc: "/status/verEmailDocs/iddocs/"+arrayeliminar.toString()+"/idmaster/"+this.up().up().idmaster
+                        });
+                        windowpdf.show();
+                    }
+                }
+            ]
         }],
     listeners: {
         beforerender: function (ct, position) {
