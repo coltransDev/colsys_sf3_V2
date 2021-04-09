@@ -1032,28 +1032,34 @@ class gestDocumentalActions extends sfActions {
             $mail->selectFolder($folder1);
             
             foreach ($mail as $messageNum => $message) {
+                
                 //if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) {
                 //    continue;
                 //}
                 
                 $from = $message->from;
                 $part = $message;
-
+        
                 while ($part->isMultipart()) {
                     
+                    echo $messageNum."<br>".$part->isMultipart()."<br>";
                     for($i=1;$i<=2;$i++)
                     {
                         $part = $message->getPart($i);
+                        
+                            
                         if($debug=="true")
                         {
                             echo "<pre>";
-            //                print_r($part);
+                            echo "<pre>";print_r($message);echo "</pre>";
+                            print_r($part);
                             echo "<pre>";
                         }
                         try{
                             if($part->getHeader('content-disposition'))
                             {
                                 $arr=explode(";", $part->getHeader('content-disposition'));
+                                
                                 if(trim($arr[0])=="attachment")
                                 {
                                     $fileName=  str_replace("filename=", "", $arr[1]);
@@ -1072,6 +1078,7 @@ class gestDocumentalActions extends sfActions {
                         $fileName = (strlen($fileName)>5)?$fileName:$part->getHeader('content-description');
                         $attachment = base64_decode($part->getContent());
                         $size = strlen($attachment);
+                        echo "size:".$size."<br>";
                         //$directory = sfConfig::get('app_digitalFile_root').date("Y").DIRECTORY_SEPARATOR;
                         $mime = explode(";", $part->getHeader('content-type'));
                         $mime = $mime[0];
@@ -1173,21 +1180,21 @@ class gestDocumentalActions extends sfActions {
                         
                         if($folder1=="DOCUMENTOSTH")
                         {
-                            if ($ref[1] == "01")
+                            if ($ref[1] == "01" || $ref[1] == "1")
                                 $data["iddocumental"] = "84";
-                            else if ($ref[1] == "02")
+                            else if ($ref[1] == "02" || $ref[1] == "2")
                                 $data["iddocumental"] = "85";
-                            else if ($ref[1] == "03")
+                            else if ($ref[1] == "03" || $ref[1] == "3")
                                 $data["iddocumental"] = "86";
-                            else if ($ref[1] == "04")
+                            else if ($ref[1] == "04" || $ref[1] == "4")
                                 $data["iddocumental"] = "87";
-                            else if ($ref[1] == "05")
+                            else if ($ref[1] == "05" || $ref[1] == "5")
                                 $data["iddocumental"] = "88";
-                            else if ($ref[1] == "06")
+                            else if ($ref[1] == "06" || $ref[1] == "6")
                                 $data["iddocumental"] = "89";
-                            else if ($ref[1] == "07")
+                            else if ($ref[1] == "07" || $ref[1] == "7")
                                 $data["iddocumental"] = "90";
-                            else if ($ref[1] == "00")
+                            else if ($ref[1] == "00" || $ref[1] == "0")
                                 $data["iddocumental"] = "92";
                         }
                         
@@ -1195,17 +1202,17 @@ class gestDocumentalActions extends sfActions {
                         
                         if($folder1=="DOCUMENTOSTT")
                         {
-                            if ($ref[1] == "01")
+                            if ($ref[1] == "01" || $ref[1] == "1")
                                 $data["iddocumental"] = "82";
-                            else if ($ref[1] == "02")
+                            else if ($ref[1] == "02" || $ref[1] == "2")
                                 $data["iddocumental"] = "81";
-                            else if ($ref[1] == "03")
+                            else if ($ref[1] == "03" || $ref[1] == "3")
                                 $data["iddocumental"] = "80";
-                            else if ($ref[1] == "04")
+                            else if ($ref[1] == "04" || $ref[1] == "4")
                                 $data["iddocumental"] = "63";
-                            else if ($ref[1] == "05")
+                            else if ($ref[1] == "05" || $ref[1] == "5")
                                 $data["iddocumental"] = "60";
-                            else if ($ref[1] == "06")
+                            else if ($ref[1] == "06" || $ref[1] == "6")
                                 $data["iddocumental"] = "57";
                         }
 
