@@ -12,6 +12,7 @@ include_component("widgets", "widgetCiudad");
 include_component("widgets", "widgetAgente");
 include_component("widgets", "widgetSucursalAgente");
 include_component("widgets", "widgetIncoterms");
+include_component("widgets", "widgetColdepositos");
 include_component("reportesNegPlug", "formMercanciaPanel",array("modo"=>$modo,"impoexpo"=>$impoexpo,"tipo"=>$tipo));
 if($impoexpo!= Constantes::TRIANGULACION )
 {
@@ -45,6 +46,7 @@ include_component("widgets", "widgetTicket");
                                     id:"idticket",
                                     hiddenName: "idticket",
                                     iddepartament: 11,                                            
+                                    tipo: "tarifa",
                                     valueField:"idticket"
                             });
         
@@ -226,6 +228,7 @@ include_component("widgets", "widgetTicket");
                                                       tipo:<?=($impoexpo==constantes::OTMDTA)?"3":"2"?>,
                                                       impoexpo:"impoexpo"
                                                     })
+                                                    
     <?
                                     if($impoexpo==constantes::EXPO)
                                     {
@@ -242,7 +245,7 @@ include_component("widgets", "widgetTicket");
                                 ]
                             },
                             {
-                                columnWidth : 1,
+                                columnWidth : .4,
                                 layout : 'form',
                                 border : false,
                                 items:
@@ -269,7 +272,27 @@ include_component("widgets", "widgetTicket");
                                         name:"listar_todos"
                                     }
                                 ]
+                            },
+                            {
+                                columnWidth : .6,
+                                layout : 'form',
+                                border : false,
+                                items:
+                                [
+                                    new WidgetColdepositos({fieldLabel: 'Coldepositos',
+                                                    id: 'coldepositos',
+                                                    idciudad:"coldepositos",
+                                                    hiddenName:"idcoldepositos"}),
+                                            new WidgetCiudad({fieldLabel: 'Ciudad Deposito',
+                                                      id: 'ciudeposito',
+                                                      idciudad:"ciudeposito",
+                                                      hiddenName:"idciudeposito",
+                                                      tipo:"2",
+                                                      impoexpo:"impoexpo"
+                                                    })
+                                ]
                             }
+                            
                         ]
                     },
                 <?
