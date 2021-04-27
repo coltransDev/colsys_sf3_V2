@@ -106,9 +106,9 @@ class adminUsersActions extends sfActions {
             case "intranet":
                 
                 break;
-        }
+        }                
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
-            if ( $this->nivel < 2 ) {
+            if ( $this->nivel < 2 && !($this->nivel == 1 and $request->getParameter("login") == $this->getUser()->getUserId())) {
                 $this->forward("adminUsers", "noAccess");
             }
         }
@@ -453,7 +453,7 @@ class adminUsersActions extends sfActions {
         }
         
         if (!($this->nivel == 0 and $request->getParameter("login") == $this->getUser()->getUserId())) {
-            if (!($this->nivel > 1)) {
+            if (!($this->nivel > 1) && !($this->nivel == 1 and $request->getParameter("login") == $this->getUser()->getUserId())) {
                 $this->forward("users", "noAccess");
             }
         }
@@ -519,12 +519,17 @@ class adminUsersActions extends sfActions {
         if(( $this->nivel>=2 && in_array($usuario->getSucursal()->getCaIdempresa(),$grupoEmp)) || $this->nivel>=3){
             
             if ($request->getParameter("activo")) {
-                $usuario->setCaActivo(true);
-                if($usuario->getDatosJson("bloqueado")){
-                    $usuario->setDatosJson("bloqueado", null);
-                }
+                $usuario->setCaActivo(true);                
             }else{
                 $usuario->setCaActivo(false);           
+            }
+            
+            if ($request->getParameter("bloqueado")) {
+                $usuario->setCaBloqueado(true);                
+            }else{
+                $usuario->setCaBloqueado(false);  
+                $usuario->setDatosJson("bloqueado", null);
+                $usuario->setDatosJson("nintentos", 0);
             }
             
             if ($request->getParameter("forcechange")) {
@@ -790,15 +795,20 @@ class adminUsersActions extends sfActions {
         $this->form = new CambioClaveForm();
         
         session_start();
+        
+        $user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+        $this->user = $user;
+        $nintentos = $user->getDatosJson("nintentos");
 
-        if($_SESSION["nintentos"])
-            $igual++;
-        else
-            $_SESSION["nintentos"] = 1;
-
+        if(!$nintentos || $nintentos == 0){
+            $nintentos = 1;
+        }
+        
         if ($request->isMethod('post')) {
-            $_SESSION["nintentos"]++;
-
+            $nintentos++;
+            $user->setDatosJson("nintentos",$nintentos);
+            $user->save();
+            
             $this->form->bind(
                     array(
                         'clave_ant' => $request->getParameter('clave_ant'),
@@ -812,9 +822,8 @@ class adminUsersActions extends sfActions {
                 $conn = Doctrine::getTable("Usuario")->getConnection();
                 $conn->beginTransaction();
                 
-                $user = $this->getUser()->getUserId();
-                $user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
-                //$user->setPasswd($this->getRequestParameter("clave1"));
+                //$user = Doctrine::getTable("Usuario")->find($this->getUser()->getUserId());
+                
                 $salt = hash("md5", uniqid(rand(), true));
                 $passwd = $this->getRequestParameter("clave1");
                 $new_pass = sha1($passwd);
@@ -822,7 +831,7 @@ class adminUsersActions extends sfActions {
                 $validacion = $user->validarClave($passwd);
                 
                 
-                if($validacion == "OK" && $_SESSION["nintentos"] <= Constantes::PASSW_INTE){
+                if($validacion == "OK" && $nintentos <= Constantes::PASSW_INTE){
 
                     $fch_vencimiento = TimeUtils::calcularVencimientoFecha(date("Y-m-d"), Constantes::PASSW_VIGE);
 
@@ -853,12 +862,12 @@ class adminUsersActions extends sfActions {
                     $this->getUser()->setAttribute('forcechange', false);
                     $this->setTemplate("changePasswdOk");
                 }else{
-                    if($_SESSION["nintentos"] <= 5)
-                        $this->error = $validacion;
-                    else{
-                        $this->error = "El número de intentos ha acabado. El usuario ha sido inactivado, por favor consultar con el área de Soporte Técnico";
-                        $user->setCaActivo(false);                        
-                        $user->setDatosJson("bloqueado", utf8_encode("Inactivo por número de intentos fallidos. (".date("Y-m-d H:i:s").")"));
+                    if($nintentos <= 5){
+                        $this->error = $validacion;                        
+                    }else{
+                        $this->error = "El número de intentos ha acabado. El usuario ha sido bloqueado, por favor consultar con el área de Soporte Técnico";
+                        $user->setCaBloqueado(true);                        
+                        $user->setDatosJson("bloqueado", date("Y-m-d H:i:s").utf8_encode(": Se superaron número de intentos al cambiar la clave."));
                         $user->save($conn);
                         $conn->commit();
                     }
@@ -1416,9 +1425,10 @@ class adminUsersActions extends sfActions {
         if($usuarios){
             foreach ($usuarios as $usuario){
 
-                list($ano,$mes,$dia) = explode("-",$usuario->getCaFchingreso());
+                list($anoIni,$mesIni,$diaIni) = explode("-",$usuario->getCaFchingreso());                
+                $anoFin = date('Y', strtotime(date('Y-m-d')."+ 4 days"));
 
-                $tiempoCumplido = date("Y") - $ano;
+                $tiempoCumplido = $anoFin - $anoIni;
                 $login = $usuario->getCaLogin();
                 $fchingreso = $usuario->getCaFchingreso();
 
@@ -1956,6 +1966,55 @@ class adminUsersActions extends sfActions {
         }else{
             $this->responseArray = array("success"=> false);
         }
+        $this->setTemplate("responseTemplate");   
+    }
+    
+    public function executeValidarLogin(sfWebRequest $request){
+        
+        $name = utf8_decode($request->getParameter("nombres"));
+        $lastName = utf8_decode($request->getParameter("papellido"));
+        $newlogin = $request->getParameter("nuevologin");
+        
+        $existe = true;
+        $j=1;
+        if($name && $lastName && !$newlogin){            
+            do{            
+                $nameParts = split(" ", $name);
+                $firstName = $nameParts[0];
+                $middleName = $nameParts[1];                            
+                
+                $login = strtolower(substr($firstName, 0,1));
+
+                if($middleName){    
+                    $login.= strtolower(substr($middleName, 0,$j));
+                }else{
+                    if($j>1)
+                        $login = strtolower(substr($firstName, 0,$j));                    
+                }
+
+                $login.= strtolower(trim($lastName));                
+                $login = strtolower(Utils::eliminarTildes($login));                
+                $usuario = Doctrine::getTable("Usuario")->find($login);
+
+                if($usuario){
+                    $j++;
+                }else{
+                    $existe = false; 
+                }                                 
+                
+            }while($existe == true);
+            
+            $this->responseArray = array("success"=> true, "login"=>$login);
+        }else if($newlogin){
+            $usuario = Doctrine::getTable("Usuario")->find($newlogin);
+                if($usuario){
+                    $this->responseArray = array("success"=> false, "errorInfo"=>utf8_encode("El login ya existe, intente nuevamente."));
+                }else{
+                    $this->responseArray = array("success"=> true, "login"=>$newlogin);
+                }
+        }else
+            $this->responseArray = array("success"=> false, "errorInfo"=>utf8_encode("Por favor ingrese Nombres y apellidos válidos"));
+        
         $this->setTemplate("responseTemplate");   
     }
 }
