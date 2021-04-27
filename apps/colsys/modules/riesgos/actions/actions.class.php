@@ -140,7 +140,9 @@ class riesgosActions extends sfActions {
                         $node_uid = $tree->findValue($uid, $value);                    
 
                         if (!$node_uid) {                            
-                            $request->setParameter("idempresa", $proceso->getCaIdempresa());                                
+//                            $verificacion = $proceso->getCaIdempresa() === NULL?0:$proceso->getCaIdempresa();
+//                            echo "verificacion".$verificacion."<br/>";
+                            $request->setParameter("idempresa", $proceso->getCaIdempresa() === NULL?"Transversales":$proceso->getCaIdempresa());
                             $lastYearEmpresa = $this->executeGetLastYear($request);
                             
                             $nodo = $tree->createNode($value);
@@ -2390,7 +2392,7 @@ class riesgosActions extends sfActions {
                 LEFT JOIN control.tb_empresas em ON em.ca_idempresa = p.ca_idempresa
                 INNER JOIN riesgos.tb_eventos e ON r.ca_idriesgo = e.ca_idriesgo
                 LEFT JOIN control.tb_sucursales s ON e.ca_idsucursal = s.ca_idsucursal
-                INNER JOIN ids.tb_ids i ON e.ca_idcliente = i.ca_id        
+                LEFT JOIN ids.tb_ids i ON e.ca_idcliente = i.ca_id        
                 LEFT JOIN (
                         SELECT ca_idriesgo, 
                                 CASE WHEN (array_agg(clase))[1] IS NOT NULL then TRUE ELSE FALSE END as ca_laft,
@@ -2413,6 +2415,7 @@ class riesgosActions extends sfActions {
         $rs = $con->execute($sql);
         $riesgos = $rs->fetchAll();
         
+//        echo $sql;
 //        echo "<pre>";print_r($riesgos);echo "</pre>";
 //        exit;
         
@@ -2594,7 +2597,17 @@ class riesgosActions extends sfActions {
         //exit;
         //if($params){
             if($request->getParameter("idempresa")){
-                return Doctrine::getTable("RsgoValoracion")
+                if($request->getParameter("idempresa") == "Transversales"){
+                    return Doctrine::getTable("RsgoValoracion")
+                        ->createQuery("v")
+                        ->innerJoin("v.Riesgos r")
+                        ->innerJoin("r.RsgoProcesos p")
+                        ->where("p.ca_idempresa IS NULL")
+                        ->orderBy("ca_ano DESC")
+                        ->execute()
+                        ->getFirst();
+                }else{
+                    return Doctrine::getTable("RsgoValoracion")
                         ->createQuery("v")
                         ->innerJoin("v.Riesgos r")
                         ->innerJoin("r.RsgoProcesos p")
@@ -2602,6 +2615,7 @@ class riesgosActions extends sfActions {
                         ->orderBy("ca_ano DESC")
                         ->execute()
                         ->getFirst();
+                }                
             }else if($request->getParameter("idproceso")){
                 return Doctrine::getTable("RsgoValoracion")
                         ->createQuery("v")
