@@ -19,7 +19,10 @@ WidgetTicket = function( config ){
         proxy: new Ext.data.HttpProxy({
             url: '<?=url_for("widgets/listaTicketsJSON")?>'            
         }),
-        baseParams: {iddepartament: this.iddepartament},
+        baseParams: {
+            iddepartament: this.iddepartament,
+            tipo: this.tipo
+        },
         reader: new Ext.data.JsonReader({
             root: 'root',
             totalProperty: 'total'
