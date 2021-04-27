@@ -168,41 +168,46 @@ class Usuario extends BaseUsuario {
 
     public function checkPasswd($passwd, &$error="", &$errorno="") {
         if ($this->getCaActivo()) {
-            $username = $this->getCaLogin();
-            $ldap_auth_enabled = sfConfig::get("app_ldap_auth_enabled");
-            if (!$ldap_auth_enabled) {
-                $this->setCaAuthmethod("sha1");
-            }
-
-            if ($this->getCaAuthmethod() == "ldap") {
-                //$auth_user = "cn=" . $username . ",o=coltrans_bog";
-                // CN=CARLOS GILBERTO LOPEZ MENDEZ,OU=Sistemas,OU=Usuarios,OU=Coltrans_Bog,DC=COLTRANS,DC=LOCAL
-                $auth_user = $username . "@COLTRANS.LOCAL";
-                $ldap_server = sfConfig::get("app_ldap_host");
-                
-                $connect = ldap_connect($ldap_server);
-                if ($connect) {
-                    if (@$bind = ldap_bind($connect, $auth_user, utf8_encode($passwd))) {
-                        try {
-                            if ($this->getCaPasswd() != sha1($passwd . $this->getCaSalt())) {
-                                $this->stopBlaming();
-                                $this->setPasswd($passwd);
-                                $this->save();
-                            }
-                        } catch (Exception $e) {
-                            //echo $e->getMessage();
-                        }
-                        return true;
-                    } else {
-                        $error = ldap_error($connect);
-                        $errorno = ldap_errno($connect);
-                    }
-                    ldap_close($connect);
+            if(!$this->getCaBloqueado()){
+                $username = $this->getCaLogin();
+                $ldap_auth_enabled = sfConfig::get("app_ldap_auth_enabled");
+                if (!$ldap_auth_enabled) {
+                    $this->setCaAuthmethod("sha1");
                 }
-            }
 
-            if ($this->getCaAuthmethod() == "sha1") {
-                return $this->getCaPasswd() == sha1($passwd . $this->getCaSalt());
+                if ($this->getCaAuthmethod() == "ldap") {
+                    //$auth_user = "cn=" . $username . ",o=coltrans_bog";
+                    // CN=CARLOS GILBERTO LOPEZ MENDEZ,OU=Sistemas,OU=Usuarios,OU=Coltrans_Bog,DC=COLTRANS,DC=LOCAL
+                    $auth_user = $username . "@COLTRANS.LOCAL";
+                    $ldap_server = sfConfig::get("app_ldap_host");
+
+                    $connect = ldap_connect($ldap_server);
+                    if ($connect) {
+                        if (@$bind = ldap_bind($connect, $auth_user, utf8_encode($passwd))) {
+                            try {
+                                if ($this->getCaPasswd() != sha1($passwd . $this->getCaSalt())) {
+                                    $this->stopBlaming();
+                                    $this->setPasswd($passwd);
+                                    $this->save();
+                                }
+                            } catch (Exception $e) {
+                                //echo $e->getMessage();
+                            }
+                            return true;
+                        } else {
+                            $error = ldap_error($connect);
+                            $errorno = ldap_errno($connect);
+                        }
+                        ldap_close($connect);
+                    }
+                }
+
+                if ($this->getCaAuthmethod() == "sha1") {
+                    return $this->getCaPasswd() == sha1($passwd . $this->getCaSalt());
+                }
+            }else{
+                $errorno = "9999";
+                return false;
             }
         }
         return false;
