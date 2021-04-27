@@ -1049,7 +1049,20 @@ $jefes = $sf_data->getRaw("jefes");
                                 <td>&nbsp;</td>
                                 <td width="40%">
                                     <div align="left">
-                                        <b><?=$usuario->getCaActivo()?"Activo":($usuario->getDatosJson("bloqueado")? (utf8_decode($usuario->getDatosJson("bloqueado"))):"Inactivo")?></b>
+                                        <b>Bloqueado<?=$usuario->getCaBloqueado()?". ".utf8_decode($usuario->getDatosJson("bloqueado")):""?></b>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div align="left">
+                                        <input type="checkbox" name="activo" id="activo"  <?=$usuario->getCaBloqueado()?'checked="checked"':''?> <?if(!($nivel>=2)){?>disabled="disabled"<?}?>/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+                                <td width="40%">
+                                    <div align="left">
+                                        <b>Activo</b>
                                     </div>
                                 </td>
                                 <td>
