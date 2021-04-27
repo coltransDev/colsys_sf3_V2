@@ -233,17 +233,19 @@ $cliente = $inoCliente->getCliente();
             <?
         }
         ?>    
+        <br/>
         <b>Importante:</b><br />
         Estimado Cliente,
-        <ul>
-            <li>Le recordamos que el tiempo de permanencia de mercancìa en los depositos es de un (1) mes, contados desde la fecha de llegada de la mercancìa, y pueden solicitar una posible prorroga por un (1) mes adicional acorde al Decreto 2557 del 06 de Julio 2007 art. 10</li>
+        <ul>                        
         <?
         if ($status->getCaIdetapa() == "IMCPD") {
             ?>
-            <li>Favor tener en cuenta la entrada en vigencia de la Resolución No. 7408,  Declaracion  Anticipada. En caso de requerir certificación de fletes en forma anticipada informarnos por escrito y con el mayor gusto la suministraremos.</li>
+            <li>Detallamos que es necesario cumplir con los requisitos de liberación y tiempos dados por las Navieras y Operadores de Contenedores.</li>
+            <li>Favor tener en cuenta la entrada en vigencia del Decreto 1165 art. 189 y el Decreto 360 que regula la Declaración Anticipada. En caso de requerir certificación de fletes en forma anticipada informarnos por escrito y con el mayor gusto la suministraremos. </li>
             <?
         }
         ?>
+            <li>Le recordamos que el tiempo de permanencia de mercancía en los depósitos es de un (1) mes, contados desde la fecha de llegada de la mercancía, y pueden solicitar una posible prorroga por un (1) mes adicional. Acorde al Decreto 1165 art. 171</li>
         </ul>
     </div>
     
