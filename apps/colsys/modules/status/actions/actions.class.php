@@ -1123,10 +1123,10 @@ class statusActions extends sfActions {
                     $status->setStatus($mensajeStatus);
                     
                     $status->save($conn);
-                    list($useg, $seg) = explode(" ", microtime(true));                                        
                     
-                    $status->send($destinatarios, array(), $attachments, $options);
-                    list($useg, $seg) = explode(" ", microtime(true));                                        
+                    
+                    $status->send($destinatarios, array(), $attachments, $options, $conn);
+                    
                 }
                 $conn->commit();
                 $this->responseArray = array("success" => true, "mensaje" => "Las comunicaciones se han enviado correctamente!", "modulo" => $tipo_msg/*, "tiempo"=> $tiempo*/);
