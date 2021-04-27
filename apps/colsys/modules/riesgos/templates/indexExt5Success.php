@@ -408,7 +408,7 @@ $headers = json_encode($headers);
                                     break;
                                 case 2://Empresa
                                     if(permisos){
-                                        console.log("case 2");
+                                        console.log("case 2");                                        
                                             var menu = new Ext.menu.Menu({
                                                 id: 'menuContextual-idempresa-'+idempresa,
                                                 items: [{
@@ -441,7 +441,7 @@ $headers = json_encode($headers);
                                                                 }]
                                                             }).show();
                                                         }
-                                                        tabpanel.setActiveTab('tab-informe-'+idproceso);
+                                                        tabpanel.setActiveTab('tab-informe-idempresa-'+idempresa);
                                                     }
                                                 }]
                                             }).showAt(e.getXY());                                        
