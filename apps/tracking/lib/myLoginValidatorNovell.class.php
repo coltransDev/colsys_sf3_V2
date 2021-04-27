@@ -37,6 +37,9 @@ class myLoginValidatorNovell extends sfValidatorBase
             /*case 49:
                 $this->setMessage('invalid', 'Las entradas de gracias para este usuario se acabaron, debe cambiar su clave de NOVELL');
                 break;*/
+            case 9999:
+                $this->setMessage('invalid', 'El usuario se encuentra bloqueado. Por favor comuníquese con el área de sistemas.');
+                break;
             case 53:
                 $this->setMessage('invalid', 'La cuenta de NOVELL se encuentra bloqueada');
                 break;
