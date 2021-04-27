@@ -121,7 +121,7 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                 items: [
                     {
                         text: 'Editar',
-                        disabled: !permisos.valoracion.editar,
+                        disabled: !permisos.eventos.editar,
                         iconCls: 'application_form_edit',
                         handler: function() {
                             Ext.getCmp("grid-eve"+idriesgo).ventanaEvento(record);
