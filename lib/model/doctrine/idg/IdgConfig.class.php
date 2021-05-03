@@ -108,6 +108,12 @@ class IdgConfig extends BaseIdgConfig {
                 } else {                    
                     $cumple = "Justifico";
                 }
+                /*Para la factura electrónica, la justificación se realiza despues de generado el comprobante*/
+                if($options["fe"] == true){
+                    $cumple = "Justifico";
+                    $options["observaciones"] = utf8_decode($mensaje);
+                }
+                
                 break;
             case 1;
                 $cumple = "Si";                
@@ -122,7 +128,7 @@ class IdgConfig extends BaseIdgConfig {
             }
         }
         
-        return array("cumplio"=>$cumple, "mensaje"=>$mensaje);
+        return array("cumplio"=>$cumple, "mensaje"=>$mensaje, "registro" => $registro);
 
     }
 
@@ -150,17 +156,19 @@ class IdgConfig extends BaseIdgConfig {
         $eventos = $options["eventos"];
         
         try {
+            $existe = false;
             if(!$conn){
                 $conn = Doctrine::getTable("InoIndicadores")->getConnection();
                 $conn->beginTransaction();
                 $commit = true;
             }
-            $registro = Doctrine::getTable("InoIndicadores")->findByDql("ca_idindicador = ? AND ca_idcaso = ? AND ca_idetapa = ?", array($this->getIdg()->getCaIdg(), $idcaso, $idetapa));
+            
+            $registro = Doctrine::getTable("InoIndicadores")->findByDql("ca_idindicador = ? AND ca_idcaso = ? AND ca_idetapa = ?", array($this->getIdg()->getCaIdg(), $idcaso, $idetapa))->getFirst();            
 
-            if (count($registro) > 0) {
+            if (is_object($registro)) {
                 $existe = true;
             }
-
+//            echo "Idindicador =>".$this->getIdg()->getCaIdg().' Idcaso=>'. $idcaso.' Idetapa=>'. $idetapa." existe=>".$existe." estado=>".$estado." exclusion=>".$idexclusion." observaciones=>".$observaciones;
             if (!$existe && (($estado == 0 && strlen($observaciones) > 0) || ($estado == 0 && strlen($idexclusion) > 0) || $estado == 1)) {
 
                 $data = array();
@@ -168,31 +176,42 @@ class IdgConfig extends BaseIdgConfig {
                     $data["observaciones"] = utf8_encode($observaciones);
 
                 if ($eventos) {
-                    $data["eventos"] = $eventos;
+                    $data["eventos"] = $options["eventos"];
+                }
+                if($options["fe"] == true){
+                    $estado = $estado == 0 ? 'false' : 'true';
+                    $data["fe"] = true;
+                    if ($eventos) {
+                        $data["eventos"] = $options["arrayeventos"];                        
+                    }
+                    $con3 = Doctrine_Manager::getInstance()->getConnection('master');
+                    $sql3="INSERT INTO ino.tb_indicadores (ca_tipo, ca_idcaso, ca_fecha, ca_idindicador, ca_fchinicial, ca_fchfinal, ca_idg, ca_estado, ca_usuario, ca_datos, ca_idetapa) "
+                            . "VALUES (".$datos["tipo"].",'".$idcaso."','".$fecha."',".$this->getIdg()->getCaIdg().",'".$fchini."','".$fchend."',".$valor.",".$estado.",'".$user->getUserId()."','".json_encode($data)."','".$idetapa."')";                                                
+                    $st = $con3->execute($sql3);
+                }else{
+                    $ind = new InoIndicadores();
+                    $ind->setCaTipo($datos["tipo"]);
+                    $ind->setCaIdcaso($idcaso);
+                    $ind->setCaFecha($fecha);
+                    $ind->setCaIdindicador($this->getIdg()->getCaIdg());
+                    $ind->setCaFchinicial($fchini);
+                    $ind->setCaFchfinal($fchend);
+                    $ind->setCaIdg($valor);
+                    $ind->setCaIdexclusion($idexclusion?$idexclusion:null);
+                    $ind->setCaEstado($estado);
+                    $ind->setCaUsuario($user->getUserId());
+                    $ind->setCaDatos(json_encode($data));
+                    $ind->setCaIdetapa($idetapa);
+                    $ind->save($conn);
+
+                    if($commit){
+                        $conn->commit();
+                    }
                 }
 
-                $ind = new InoIndicadores();
-                $ind->setCaTipo($datos["tipo"]);
-                $ind->setCaIdcaso($idcaso);
-                $ind->setCaFecha($fecha);
-                $ind->setCaIdindicador($this->getIdg()->getCaIdg());
-                $ind->setCaFchinicial($fchini);
-                $ind->setCaFchfinal($fchend);
-                $ind->setCaIdg($valor);
-                $ind->setCaIdexclusion($idexclusion?$idexclusion:null);
-                $ind->setCaEstado($estado);
-                $ind->setCaUsuario($user->getUserId());
-                $ind->setCaDatos(json_encode($data));
-                $ind->setCaIdetapa($idetapa);
-                $ind->save($conn);
-                
-                if($commit){
-                    $conn->commit();
-                }
-
-                return array("success" => true);
+                return array("success" => true, "mensaje"=>$observaciones, "existe"=>$existe);
             } else {
-                return array("success" => true, "error" => "Ya existe un indicador registrado. Idindicador:".$this->getIdg()->getCaIdg()." Idcaso:".$idcaso." Idetapa:".$datos["idetapa"]);
+                return array("success" => true, "error" => "Ya existe un indicador registrado. Idindicador:".$this->getIdg()->getCaIdg()." Idcaso:".$idcaso." Idetapa:".$idetapa." Idregistro=>");
             }
         } catch (Exception $e) {
             $conn->rollback();
