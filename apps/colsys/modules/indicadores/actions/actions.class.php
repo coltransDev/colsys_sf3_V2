@@ -293,6 +293,8 @@ class indicadoresActions extends sfActions{
         }
         
         $debug = $q->getSqlQuery();        
+//        echo $debug;
+//        exit;
         $registros = $q->execute();
         $contador = 0;
         
@@ -1003,12 +1005,12 @@ class indicadoresActions extends sfActions{
                             ->createQuery("ia")
                             ->where("ia.ca_idg = ?", $idg->getCaIdg())
                             ->addWhere("ca_fcheliminado IS NULL")
-                            ->orderBy("ca_ano ASC, ca_idsucursal ASC, ca_fchcreado")
+                            ->orderBy("ca_idg ASC, ca_ano ASC, ca_idsucursal ASC, ca_fchcreado asc")
                             ->execute(); 
                     $lastArc = true;
 
                     if(count($archivos)>0){
-                        foreach($archivos as $archivo){    
+                        foreach($archivos as $archivo){
                             if ($lastArc) {                
                                 $ano = $archivo->getCaAno();                
                                 $sucursal = utf8_encode($archivo->getSucursal()->getCaNombre());                    
