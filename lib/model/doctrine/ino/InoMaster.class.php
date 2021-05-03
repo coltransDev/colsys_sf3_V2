@@ -281,9 +281,9 @@ class InoMaster extends BaseInoMaster {
     public function getTarea1207($datosMaster) {
         $idTarea = $datosMaster["idtarea"];
         if (!$idTarea) {
-            if ($this->existeReporteOtm()) {
+            //if ($this->existeReporteOtm()) {
                 return true;
-            }
+            //}
         }
         return false;
     }
@@ -303,50 +303,59 @@ class InoMaster extends BaseInoMaster {
 
     public function generarComisiones() {
         $datosMaster = json_decode(utf8_encode($this->getCaDatos()), 1);
-        if ($this->getCaImpoexpo() !== Constantes::OTMDTA || ($this->getCaImpoexpo() == Constantes::OTMDTA && $datosMaster['idempresa'] == 2)) {  // $this->getCaImpoexpo() !== Constantes::INTERNO &&  && $this->getCaTransporte() !== Constantes::TERRESTRE
-            $houses = $this->getInoHouse();
-            foreach ($houses as $house) { /* Lee todos los houses de la referencia */
-                if ($house->getUtilidadPorHouse()) {
-                    if ((($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION) && $this->getCaTransporte() == Constantes::MARITIMO) || $this->getCaImpoexpo() == Constantes::EXPO) {
-                        $this->causarComision(null, $house, $house->getUtilidadPorHouse());     /* Causa la utilidad general del caso para Impo Marítimo */
-                    }
-                    if ($this->getCaImpoexpo() != Constantes::INTERNO && ($this->getCaTransporte() == Constantes::TERRESTRE || $this->getCaImpoexpo() == Constantes::OTMDTA)) {
-                        $this->causarComision(null, $house, $house->getUtilidadPorHouse());     /* Causa la utilidad general para los OTM DIRECTOS */
-                    }
-                } else {
-                    $this->causarComision(null, $house, $house->getIno());      /* Causa la utilidad general del caso para diferentes a Impo Aéreo */
-                }
-                $individual = 0;     /* Remiendo para Causar Comisiones de INO Ver. Terrestre */
-                $utilidades = $house->getInoUtilidad();
-                foreach ($utilidades as $utilidad) { /* Causa la utilidad individual para Impo Aéreo, Terrestre Interno y sobreventas de Impo Marítimo */
-                    if (!$utilidad->getCaUsuanulado()) {
-                        $this->causarComision($utilidad->getCaIdutilidad(), $house, $utilidad->getCaValor());
-                        $individual += $utilidad->getCaValor();
-                    } else {
-                        $conn = Doctrine::getTable("InoComision")->getConnection();
-                        $sql = "delete from ino.tb_comisiones where ca_consecutivo IS NULL and ca_idutilidad = " . $utilidad->getCaIdutilidad();
-                        $stmt = $conn->execute($sql);
-                        $sql = "select sum(ca_comision) as ca_comision from ino.tb_comisiones where ca_idutilidad = " . $utilidad->getCaIdutilidad();
-                        $stmt = $conn->execute($sql);
-                        $comision = $stmt->fetchAll(PDO::FETCH_COLUMN);
-                        if ($comision[0] <> 0) {
-                            /* Valida si el ingreso individual fue anulado y realizar el ajuste */
-                            $reversion = new InoComision();
-                            $reversion->setCaIdhouse($utilidad->getCaIdhouse());
-                            $reversion->setCaIdutilidad($utilidad->getCaIdutilidad());
-                            $reversion->setCaValor($utilidad->getCaValor());
-                            $reversion->setCaComision(-$comision[0]);
-                            $reversion->setCaVendedor($house->getCaVendedor());
-                            $reversion->save();
-                        }
-                    }
-                }
-                if ($this->getCaImpoexpo() == Constantes::INTERNO && ($house->getUtilidadPorHouse() - $individual) != 0) {
-                    /* Solo aplica para Terrestre Interno, causa comision si hay diferencia entre ingreso individual e ingreso general*/
-                    $this->causarComision(null, $house, $house->getUtilidadPorHouse() - $individual);
+//      if ($this->getCaImpoexpo() !== Constantes::OTMDTA || ($this->getCaImpoexpo() == Constantes::OTMDTA && $datosMaster['idempresa'] == 2)) {  // $this->getCaImpoexpo() !== Constantes::INTERNO &&  && $this->getCaTransporte() !== Constantes::TERRESTRE
+            
+        $houses = $this->getInoHouse();
+        foreach ($houses as $house) {
+            if ($this->getCaImpoexpo() == Constantes::OTMDTA) {
+                /* Oct 06/2020 Causación Comisiones COLOTM solo para vendedores de COLOTM u OTMs directos de Coltrans  */
+                if ($datosMaster['idempresa'] == 8 && $house->getVendedor()->getSucursal()->getCaIdempresa() != 8) {
+                    continue;
+                } else if ($datosMaster['idempresa'] == 2 && $house->getVendedor()->getSucursal()->getCaIdempresa() == 8) {
+                    continue;
                 }
             }
+            if ($house->getUtilidadPorHouse()) {
+                if ((($this->getCaImpoexpo() == Constantes::IMPO || $this->getCaImpoexpo() == Constantes::TRIANGULACION) && $this->getCaTransporte() == Constantes::MARITIMO) || $this->getCaImpoexpo() == Constantes::EXPO) {
+                    $this->causarComision(null, $house, $house->getUtilidadPorHouse());     /* Causa la utilidad general del caso para Impo Marítimo */
+                }
+                if ($this->getCaImpoexpo() != Constantes::INTERNO && ($this->getCaTransporte() == Constantes::TERRESTRE || $this->getCaImpoexpo() == Constantes::OTMDTA)) {
+                    $this->causarComision(null, $house, $house->getUtilidadPorHouse());     /* Causa la utilidad general para los OTM DIRECTOS */
+                }
+            } else {
+                $this->causarComision(null, $house, $house->getIno());      /* Causa la utilidad general del caso para diferentes a Impo Aéreo */
+            }
+            $individual = 0;     /* Remiendo para Causar Comisiones de INO Ver. Terrestre */
+            $utilidades = $house->getInoUtilidad();
+            foreach ($utilidades as $utilidad) { /* Causa la utilidad individual para Impo Aéreo, Terrestre Interno y sobreventas de Impo Marítimo */
+                if (!$utilidad->getCaUsuanulado()) {
+                    $this->causarComision($utilidad->getCaIdutilidad(), $house, $utilidad->getCaValor());
+                    $individual += $utilidad->getCaValor();
+                } else {
+                    $conn = Doctrine::getTable("InoComision")->getConnection();
+                    $sql = "delete from ino.tb_comisiones where ca_consecutivo IS NULL and ca_idutilidad = " . $utilidad->getCaIdutilidad();
+                    $stmt = $conn->execute($sql);
+                    $sql = "select sum(ca_comision) as ca_comision from ino.tb_comisiones where ca_idutilidad = " . $utilidad->getCaIdutilidad();
+                    $stmt = $conn->execute($sql);
+                    $comision = $stmt->fetchAll(PDO::FETCH_COLUMN);
+                    if ($comision[0] <> 0) {
+                        /* Valida si el ingreso individual fue anulado y realizar el ajuste */
+                        $reversion = new InoComision();
+                        $reversion->setCaIdhouse($utilidad->getCaIdhouse());
+                        $reversion->setCaIdutilidad($utilidad->getCaIdutilidad());
+                        $reversion->setCaValor($utilidad->getCaValor());
+                        $reversion->setCaComision(-$comision[0]);
+                        $reversion->setCaVendedor($house->getCaVendedor());
+                        $reversion->save();
+                    }
+                }
+            }
+            if ($this->getCaImpoexpo() == Constantes::INTERNO && ($house->getUtilidadPorHouse() - $individual) != 0) {
+                /* Solo aplica para Terrestre Interno, causa comision si hay diferencia entre ingreso individual e ingreso general*/
+                $this->causarComision(null, $house, $house->getUtilidadPorHouse() - $individual);
+            }
         }
+//      }
         return true;
     }
 
@@ -381,7 +390,10 @@ class InoMaster extends BaseInoMaster {
                         $reversion->setCaVendedor($comision->getCaVendedor());
                         $reversion->save();
 
-                        $ajuste = clone $reversion;
+                        $ajuste = new InoComision();
+                        $ajuste->setCaIdhouse($comision->getCaIdhouse());
+                        $ajuste->setCaIdutilidad($idutilidad);
+                        $ajuste->setCaValor($utilidad);
                         $ajuste->setCaComision($vlr_comision);
                         $ajuste->setCaVendedor($house->getCaVendedor());
                         $ajuste->save();
@@ -507,6 +519,7 @@ class InoMaster extends BaseInoMaster {
         $ult_mem = null;
 
         $tbeventos = "<table>";
+        $arreventos = [];
         foreach($eventos as $evento){
 
             $tbeventos.= "<tr>";
@@ -522,10 +535,10 @@ class InoMaster extends BaseInoMaster {
             }
             $tbeventos.= "  <td style='font-size: 9px;'>$fch_tmp</td>";
             $tbeventos.= "</tr>";
+            $arrayeventos = array("ca_evento"=>utf8_encode($evento['ca_valor']), "ca_usuario"=>$evento['ca_usuario'], "ca_fchevento"=>$fch_tmp);            
         }
         $tbeventos.= "  </table>";
-        
-        return array("ult_mem"=>$ult_mem, "sae_mem"=>$sae_mem, "rad_mem"=>$rad_mem, "tb_eventos"=>$tbeventos);
+        return array("ult_mem"=>$ult_mem, "sae_mem"=>$sae_mem, "rad_mem"=>$rad_mem, "tb_eventos"=>$tbeventos, "arrayEventos"=>$arrayeventos);
     }
     
     public function getRequiereIdg($idetapa){
@@ -555,7 +568,7 @@ class InoMaster extends BaseInoMaster {
                     return true;
                     break;
             }
-        } else if($this->getCaImpoexpo() == Constantes::TRIANGULACION) {
+        } else if($this->getCaImpoexpo() == Constantes::TRIANGULACION || $this->getCaImpoexpo() == Constantes::INTERNO || $this->getCaImpoexpo() == Constantes::OTMDTA) {
             return false;
         } else{
             return true;
