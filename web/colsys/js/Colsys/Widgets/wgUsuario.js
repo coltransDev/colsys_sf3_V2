@@ -7,7 +7,7 @@
 */
 Ext.define('Colsys.Widgets.wgUsuario', {
     extend: 'Ext.form.field.ComboBox',
-    alias: 'widget.Colsys.Widgets.wgCliente',
+    alias: 'widget.Colsys.Widgets.wgUsuario',
     store: new Ext.data.Store(
     {
         fields: [
@@ -33,7 +33,7 @@ Ext.define('Colsys.Widgets.wgUsuario', {
      loadingText: 'buscando...',
      triggerAction: 'all',     
      selectOnFocus: true,
-     allowBlank: false,
+     //allowBlank: false,
      //anchor: '98%',
      //width: 500,
      enableKeyEvents: true,
