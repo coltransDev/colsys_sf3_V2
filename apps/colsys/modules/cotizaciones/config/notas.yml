@@ -102,7 +102,7 @@ OTM_LCL: |
   Las anteriores tarifas incluyen:
  
     Tres días libres de bodegajes a partir del arribo de la carga a puerto
-    Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
+    Coordinación con el Transporte terrestre Puerto Colombiano  Destino
     Formulario DIAN para continuación de viaje
     Elaboración y coordinación OTM para continuación de viaje
     Coordinación Logística
@@ -268,7 +268,7 @@ OTM_FCL: |
   Las anteriores tarifas incluyen:
  
   • Tres días libres de bodegajes a partir del arribo de la carga a puerto
-  • Coordinación con el Transporte terrestre Puerto Colombiano ? Destino
+  • Coordinación con el Transporte terrestre Puerto Colombiano  Destino
   • Formulario DIAN para continuación de viaje
   • Elaboración y coordinación OTM para continuación de viaje
   • Coordinación Logística
@@ -298,8 +298,8 @@ OTM_FCL: |
   • Devolución de contenedor ( 7 días para devolver a puerto en compensación)
   • Almacenajes en bodega de destino
   • Descargue, vaciado del contenedor en Bodega de destino
-  • Devolución de contenedor (7 días hábiles  para devolver a puerto ? con carga de  compensación)
-  • Dropoff ? Depende de la naviera
+  • Devolución de contenedor (7 días hábiles  para devolver a puerto  con carga de  compensación)
+  • Dropoff.  Depende de la naviera
   • Demoras de Contenedor
   • Tramite Ica, Dasalud, Invima  $190.000,oo (por entidad).
   • Recargo IMO  $ 150.000
@@ -409,39 +409,42 @@ OTM_FCL: |
 aduanaImpoTitulo: NOTAS IMPORTANTES QUE DEBEN TENER EN CUENTA EN SUS NACIONALIZACIONES
 aduanaImpo: |
   
-  DE CONFORMIDAD CON LA LEGISLACION ADUANERA EL PLAZO PARA NACIONALIZAR LA MERCANCIA ES DE UN (1) MES CONTADO A PARTIR DE LA LLEGADA AL PUERTO O AEROPUERTO COLOMBIANO.
+  AGENCIA DE ADUANAS COLMAS SAS NIVEL 1. No podrá iniciar ningún proceso, si no cuenta con la circular 0170 vigente y completa por parte de los importadores. Así mismo AGENCIA DE ADUANAS COLMAS SAS NIVEL 1. No se hará responsables por sobre costos o demoras, que se generen o estén asociados por no contar con la documentación legal correspondiente, de manera completa a cargo de los importadores.
+  DE CONFORMIDAD CON LA LEGISLACION ADUANERA EL PLAZO PARA NACIONALIZAR LA MERCANCIA PARA LAS CARGAS QUE SE ENCUENTRAN EN DEPOSITO PUBLICO, ES DE UN (1) MES CONTADO A PARTIR DE LA LLEGADA AL PUERTO O AEROPUERTO COLOMBIANO. 
   
-  Previo el despacho de mercancías a Colombia deben ustedes obtener toda la información y documentación correspondiente, tal como la Ficha Técnica del producto a importar y la Clasificación Arancelaria, entre otros; igualmente, tener aprobada la Licencia Previa para las mercancías usadas, saldos y cuando la partida arancelaria asi lo determine.
+  Previo el despacho de mercancías a Colombia, deben ustedes como importadores, suministrar, obtener toda la información y documentación correspondiente, tal como la Ficha Técnica del producto a importar y la Clasificación Arancelaria, entre otros; igualmente, tener aprobada la Licencia Previa para las mercancías usadas, saldos y/o cuando la partida arancelaria así lo determine. 
   
   AGENCIA DE ADUANAS COLMAS S.A.S. NIVEL 1 tiene por objeto social principal la prestación de servicios de agenciamiento de aduanas, actuando como mandataria, en nombre, por cuenta y representación de sus clientes o contratantes mediante el Contrato de Mandato Aduanero, por lo cual su actividad mercantil se encuentra regulada por las normas civiles relativas al contrato de mandato remunerado y por los términos legales convenidos con el cliente o contratante.
   
-  La legislación aduanera es exigente en cuanto a prerrequisitos, controles previos y prohibiciones o restricciones. AGENCIA DE ADUANAS COLMAS SAS NIVEL 1 se exonera de responsabilidad por todo y cualquier contingencia o irregularidad causada entre otros por trastornos, demoras, sanciones, sobrecostos y/o aprehensiones y decomisos que afecten el trámite de importación por no atender en debida forma y oportunidad las exigencias señaladas a continuación y que no se encuentre en nuestro poder antes de iniciar el proceso de nacionalización; los originales de los documentos e información exigidos por la DIAN, que se relacionaran a continuación, asimismo AGENCIA DE ADUANAS COLMAS SAS NIVEL 1, no será responsable por la demora que presente entidades del estado que intervengan en la operación tales como ICA, INVIMA, etc.
+  La legislación aduanera es exigente en cuanto a prerrequisitos, controles previos y prohibiciones o restricciones. AGENCIA DE ADUANAS COLMAS SAS NIVEL 1 se exonera de responsabilidad por todo y cualquier contingencia o irregularidad causada entre otros por trastornos, demoras, sanciones, sobrecostos y/o aprehensiones y decomisos que afecten el trámite de importación por no atender en debida forma y oportunidad las exigencias señaladas a continuación y que no se encuentre en nuestro poder antes de iniciar el proceso de nacionalización; los originales de los documentos e información exigidos por la DIAN, que se relacionaran a continuación, asimismo AGENCIA DE ADUANAS COLMAS SAS NIVEL 1, no será responsable por la demora que presente entidades del estado que intervengan en la operación tales como ICA, INVIMA, etc. 
   
-  1. Suministro de la Ficha Técnica del (los) producto(s).
-  2. Clasificación Arancelaria.
-  3. Elaboración y aprobación del Registro de Importación o Licencia Previa (cuando requiera).
-  4. Autorización PREVIA por las entidades de control correspondiente (Tales como: Instituto Nacional de Vigilancia de Medicamentos y Alimentos-INVIMA; Ministerio de Comercio, Industria y Turismo-MINCIT; Aeronáutica Civil o Aerocivil; Ministerio de Defensa Nacional; Ministerio de Minas y Energia; Fondo Nacional de Estupefacientes; Instituto Colombiano Agropecuario-ICA; Superintendencia de Industria y Comercio-SIC; entre otras).
-  
-  Los documentos requeridos para la importación de mercancías son los siguientes:
-  
-  1. Contrato de Mandato Aduanero, impreso en papel membrete de la sociedad otorgante, firmado por su representante legal y con reconocimiento de firma en notaría pública.
-  2. Copia del RUT actualizado y vigente, incluyendo la autorización como usuario aduanero y calidad de Importador y/o Exportador.
-  3. Original del Certificado de Existencia y Representación Legal emitido por la Cámara de Comercio.
-  4. Factura Original, conteniendo el término de negociación (incoterm), lugar de entrega y moneda.
-  5. Lista de Empaque, conteniendo los números de seriales, cantidad de bultos, peso de cada bulto.
-  6. Fotocopia del documento de identidad del Representante Legal.
-  7. Mandato de comodato a favor de los administradores de contenedores aceptando asumir los costos generados por demoras, daños y/o limpieza de los contenedores.
-  8. Original del Certificado de Origen, cuando existe acuerdo.
-  9. Descripción Completa del producto, posición arancelaria y Catálogo en lo posible.
-  10. Formato de Conocimiento del Cliente - Circular 170 de 2002 vigente y sus documentos anexos.
-  11. Certificación de su póliza de seguro de transporte indicando la tasa (porcentaje liquidado) para efectos de cumplir exigencias de la DIAN.
+  1. Suministro de la Ficha Técnica del (los) producto(s). 
+  2. Clasificación Arancelaria. 
+  3. Elaboración y aprobación del Registro de Importación o Licencia Previa (cuando requiera). 
+  4. Autorización PREVIA por las entidades de control correspondiente (Tales como: Instituto Nacional de Vigilancia de Medicamentos y Alimentos-INVIMA; Ministerio de Comercio, Industria y Turismo-MINCIT; Aeronáutica Civil o Aerocivil; Ministerio de Defensa Nacional; Ministerio de Minas y Energía; Fondo Nacional de Estupefacientes; Instituto Colombiano Agropecuario-ICA; Superintendencia de Industria y Comercio-SIC; entre otras). 
 
-  Todos los conceptos de Ingresos Propios generan IVA.
-  Todos los Ingresos para Terceros se facturan al costo.
+  Los documentos requeridos para la importación de mercancías son los siguientes: 
+
+  1. Contrato de Mandato Aduanero, impreso en papel membrete de la sociedad otorgante, firmado por su representante legal y con reconocimiento de firma en notaría pública. 
+  2. Copia del RUT actualizado y vigente, incluyendo la autorización como usuario aduanero y calidad de Importador y/o Exportador. 
+  3. Original del Certificado de Existencia y Representación Legal emitido por la Cámara de Comercio. 
+  4. Factura Original, conteniendo el término de negociación (incoterm), lugar de entrega y moneda. 
+  5. Lista de Empaque, conteniendo los números de seriales, cantidad de bultos, peso de cada bulto. 
+  6. Fotocopia del documento de identidad del Representante Legal. 
+  7. Mandato de comodato a favor de los administradores de contenedores aceptando asumir los costos generados por demoras, daños y/o limpieza de los contenedores. 
+  8. Original del Certificado de Origen, cuando se pretenda acogerse a un tratamiento preferencial o no preferencial. 
+  9. Descripción Completa del producto, posición arancelaria y Catálogo en lo posible. 
+  10. Formato de Conocimiento del Cliente - Circular 170 de 2002 vigente y sus documentos anexos. 
+  11. Certificación de su póliza de seguro de transporte indicando la tasa (porcentaje liquidado) para efectos de cumplir exigencias de la DIAN. 
+
+  Todos los conceptos de Ingresos Propios generan IVA. 
+  Todos los Ingresos para Terceros se facturan al costo. 
+
+  Agencia de Aduanas Colmas SAS solicitará a ustedes el anticipo de fondos correspondientes a los pagos a terceros tales como: bodegajes, almacenamientos, uso de instalaciones portuarias, liberaciones documentos de transporte, seguros, etc. 
   
-  Agencia de Aduanas Colmas SAS solicitará a ustedes el anticipo de fondos correspondientes a los pagos a terceros tales como: bodegajes, almacenamientos, uso de instalaciones portuarias, liberaciones documentos de transporte, seguros, etc.
+  En la compañía de la cual hacemos parte, trabajamos con proveedores aprobados para la prestación de nuestros servicios con los cuales hemos firmado acuerdos de seguridad y confidencialidad, por lo anterior todas las operaciones manejadas por nuestra compañía son facturadas por COLMAS S.A.S, de igual manera los pagos deben ser realizados en las cuentas bancarias a nombre de la empresa únicamente, en ningún caso los servicios prestados serán facturados y/o cobrados por terceros. 
   
-  En el Grupo Empresarial del cual formamos parte, trabajamos con proveedores aprobados para la prestación de nuestros servicios con los cuales hemos firmado acuerdos de seguridad y confidencialidad, por lo anterior todas las operaciones manejadas por nuestra compañía son facturadas por COLMAS S.A.S, de igual manera los pagos deben ser realizados en las cuentas bancarias a nombre de la empresa únicamente, en ningún caso los servicios prestados serán facturados y/o cobrados por terceros.
+  
   
   Una vez recibida y analizada nuestra propuesta de servicios y aprobadas las condiciones de negociación les solicitamos confirmar su aceptación por escrito.
   
@@ -473,7 +476,7 @@ seguro: |
   1. EL VALOR ASEGURADO:
   Deberá corresponder al valor real de la carga, es decir, su componente de costos: factura comercial, fletes internacionales, fletes nacionales, derechos e impuestos a la importación (el IVA sólo se incluye en el componente de costos cuando éste no es descontable). Los factores de costos diferentes a los anteriores no se deben considerar como valor asegurado, pero se pueden amparar bajo el rubro de gastos adicionales.
   2. TRAYECTO ASEGURADO:
-  Se asegura en trayectos de ?bodega-bodega?, es decir, desde el momento que el asegurado recibe la carga y asume la responsabilidad sobre ella, hasta su destino final en bodegas. El verdadero alcance de ese trayecto será definido por los términos de negociación INCOTERMS 2010 y el INTERÉS ASEGURABLE existente sobre la carga. Se incluyen las operaciones de cargue y descargue.
+  Se asegura en trayectos de 'bodega-bodega', es decir, desde el momento que el asegurado recibe la carga y asume la responsabilidad sobre ella, hasta su destino final en bodegas. El verdadero alcance de ese trayecto será definido por los términos de negociación INCOTERMS 2010 y el INTERÉS ASEGURABLE existente sobre la carga. Se incluyen las operaciones de cargue y descargue.
   No se amparan transportes que tengan como origen o destino cualesquiera de los siguientes países: Algeria, Cuba, Chad, Libia, Irán, Irak, Corea Del Norte, Georgia, Serbia, Montenegro (Ex Yugoslavia), Albania, Croacia, Laos, Líbano, Siria, Angola, Somalia, Sudán del Norte, Zaire, Yemen, Pakistán, Afganistán, Golfo Pérsico Y Aguas Adyacentes Incluyendo Golfo De Omán, Y Costas Del Mar Rojo, Balcanes (Bosnia, Herzegovina, Bulgaria, Eslovenia, Macedonia, Rumania, Kosovo), Bielorrusia, Burma (Myanmar), Costa De Marfil, Etiopia, República Centroafricana, Liberia, República Democrática Del Congo, Guinea, Nigeria, Zimbawe, Zaire, Sierra Leona, Uzbekistán, Sri Lanka y Venezuela, así como países que eventualmente podrán ser excluidos por determinación de leyes de los Estados Unidos de América o bajo sanción de las Naciones Unidas, Unión Europea o Reino Unido o aquellos países que estén en la lista OFAC.
   3. BIENES EXCLUIDOS:
   Documentos o títulos valores, efectos personales o menaje doméstico, avería particular para maquinaria usada, obras de arte, semovientes, animales en general, carga a granel, azúcar, joyas, dinero en efectivo, monedas, valores y títulos valores, bonos cédulas hipotecarias, estampillas de timbre o correo, cartas, mapas o planos, perecederos que no cumplan con la cláusula de bienes transportados en condiciones especiales de refrigeración, congelación o calefacción.
