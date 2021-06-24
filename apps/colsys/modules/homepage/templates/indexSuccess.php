@@ -46,10 +46,10 @@ $plantillas = $sf_data->getRaw("plantillas");
                             <h5>Links</h5>
                             <ul class="features">
                                 <li><a href="#" onClick="crearTicket()">Nuevo ticket</a></li>
-                                <li><a href="http://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
+                                <li><a href="https://www.coltrans.com.co/intranet" target="blank">Intranet</a></li>
                                 <li><a href="<?=$usuario->getSucursal()->getEmpresa()->getCaTracking()?>" target="blank">Tracking</a></li>
-                                <li><a href="http://www.gerenteslatinos.com/aulavirtualgrupo" target="blank">Aula Virtual</a></li>
-                                <li><a href="https://www.colsys.com.co/images/publicidad/GoverLAN_Client_Agent_Installer.zip" target="blank">Soporte Remoto</a></li>
+                                <li><a href="https://www.aulacoltrans.com/aulavirtualgrupo" target="blank">Aula Virtual</a></li>
+                                <li><a href="https://www.goverlan.com/go.cgi?to=AssistMe&PARAM=d=1DF0694B37120E3664CC7DD3B1FA2A162371C6E3044F1360523119EA506941F535F8E227C45FFE12A40E5DC585D2CD672B51518CFEF4991F083384866C5FDAC201E58C01466B77BE58C219A04150A3A813AE22F19A3B26BDE4CC039D664152F56BE5EACB6DD7422C4877640A0F99A6AC1B546C70C51B3ACF1A6F27F830BFC40EA42A7C2E5E9CFA86A0D289025D113359545CA5B630E54CB28680BB111C16F0FD8A4BBBBA5507A777BE78EB59DFCE912C00BE90F6BEB65295507F05A68F527844079FFBF93473863273C5F3DCA666EA97E9A83802A025A73688BB28475335FA2D82BC8D542498FD6C301FFC1EE0808F6F,fips=0,o=COLTRANS,version=10.01.01" target="blank">Soporte Remoto</a></li>
                             </ul>
                         </div>
                     </div>
