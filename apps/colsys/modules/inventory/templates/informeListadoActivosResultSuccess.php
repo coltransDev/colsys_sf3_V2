@@ -28,6 +28,15 @@ $granTotal = 0;
             <th>
                 Id
             </th>
+            <?
+            if( $param=="Hardware" ){
+            ?>
+            <th>
+                Tipo
+            </th>            
+            <?
+            }
+            ?>
             <th>
                 Marca
             </th>
@@ -163,6 +172,15 @@ $granTotal = 0;
             <td>
                 <?=link_to($activo->getCaIdentificador(), "inventory/detalleActivo?idactivo=".$activo->getCaIdactivo(), array("target"=>"_blank"))?>
             </td>
+            <?
+            if( $param=="Hardware" ){
+            ?>
+            <td>
+                <?=$activo->getCaIdtipo()== null?null:($activo->getCaIdtipo()==1?"Notebook":($activo->getCaIdtipo()==2?"Desktop":"Tablet"))?>
+            </td>            
+            <?
+            }
+            ?>
             <td>
                 <?=$activo->getCaMarca()?>
             </td>
