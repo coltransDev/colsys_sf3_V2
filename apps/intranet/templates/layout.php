@@ -105,22 +105,29 @@
             accesos+='<a style="font-weight:600; font-size:20px; line-height:15px; color:#062a7d;" href="http://tracking.opentecnologia.com.co"><b>Tracking Colmas</b></a><br/><br/>';
             accesos+='<a style="font-weight:600; font-size:20px; line-height:15px; color:#062a7d;" href="https://www.colsys.com.co/tracking"><b>Tracking Coltrans</b></a><br/><br/>';
             accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier"><b>Webmail</b></a><br/><br/>';
-            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="http://isodoc.coltrans.com.co"><b>Isodoc</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="https://coltrans.isodoc.co/"><b>Isodoc</b></a><br/><br/>';
             accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="http://sevenet.coltrans.com.co"><b>Sevenet</b></a><br/><br/>';
-            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="http://www.gerenteslatinos.com/aulavirtualgrupo"><b>Aula Virtual</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="https://www.aulacoltrans.com/aulavirtualgrupo"><b>Aula Virtual</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="https://sites.google.com/colmas.com.co/intracolmas/intracolmas"><b>IntraColmas</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="https://sites.google.com/coltrans.com.co/intracoltrans/intracoltrans"><b>IntraColtrans</b></a><br/><br/>';
+            accesos+='<a style="font-weight:600; font-size:20px; line-height:20px; color:#062a7d;" href="https://sap.coltrans.com.co/"><b>SAP 9.3.</b></a><br/><br/>';
 
             $("#div_accesos").html(accesos);
         }else{
+            //accesos+='<a href="https://www.colsys.com.co/" class="myButton" style="background-image: url(/intranet/images/colsys2_navidad.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';    
             accesos+='<a href="https://www.colsys.com.co/" class="myButton" style="background-image: url(/intranet/images/colsys2.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';    
             accesos+='<br/><br/><a href="http://tracking.opentecnologia.com.co" class="myButton" style="background-image: url(/intranet/images/ColmasTransparente.png); background-repeat: no-repeat;">Tracking</a>';
             accesos+='<br/><br/><a href="https://www.colsys.com.co/tracking" class="myButton" style="background-image: url(/intranet/images/ColtransTransparente.png); background-repeat: no-repeat;">Tracking</a>';
             accesos+='<br/><br/><a href="https://accounts.google.com/ServiceLogin?service=mail&continue=https://mail.google.com/mail/#identifier" class="myButton" style="background-image: url(/intranet/images/GmailTransparente.png); background-repeat: no-repeat;">Webmail</a>';
-            accesos+='<br/><br/><a href="http://isodoc.coltrans.com.co" class="myButton" style="background-image: url(/intranet/images/iso1.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/><a href="https://coltrans.isodoc.co/" class="myButton" style="background-image: url(/intranet/images/iso1.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
             accesos+='<br/><br/><a href="http://sevenet.coltrans.com.co" class="myButton" style="background-image: url(/intranet/images/sevenet.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
-            accesos+='<br/><br/><a href="http://www.gerenteslatinos.com/aulavirtualgrupo" class="myButton" style="background-image: url(/intranet/images/aula_virtual.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/><a href="https://www.aulacoltrans.com/aulavirtualgrupo" class="myButton" style="background-image: url(/intranet/images/aula_virtual.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/><a href="https://sites.google.com/colmas.com.co/intracolmas/intracolmas" class="myButton" style="background-image: url(/intranet/images/logo_intracolmas.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/><a href="https://sites.google.com/coltrans.com.co/intracoltrans/intracoltrans" class="myButton" style="background-image: url(/intranet/images/logo_intracoltrans.png); background-repeat: no-repeat;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
+            accesos+='<br/><br/><a href="https://sap.coltrans.com.co/" class="myButton" style="background-image: url(/intranet/images/icons/sap.jpeg); background-repeat: no-repeat; background-position:center;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>';
             accesos+='<br/><br/>';
 
             $("#div_accesos").html(accesos);
         }
     })
-</script>7
+</script>
