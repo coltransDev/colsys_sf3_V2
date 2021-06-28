@@ -1204,6 +1204,10 @@ class reportesNegActions extends sfActions {
                     $reporte->setCaDeclaracionant(false);
                     $reporte->setProperty("subarancel", NULL);
                 }
+                
+                $reporte->setDatosJson("idcoldepositos",$request->getParameter("idcoldepositos"));
+                $reporte->setDatosJson("idciudeposito",$request->getParameter("idciudeposito"));
+                $reporte->setDatosJson("ciudeposito",$request->getParameter("ciudeposito"));
             }
             if (count($errors) > 0) {
                 $this->responseArray = array("success" => false, "idreporte" => $idreporte, "redirect" => $redirect, "errors" => $errors, "texto" => $texto);
@@ -2141,6 +2145,14 @@ class reportesNegActions extends sfActions {
                     else
                         $reporte->setCaIdbodega(1);
                 }
+                
+                //print_r($request->getParameter("dim_alto"));
+                //echo json_encode($request->getParameter("dim_alto"));
+                //exit;
+                $reporte->setDatosJson("dim_alto", ($request->getParameter("dim_alto")));
+                $reporte->setDatosJson("dim_ancho", ($request->getParameter("dim_ancho")));
+                $reporte->setDatosJson("dim_profundo", ($request->getParameter("dim_profundo")));
+                
             }
 
             if (count($errors) > 0)
@@ -2677,49 +2689,6 @@ class reportesNegActions extends sfActions {
             $data["preferencias"] = utf8_encode($reporte->getCaPreferenciasClie());
 
             $data["ca_comodato"] = ($reporte->getCaComodato() == "Sí" || $reporte->getCaComodato() == "on" ) ? true : false;
-            /*if ($reporte->getCaIdproveedor()) {
-                $values = explode("|", $reporte->getCaIdproveedor());
-                for ($i = 0; $i < count($values); $i++) {
-                    $tercero = Doctrine::getTable("Tercero")->find($values[$i]);
-                    if ($tercero) {
-                        $data["idproveedor" . $i] = $values[$i];
-                        $data["proveedor" . $i] = Utils::replace($tercero->getCaNombre());
-                    }
-                }
-            }
-
-            if ($reporte->getCaIncoterms()) {
-                $values = explode("|", $reporte->getCaIncoterms());
-                for ($i = 0; $i < count($values); $i++) {
-                    $data["incoterms" . $i] = $values[$i];
-                }
-            }
-
-            if ($reporte->getCaOrdenProv()) {
-                $values = explode("|", $reporte->getCaOrdenProv());
-                for ($i = 0; $i < count($values); $i++) {
-                    $data["orden_pro" . $i] = utf8_encode($values[$i]);
-                }
-            }*/
-            /*$proveedores = $reporte->getRepProveedor(array("ca_idrepproveedor","ASC"));
-            //echo count($provedores);
-            
-            
-            if(count($proveedores)>0){
-                $i=0;
-                foreach($proveedores as $proveedor){
-                    //echo $proveedor->getCaIdrepproveedor()."<br/>";
-                    $tercero = Doctrine::getTable("Tercero")->find($proveedor->getCaIdproveedor());
-                    if ($tercero) {
-                        $data["idrepproveedor".$i] = $proveedor->getCaIdrepproveedor();
-                        $data["idproveedor" . $i] = $proveedor->getCaIdproveedor();
-                        $data["proveedor" . $i] = Utils::replace($tercero->getCaNombre());
-                        $data["incoterms" . $i] = $proveedor->getCaIncoterms();
-                        $data["orden_pro" . $i] = $proveedor->getCaOrdenProv();
-            }
-                    $i++;                    
-                }
-            }*/
 
             $proveedores = $reporte->getProveedores();
             //print_r($proveedores);
@@ -2802,23 +2771,22 @@ class reportesNegActions extends sfActions {
             $data["terrestre"] = $reporte->getDatosJson("terrestre");
             
             if(is_numeric($reporte->getDatosJson("idreporteT")) && $reporte->getDatosJson("idreporteT")>0)
-            {            
+            {
                 $data["idreporteT"] = $reporte->getDatosJson("idreporteT");
                 $reporteT = Doctrine::getTable("Reporte")->find($reporte->getDatosJson("idreporteT"));
                 if($reporteT)
-                    $data["reporteT"] = $reporteT->getCaConsecutivo();                
+                    $data["reporteT"] = $reporteT->getCaConsecutivo();
             }
             else
-            {                
+            {
                 $reporteT = Doctrine::getTable("Reporte")
                 ->createQuery("r")
-                ->select("*")                
+                ->select("*")
                 ->where("r.ca_consecutivo=? ", array($reporte->getDatosJson("idreporteT")))
                 ->orderBy("r.ca_idreporte DESC")
                 ->fetchOne();
                 if($reporteT)
                     $data["reporteT"] = $reporteT->getCaConsecutivo();
-                
             }
 
             $repseguro = Doctrine::getTable("RepSeguro")->find($reporte->getCaIdreporte());
@@ -3002,7 +2970,15 @@ class reportesNegActions extends sfActions {
             }
             if($reporte->getProperty("idticket")){
                 $data["idticket"] = $reporte->getProperty("idticket");
-            }            
+            }
+            
+            $data["idcoldepositos"]=utf8_encode($reporte->getDatosJson("idcoldepositos"));
+            $data["idciudeposito"]=utf8_encode($reporte->getDatosJson("idciudeposito"));
+            $data["ciudeposito"]= utf8_encode($reporte->getDatosJson("ciudeposito"));
+            
+            $data["dim_alto"]=$reporte->getDatosJson("dim_alto");
+            $data["dim_ancho"]=$reporte->getDatosJson("dim_ancho");
+            $data["dim_profundo"]=$reporte->getDatosJson("dim_profundo");
         }
         $this->responseArray = array("success" => true, "data" => $data);
         $this->setTemplate("responseTemplate");
@@ -4362,7 +4338,7 @@ class reportesNegActions extends sfActions {
                         ->createQuery("c")
                         ->select("c.ca_email,c.ca_login")
                         ->innerJoin("c.Sucursal s")
-                        ->where("s.ca_nombre = ? and c.ca_cargo=?", array($sucursal->getCaNombre(), 'Coordinador Control Riesgo Aduana'));
+                        ->where("c.ca_activo = true and s.ca_nombre = ? and c.ca_cargo=?", array($sucursal->getCaNombre(), 'Coordinador Control Riesgo Aduana'));
                 $jef_adu = $q->execute();
                 foreach ($jef_adu as $j) {
                     $gruposObligatorios["colmas"][] = $j->getCaLogin();
@@ -4459,7 +4435,7 @@ class reportesNegActions extends sfActions {
                 $asunto = "*ANT*" . $asunto;
                 $email->setCaPriority(1);
             }
-            $email->setCaSubject($asunto);
+            $email->setCaSubject(substr($asunto,0,249));
             $email->setCaBody("Notificacion de Reporte de negocios");
 
             $mensaje = Utils::replace($request->getParameter("mensaje")) . "<br />";
