@@ -136,6 +136,7 @@ Ext.define('Colsys.Riesgos.FormEvento', {
                 {
                     xtype: 'Colsys.Widgets.WgSucursalesEmpresa',
                     fieldLabel: 'Sucursal',
+                    allowBlank: false,
                     name: 'idsucursal',
                     id: 'idsucursal',
                     empresa: 2

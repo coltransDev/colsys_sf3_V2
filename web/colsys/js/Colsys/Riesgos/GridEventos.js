@@ -115,7 +115,7 @@ Ext.define('Colsys.Riesgos.GridEventos', {
             e.stopEvent();
             var idriesgo = this.idriesgo;
             var permisos = this.permisos;
-            
+            console.log("118",record);
             var record = this.store.getAt(index);                        
             var menu = new Ext.menu.Menu({
                 items: [
@@ -125,6 +125,38 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                         iconCls: 'application_form_edit',
                         handler: function() {
                             Ext.getCmp("grid-eve"+idriesgo).ventanaEvento(record);
+                        }
+                    },
+                    {
+                        text: 'Eliminar',
+                        disabled: !permisos.eventos.eliminar,
+                        iconCls: 'fa fa-trash-alt',
+                        handler: function() {
+                            Ext.MessageBox.confirm('Confirmacion', 'Este proceso no se puede deshacer: Est&aacute; seguro que desea eliminar el evento: "'+ record.data.descripcion+'" ?',function (e) {
+                                if (e == 'yes') {
+                                    var box = Ext.MessageBox.wait('Procesando', 'Eliminando Evento');
+                                    Ext.Ajax.request({
+                                        url: '/riesgos/eliminarEvento',
+                                        params: {
+                                            idevento: record.data.idevento
+                                        },
+                                        success: function (response, opts) {
+                                            var res = Ext.util.JSON.decode(response.responseText);
+
+                                            if(res.success){
+                                                Ext.MessageBox.alert("Mensaje", res.mensaje);
+                                            }else{
+                                                Ext.MessageBox.alert("Mensaje", 'Se presento un error eliminando<br>' + res.errorInfo);   
+                                            }
+                                            Ext.getCmp("grid-eve"+idriesgo).getStore().reload();                                                                                            
+                                        },
+                                        failure: function (response, opts) {
+                                            Ext.MessageBox.alert("Colsys", "Se presento el siguiente error " + response.status);
+                                            box.hide();
+                                        }
+                                    });
+                                }
+                            })                            
                         }
                     }
                 ]
@@ -329,7 +361,7 @@ Ext.define('Colsys.Riesgos.GridEventos', {
                     {
                         header: "Sucursal",
                         dataIndex: 'sucursal' + this.idgrid,
-                        hideable: true,
+                        hideable: true,                        
                         sortable: true                        
                     },                    
                     {
