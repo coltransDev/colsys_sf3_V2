@@ -408,7 +408,8 @@ $headers = json_encode($headers);
                                     break;
                                 case 2://Empresa
                                     if(permisos){
-                                        console.log("case 2");                                        
+                                        console.log("case 2");
+                                        idempresa = idempresa?idempresa:"0";
                                             var menu = new Ext.menu.Menu({
                                                 id: 'menuContextual-idempresa-'+idempresa,
                                                 items: [{

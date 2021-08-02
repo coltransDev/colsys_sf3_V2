@@ -878,8 +878,20 @@ class riesgosActions extends sfActions {
             $texto = sfContext::getInstance()->getController()->getPresentationFor('riesgos', 'emailEvento');
             $email->setCaBodyhtml($texto);
             
-//            $usuprocesos = Doctrine::getTable("RsgoPermisos")->findBy("ca_idproceso", $proceso->getCaIdproceso());
-            $admons = UsuarioTable::getUsuariosxPerfil("admon-riesgos-colsys");
+            $admons = UsuarioTable::getUsuariosxPerfil("admon-riesgos-colsys");                    
+            
+            $q = Doctrine::getTable("RsgoPermisos")
+                    ->createQuery("rp")
+                    ->select("ca_login")
+                    ->leftJoin("rp.ColsysConfigValue cf")
+                    ->innerjoin("rp.Usuario u")
+                    ->innerJoin("u.Sucursal s")
+                    ->where("ca_idproceso = ?",$proceso->getCaIdproceso())
+                    ->addWhere("cf.ca_idconfig = 285 and ca_idperfil in (1,2)")
+                    ->addWhere("s.ca_nombre in ('Bogotá D.C.') OR s.ca_nombre IN (SELECT sc.ca_nombre FROM Sucursal sc WHERE sc.ca_idsucursal = '".$request->getParameter('idsucursal')."') AND ca_idperfil = 2")
+                    ->distinct();            
+
+            $usuprocesos = $q->execute();
                     
             foreach($usuprocesos as $user){                
                 $logins[] = $user->getCaLogin();
@@ -2282,6 +2294,26 @@ class riesgosActions extends sfActions {
             $riesgo->delete($conn);
             $conn->commit();
             $this->responseArray = array("success" => true, "mensaje"=> "Riesgo eliminado correctamente!");
+        } catch (Exception $e){
+            $conn->rollback();
+            $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode($e->getMessage()));
+        }
+        
+        $this->setTemplate("responseTemplate");       
+    }
+
+    public function executeEliminarEvento(sfWebRequest $request){
+        
+        $idevento = $request->getParameter("idevento");
+       
+        $conn = Doctrine::getTable("Riesgos")->getConnection();
+        $conn->beginTransaction();
+        
+        try{
+            $evento = Doctrine::getTable("RsgoEventos")->find($idevento);
+            $evento->delete($conn);
+            $conn->commit();
+            $this->responseArray = array("success" => true, "mensaje"=> "Evento eliminado correctamente!");
         } catch (Exception $e){
             $conn->rollback();
             $this->responseArray = array("success" => false, "errorInfo"=> utf8_encode($e->getMessage()));
