@@ -172,7 +172,7 @@ class widgets5Actions extends sfActions {
             
             if ($d["m_ca_impoexpo"] == Constantes::IMPO && $d["m_ca_transporte"] == Constantes::AEREO)
                 $mercancia_desc = utf8_encode($d["r_ca_mercancia_desc"]);
-            else if ($d["m_ca_impoexpo"] == Constantes::IMPO && $d["m_ca_transporte"] == Constantes::MARITIMO)
+            else if (($d["m_ca_impoexpo"] == Constantes::IMPO || $d["m_ca_impoexpo"] == Constantes::TRIANGULACION ) && $d["m_ca_transporte"] == Constantes::MARITIMO)
                 $mercancia_desc = utf8_encode($d["rvp_ca_orden_prov"]." ".$d["r_ca_orden_clie"]." ".$d["r_ca_mercancia_desc"]);
             else
                 $mercancia_desc = "";
@@ -204,6 +204,16 @@ class widgets5Actions extends sfActions {
                     $plazo=$credito->getCaDias();
             }
             
+            $reg = Doctrine::getTable("Cliente")->find($d["cl_ca_idcliente"]);
+            $contactos=$reg->getContactoFE();
+            $emailContactos=array();
+            foreach($contactos as $c)
+            {
+                if (filter_var(utf8_encode($c["ca_email"]), FILTER_VALIDATE_EMAIL))
+                   $emailContactos[]=utf8_encode($c["ca_email"]);
+            }
+            
+            
             $this->data[] = array(
                 "id" => $d["h_ca_idhouse"], "name" => utf8_encode($d["h_ca_doctransporte"] . "-" . utf8_encode($d["cl_ca_compania"])),
                 "idcliente" => $d["cl_ca_idcliente"], "cliente" => utf8_encode($d["cl_ca_compania"]),
@@ -214,6 +224,7 @@ class widgets5Actions extends sfActions {
                         . "y la tasa de cambio mencionada en la factura; en caso de pagar la factura con la menor de las tasas, se generará una factura adicional por diferencia en "
                         . "tipo de cambio.  Para conocer la TRM del día de pago puede comunicarse con nuestro PBX seleccionando la opción 1"),
                 "plazo"=>$plazo,
+                "emailfe"=>$emailContactos,
                 "class" => ($d["r_"] > 0 ? "" : "row_pink")
             );
         }        
@@ -249,6 +260,7 @@ class widgets5Actions extends sfActions {
         $sql="SELECT comp.ca_idcomprobante,comp.ca_consecutivo,comp.ca_valor,ca_tcambio FROM ino.tb_comprobantes comp WHERE comp.ca_idmaster = ". $this->idmaster."  
                  AND comp.ca_fchanulado IS null AND comp.ca_id='".$this->idcliente."' AND comp.ca_idcomprobante::text NOT IN 
                  (SELECT jsonb_array_elements_text(c.ca_datos->'idanticipo') FROM ino.tb_comprobantes c
+                 inner join ino.tb_tipos_comprobante t ON c.ca_idtipo=t.ca_idtipo and t.ca_tipo='F'
                  inner join ino.tb_house h ON h.ca_idhouse=c.ca_idhouse
 			WHERE h.ca_idmaster = comp.ca_idmaster AND c.ca_idcomprobante != ".$this->idcomprobante." )";
         
@@ -282,17 +294,19 @@ class widgets5Actions extends sfActions {
         if (count($this->tipoComprobante) < 1) {
             $this->tipoComprobante = array('F', 'C');
         }
+        
         $impoexpo="";
         if($idmaster>0)
         {
             $master = Doctrine::getTable("InoMaster")->find($idmaster);
             $datos = json_decode($master->getCaDatos());
-            $idempresa=$datos->idempresa;
+            $idempresa=(!$datos->idempresa)?"2":$datos->idempresa;
             $transporte=$master->getCaTransporte();
         }
         if($idempresa=="" && $origen!="consulta")
             $idempresa = ($request->getParameter("idempresa") != "") ? $request->getParameter("idempresa") : $user->getIdempresa();
 
+        
         $q = Doctrine::getTable("InoTipoComprobante")
                 ->createQuery("t")
                 ->select("t.ca_idtipo, t.ca_tipo, t.ca_comprobante, t.ca_titulo, t.ca_idempresa,t.ca_idsucursal,s.ca_direccion,s.ca_telefono,s.ca_datos")
@@ -302,9 +316,9 @@ class widgets5Actions extends sfActions {
                 ->whereIn("t.ca_tipo", $this->tipoComprobante)
                 ->addwhere("ca_idempresa=? and t.ca_activo=?", array($idempresa, true))
                 ->addOrderBy("t.ca_tipo, t.ca_comprobante");
-
+        //print_r($this->tipoComprobante);
         if ($aplicacion) {
-            $q->addWhere("t.ca_aplicacion = ?", $aplicacion);
+            $q->addWhere("t.ca_aplicacion in ( $aplicacion,2 )");
         }
 
         $tipos = $q->setHydrationMode(Doctrine::HYDRATE_SCALAR)->execute();
@@ -328,18 +342,10 @@ class widgets5Actions extends sfActions {
             else
             {
                 $detalle="";
-            }
-            
-            /*$datos=json_decode($tipo["s_ca_datos"]);
-            ,"contacto"=>$contacto,"direccion"=> utf8_encode($tipo["s_ca_direccion"]),
-                "telefono"=>utf8_encode($tipo["s_ca_telefono"])
-             * 
-             */
-            //echo "<pre>";print_r($datosSucursal);echo "</pre>";
-            
+            }            
         }
         
-        foreach ($tipos as $tipo) {            
+        foreach ($tipos as $tipo) {
             $contacto=$datos->contacto;
             $tipoStr = "";
             $tipoStr .= $tipo["t_ca_tipo"] . "-" . str_pad($tipo["t_ca_comprobante"], 2, "0", STR_PAD_LEFT) . " " . $tipo["t_ca_titulo"];
@@ -348,6 +354,7 @@ class widgets5Actions extends sfActions {
                 "idsucursal" => $tipo["t_ca_idsucursal"],"detalle"=>$detalle
                 );
         }
+        //print_r($this->data);
         $this->responseArray = array("root" => $this->data, "total" => count($this->data), "success" => true, "debug" => $q->getSqlQuery());
         $this->setTemplate("responseTemplate");
     }
@@ -596,7 +603,7 @@ class widgets5Actions extends sfActions {
 
         $sucursales = $q->execute();
         $sucursal = array();
-        //print_r($sucursales);        
+//        print_r($sucursales);        
         foreach ($sucursales as $suc) {
 
             $idempresa = ($idempresa == "") ? $suc["tcomp_ca_idempresa"] : $idempresa;
@@ -612,16 +619,28 @@ class widgets5Actions extends sfActions {
                 $plazo=$credito->getCaDias();
             
             
-                        
+            $reg = Doctrine::getTable("Cliente")->find($suc["s_ca_id"]);
+            $contactos=$reg->getContactoFE();
+            $emailContactos=array();
+            foreach($contactos as $c)
+            {
+                $c["ca_email"]=trim($c["ca_email"]);
+                if (filter_var($c["ca_email"], FILTER_VALIDATE_EMAIL)) {
+                    $emailContactos[]=$c["ca_email"];
+                }
+            }
+
             $sucursal[] = array(
                 "idsucursal" => $suc["s_ca_idsucursal"],
                 "ciudad" => utf8_encode($suc["c_ca_ciudad"]),
                 "direccion" => utf8_encode($suc["s_ca_direccion"]),
                 "idcliente" => $suc["s_ca_id"],
                 "compania" => utf8_encode($suc["ids_ca_nombre"] . "-" . $suc["c_ca_ciudad"]),
-                "plazo"=>$plazo
+                "plazo"=>$plazo,
+                "emailfe"=>$emailContactos
             );
         }
+//        print_r($sucursal); 
         $this->responseArray = array("root" => $sucursal, "total" => count($sucursal), "success" => true, "debug"=>$sql);
         $this->setTemplate("responseTemplate");
     }
@@ -1468,6 +1487,7 @@ class widgets5Actions extends sfActions {
         $tipos = Doctrine::getTable("InoTipoComprobante")
                 ->createQuery("t")
                 //->addWhere("t.ca_idempresa = ?", $this->getUser()->getIdempresa())
+                ->orderBy("ca_idempresa ASC, ca_idtipo ASC")
                 ->execute();
         $data = array();
         foreach ($tipos as $tipo) {
@@ -1480,6 +1500,7 @@ class widgets5Actions extends sfActions {
                 "titulo"=>utf8_encode($tipo->getCaTipo() . $tipo->getCaComprobante()." ".$tipo->getCaTitulo()),
                 "empresa"=> utf8_encode($empresa),
                 "aplicacion"=>$aplicacion,
+                "numeracion"=>"Desde:".$tipo->getCaInicialAut()." - Hasta: ".$tipo->getCaFinalAut(),
                 "activo"=>$tipo->getCaActivo()?true:false);
         }
         $this->responseArray = array("success" => true, "root" => $data);
@@ -1639,8 +1660,7 @@ class widgets5Actions extends sfActions {
                 ->select("t.ca_tipo, t.ca_nombre")
                 ->from("IdsTipo t")
                 ->addOrderBy("t.ca_nombre ASC")
-                ->setHydrationMode(Doctrine::HYDRATE_SCALAR)
-                ->limit(40);
+                ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
         if ($aplicacion) {
             $q->addWhere("t.ca_aplicacion = ?", $aplicacion);
         }
@@ -1771,8 +1791,10 @@ class widgets5Actions extends sfActions {
 
             for ($i = 0; $i < count($clientes); $i++) {
                 $clientes[$i] = $clientes[$i];
+                $clientes2[$i] = "'".$clientes[$i]."'";
             }
-            $listaclientes = implode(",", $clientes);
+            $listaclientes = implode(",", $clientes);            
+            $listaclientes2 = implode(",", $clientes2);            
 
             //echo $listaclientes;
 
@@ -2018,11 +2040,12 @@ class widgets5Actions extends sfActions {
             if ($transporte == "Marítimo") {
                 $join = "
                     LEFT JOIN (
-                        SELECT rp_1.ca_consecutivo, id_1.ca_id AS ca_idlinea, id_1.ca_nombre::text AS ca_linea
+                        SELECT max(rp_1.ca_version), rp_1.ca_consecutivo, im.ca_idlinea AS ca_idlinea, id_1.ca_nombre::text AS ca_linea
                         FROM tb_reportes rp_1
                           JOIN tb_inoclientes_sea ic ON rp_1.ca_idreporte = ic.ca_idreporte
                           JOIN tb_inomaestra_sea im ON im.ca_referencia::text = ic.ca_referencia::text
-                          JOIN ids.tb_ids id_1 ON id_1.ca_id = im.ca_idlinea) sea ON sea.ca_consecutivo = i.ca_consecutivo";
+                            JOIN ids.tb_ids id_1 ON id_1.ca_id = im.ca_idlinea
+                        GROUP BY rp_1.ca_consecutivo, im.ca_idlinea, id_1.ca_nombre) sea ON sea.ca_consecutivo = i.ca_consecutivo";
             } else {
                 $join = "
                     LEFT JOIN (
@@ -2041,11 +2064,14 @@ class widgets5Actions extends sfActions {
                     LEFT JOIN vi_repproveedores r ON (i.ca_idreporte = r.ca_idreporte) 
                     $join
                     LEFT JOIN (
-                        SELECT rp_1.ca_consecutivo, id_1.ca_id AS nvaidlinea, id_1.ca_nombre::text AS nvalinea
+                        SELECT max(rp_1.ca_version), rp_1.ca_consecutivo, m.ca_idlinea AS nvaidlinea, id_1.ca_nombre::text AS nvalinea 
                         FROM tb_reportes rp_1 
                                 JOIN ino.tb_house h ON rp_1.ca_idreporte = h.ca_idreporte 
                                 JOIN ino.tb_master m ON m.ca_idmaster::text = h.ca_idmaster::text 
-                                JOIN ids.tb_ids id_1 ON id_1.ca_id = m.ca_idlinea) nvoino ON nvoino.ca_consecutivo = i.ca_consecutivo
+                                JOIN ids.tb_ids id_1 ON id_1.ca_id = m.ca_idlinea
+                        WHERE m.ca_transporte in ('Marítimo','Aéreo')
+                        GROUP BY rp_1.ca_consecutivo, m.ca_idlinea, id_1.ca_nombre
+                    ) nvoino ON nvoino.ca_consecutivo = i.ca_consecutivo
                     LEFT JOIN (
                         SELECT sta.ca_fchsalida, sf.ca_consecutivo
                         FROM tb_repstatus sta
@@ -2054,7 +2080,9 @@ class widgets5Actions extends sfActions {
                                 FROM tb_repstatus sta_1
                                         JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte
                                 WHERE sta_1.ca_idetapa = ANY (ARRAY['IMCCR'::bpchar, 'IACCR'::bpchar])
-                                GROUP BY p.ca_consecutivo) sf ON sta.ca_idstatus = sf.ca_idstatus) sq ON sq.ca_consecutivo::text = i.ca_consecutivo::text                    
+                                GROUP BY p.ca_consecutivo
+                            ) sf ON sta.ca_idstatus = sf.ca_idstatus
+                    ) sq ON sq.ca_consecutivo::text = i.ca_consecutivo::text                    
             WHERE i.ca_transporte = '$transporte' AND i.ca_idcliente IN ($listaclientes)";
             
             //echo $sql;
@@ -2074,7 +2102,7 @@ class widgets5Actions extends sfActions {
                 $sql .= " and i.ca_idtrafico = '$origen'";
 
             $sql .=" ORDER BY i.ca_fchllegada_cd";
-            //print_r($sql);
+//            die($sql);
 
             $con = Doctrine_Manager::getInstance()->connection();
 
@@ -2141,6 +2169,7 @@ class widgets5Actions extends sfActions {
 
                 $gridpie[$mes]["mes"] = $mes;
                 $gridpie[$mes]["peso"] += $peso[0];
+                $gridpie[$mes][$trafico] += $peso[0];
 
                 /* if ($mes == "Dic"){
                   $pes .= "" . $peso[0] . " + ";
@@ -2225,78 +2254,46 @@ class widgets5Actions extends sfActions {
                 
                 $idcliente = $indicador["ca_idcliente"];
                 
+                $arregloColumnas = array();
+                $arregloColumnas[] = array('ca_traorigen','ca_ciuorigen','ca_idcliente','ca_modalidad');
+                $arregloColumnas[] = array('ca_traorigen','ca_ciuorigen','ca_transportista','ca_idcliente');
+                $arregloColumnas[] = array('ca_traorigen','ca_ciuorigen','ca_idcliente');                                
+                $arregloColumnas[] = array('ca_traorigen','ca_ciuorigen','ca_transportista');
+                $arregloColumnas[] = array('ca_traorigen','ca_idcliente');                
                 
+                $arregloOpciones = array();
+                $arregloOpciones[] = array($idtrafico,$idorigen,$idcliente,$indicador["modalidad"]);
+                $arregloOpciones[] = array($idtrafico,$idorigen,$indicador["idlinea"],$idcliente);
+                $arregloOpciones[] = array($idtrafico,$idorigen,$idcliente);                
+                $arregloOpciones[] = array($idtrafico,$idorigen,$indicador["idlinea"]);                
+                $arregloOpciones[] = array($idtrafico,$idcliente);                
                 
-                $columnas1 = array('ca_traorigen','ca_ciuorigen','ca_idcliente','ca_modalidad');
-                $opciones1 = array($idtrafico,$idorigen,$idcliente,$indicador["modalidad"]);
-                
-                $q = Doctrine::getTable("IdgClientes")
+                foreach($arregloColumnas as $key => $columnas){
+                    $metaTT = $jsonTT = null;
+                    $q = Doctrine::getTable("IdgClientes")
                         ->createQuery("i")
                         ->addWhere("i.ca_transporte like ?", $transporte)
                         ->addWhere("i.ca_tradestino like ?", $idtradestino)
                         ->addWhere("i.ca_ciudestino like ?", $iddestino);                        
                         
-                foreach($columnas1 as $key => $val){
-                    $q->addWhere("$val like ?", $opciones1[$key]);
-                }
-                $idgTT = $q->fetchOne();
-                
-                if ($idgTT) {
-                    $jsonTT = json_decode($idgTT->getCaIndicador());
-                    $metaTT = $jsonTT->tiempotransito;
-                }else{
-                    $columnas = array('ca_traorigen','ca_ciuorigen','ca_transportista','ca_idcliente');
-                    $opciones = array($idtrafico,$idorigen,$indicador["idlinea"],$idcliente);
+                    foreach($columnas as $keyColumna => $nombreColumna){
+                        $q->addWhere("$nombreColumna like ?", $arregloOpciones[$key][$keyColumna]);
+                    }
                     
-                    foreach($columnas as $key => $val){
-                        $q->addWhere("$val like ?", $opciones[$key]);
-                    }
-                    $idgTT = $q->fetchOne();
-
-                    if ($idgTT) {
+                    $idgTT = $q->fetchOne();                    
+                    
+                    if ($idgTT) {                        
                         $jsonTT = json_decode($idgTT->getCaIndicador());
-                        $metaTT = $jsonTT->tiempotransito;
-                    }else{
-                        $columnas = array('ca_traorigen','ca_ciuorigen','ca_idcliente');
-                        $opciones = array($idtrafico,$idorigen,$idcliente);
-                        
-                        foreach($columnas as $key => $val){
-                            $q->addWhere("$val like ?", $opciones[$key]);
-                        }
-                        $idgTT = $q->fetchOne();
-
-                        if ($idgTT) {
-                            $jsonTT = json_decode($idgTT->getCaIndicador());
-                            $metaTT = $jsonTT->tiempotransito;
-                        }else{
-                            $columnas = array('ca_traorigen','ca_ciuorigen','ca_transportista');
-                            $opciones = array($idtrafico,$idorigen,$indicador["idlinea"]);
-                            
-                            foreach($columnas as $key => $val){
-                                $q->addWhere("$val like ?", $opciones[$key]);
-                            }
-                            $idgTT = $q->fetchOne();
-
-                            if ($idgTT) {
-                                $jsonTT = json_decode($idgTT->getCaIndicador());
-                                $metaTT = $jsonTT->tiempotransito;
-                            }else{
-                                
-                                foreach($columnas as $key => $val){
-                                    $q->addWhere("$val like ?", $opciones[$key]);
-                                }
-                                $idgTT = $q->fetchOne();
-
-                                if ($idgTT) {
-                                    $jsonTT = json_decode($idgTT->getCaIndicador());
-                                    $metaTT = $jsonTT->tiempotransito;
-                                }else{
-                                    $metaTT = "SIN META";
-                                }
-                            }
-                        }
+                        $metaTT = $jsonTT->tiempotransito;                        
+                        $metaFct = $jsonTT->idgfacturacion;                        
+                        break;
                     }
                 }
+                
+//                die($metaFct);
+                
+                if(!$metaTT)
+                    $metaTT = "SIN META";                
                 
                 if (!$datagtr[$mes]["porcentaje"]) {
                     $datagtr[$mes]["porcentaje"] = 0;
@@ -2384,25 +2381,41 @@ class widgets5Actions extends sfActions {
                 }
 
                 //Notas: Para a?reo son 2 d?as despu?s que llega la carga.(Facturacion)
-                if ($transporte == Constantes::AEREO) {
-                    $meta = 2;
-                } else {
-                    $idcliente = $indicador["ca_idcliente"];
-                    $idgclienteFact = Doctrine::getTable("IdgClientes")
-                            ->createQuery("i")
-                            ->addWhere("i.ca_transporte like ?", $transporte)
-                            ->addWhere("i.ca_traorigen like ?", $idtrafico)
-                            ->addWhere("i.ca_idcliente like ?", $idcliente)
-                            ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
-                            ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
-                            ->fetchOne();
-                    if ($idgclienteFact) {
-                        $jsonf = json_decode($idgclienteFact->getCaIndicador());
-                        $meta = $jsonf->idgfacturacion;
-                    } else {
-                        $meta = 0; // Maximo el mismo día que llega la carga
-                    }
-                }
+//                if ($transporte == Constantes::AEREO) {
+//                    $meta = 2;
+//                } else {
+//                    $idcliente = $indicador["ca_idcliente"];
+//                    $idgclienteFact = Doctrine::getTable("IdgClientes")
+//                            ->createQuery("i")
+//                            ->addWhere("i.ca_transporte like ?", $transporte)
+//                            ->addWhere("i.ca_traorigen like ?", $idtrafico)
+//                            ->addWhere("i.ca_idcliente like ?", $idcliente)
+//                            ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
+//                            ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
+//                            ->fetchOne();
+//                    if ($idgclienteFact) {
+//                        $jsonf = json_decode($idgclienteFact->getCaIndicador());
+//                        $meta = $jsonf->idgfacturacion;                        
+//                    } else{
+//                        $idgclienteFact2 = Doctrine::getTable("IdgClientes")
+//                            ->createQuery("i")
+//                            ->addWhere("i.ca_transporte like ?", $transporte)                            
+//                            ->addWhere("i.ca_idcliente like ?", $idcliente)
+//                            ->addWhere("i.ca_periodo_inicial < ?", $indicador["ca_fchllegada_cd"])
+//                            ->addWhere("i.ca_periodo_final > ?", $indicador["ca_fchllegada_cd"])
+//                            ->fetchOne();
+//                        if ($idgclienteFact2) {
+//                            $jsonf = json_decode($idgclienteFact2->getCaIndicador());
+//                            $meta = $jsonf->idgfacturacion;                        
+//                        }else {
+//                            $meta = 0; // Maximo el mismo día que llega la carga
+//                        }
+//                    }
+//                }
+                if(!$metaFct)
+                    $meta = "SIN META";  
+                else
+                    $meta = $metaFct;
 
                 if ($diffFchAsn <= $meta) {
                     $cf = 1;
@@ -2413,6 +2426,9 @@ class widgets5Actions extends sfActions {
                     $gridfacturacion[$mes]["nocumple"] += 1;
                 }
                 $datafacturacion[$mes]["porcentaje"] = round(($datafacturacion[$mes]["cumplimientollegada"] * 100) / $datafacturacion[$mes]["negocios"]);
+                
+//                echo "<pre>";print_r($datafacturacion);echo "</pre>";
+//                echo "meta".$meta."-".$transporte."-".$idtrafico."-".$idcliente."-".$indicador["ca_fchllegada_cd"]."-".$indicador["ca_fchllegada_cd"];
 
                 $metav = 0;
                 if ($indicador["modalidad"] == "LCL" || $indicador["mod"] == "COLOADING") {
@@ -2534,6 +2550,70 @@ class widgets5Actions extends sfActions {
                     "restazarpe" => $restazarpe
                 );
             }
+            //exit;
+//            exit();
+            /* Gráfica para mostrar el total facturado por mes*/
+            $sql = "
+                SELECT                    
+                    date_part('year'::text, c.ca_fchllegada) AS ca_ano,
+                    to_char(c.ca_fchllegada::timestamp with time zone, 'Mon'::text) AS ca_mes,
+                    c.ca_idfacturado,
+                    c.ca_fchllegada as ca_fchllegada,
+                    c.ca_nomfacturado,
+                    c.ca_idreporte,
+                    c.ca_noreporte as ca_consecutivo,
+                    c.ca_idtraorigen as ca_idtrafico,
+                    c.ca_traorigen AS ca_traorigen,
+                    c.ca_origen AS ca_idorigen,
+                    c.ca_ciuorigen AS ca_ciuorigen,
+                    c.ca_destino AS ca_iddestino,
+                    c.ca_ciudestino AS ca_ciudestino,
+                    c.ca_transporte,
+                    CASE
+                            WHEN c.ca_modalidad::text = 'COLOADING'::text THEN 'LCL'::character varying
+                            ELSE c.ca_modalidad
+                    END AS modalidad,
+                    c.ca_modalidad AS mod,
+                    c.ca_doctransporte,
+                    c.ca_fchcomprobante,
+                    c.ca_consecutivo,
+                    c.ca_valor as ca_valor,
+                    c.ca_valor2 as ca_valor2,
+                    c.ca_idmoneda as ca_idmoneda,
+                    c.ca_tcambio
+                FROM ino.vi_consulta_comprobantes c
+                WHERE c.ca_transporte = '$transporte' AND c.ca_idfacturado IN ($listaclientes2) AND ca_estado = 5 and ca_tipo = 'F' and ca_fchllegada > '2018-05-30'";
+            
+            if ($filtros->fecha_inicio && $filtros->fecha_fin) {
+                $sql .= " AND c.ca_fchllegada BETWEEN '$filtros->fecha_inicio' AND '$filtros->fecha_fin' ";
+            }
+            
+            if ($nombreorigen) {
+                $nombreorigen = $nombreorigen->getCaCiudad();
+                $sql .= " AND c.ca_ciuorigen= '$nombreorigen'";
+            }
+            if ($nombredest) {
+                $nombredest = $nombredest->getCaCiudad();
+                $sql .= " AND c.ca_ciudestino= '$nombredest'";
+            }
+            if ($origen != "")
+                $sql .= " AND c.ca_idtrafico = '$origen'";
+
+            $sql .=" ORDER BY c.ca_fchllegada";
+
+            $st = $con->execute($sql);
+            $facturas = $st->fetchAll();
+            
+            $valoresfact = array();
+
+            foreach($facturas as $factura){
+                $trafico = utf8_encode($factura["ca_traorigen"]);
+                $mes = $factura["ca_mes"];
+                $valoresfactxmes[$mes]["valor"] += $factura["ca_valor2"]*$factura["ca_tcambio"];
+                $valoresfactxmes[$mes]["mes"] = $mes;
+                $valoresfactxmes[$mes][$trafico] += $factura["ca_valor2"]*$factura["ca_tcambio"];
+            }
+            
 
             foreach ($serieTraf as $traf) {
                 $model["name"] = $traf;
@@ -2579,9 +2659,12 @@ class widgets5Actions extends sfActions {
             $modelgrafica2 = array();
             foreach ($serieTraf as $trafico) {
                 $modelgrafica2[] = array("name" => $trafico, "type" => "integer");
+                $modelgrafica10[] = array("name" => $trafico, "type" => "float");
             }
             $modelgrafica2[] = array("name" => "name", "type" => "string");
             $modelgrafica2[] = array("name" => "porcentaje", "type" => "integer");
+            
+            $modelgrafica10[] = array("name" => "name", "type" => "string");
 
             foreach ($datagtr as $mes => $gridTrafico) {
                 foreach ($serieTraf as $trafico) {
@@ -2619,6 +2702,10 @@ class widgets5Actions extends sfActions {
             $facturacion = array();
             foreach ($datafacturacion as $traf => $fact) {
                 $facturacion[] = $fact;
+            }
+            $valoresfactura = array();
+            foreach ($valoresfactxmes as $mes => $dataValores) {
+                $valfactura[] = $dataValores;
             }
             $vaciado = array();
             foreach ($datavaciado as $traf => $vac) {
@@ -2659,7 +2746,7 @@ class widgets5Actions extends sfActions {
             }
 
             $datospie = array();
-            foreach ($gridpie as $dp => $datosp) {
+            foreach ($gridpie as $mes => $datosp) {
                 $datospie[] = $datosp;
             }
         }
@@ -2670,6 +2757,7 @@ class widgets5Actions extends sfActions {
             "datosFCL" => $datosFCL,
             "y" => $serieTraf,
             "modelgrafica2" => $modelgrafica2,
+            "modelgrafica10" => $modelgrafica10,
             "grafica2" => $datostransito,
             "zarpe" => $zarpe,
             "llegada" => $llegada,
@@ -2679,6 +2767,7 @@ class widgets5Actions extends sfActions {
             "model" => $model,
             "gridvaciado" => $datosvaciado,
             "gridfacturacion" => $datosfacturacion,
+            "gridvaloresfact" => $valfactura,
             "gridllegada" => $datosllegada,
             "gridzarpe" => $datoszarpe,
             "gridtransito" => $datostransit,
@@ -2755,15 +2844,33 @@ class widgets5Actions extends sfActions {
         $idcliente = $request->getParameter("idcliente");
 
         $cliente = Doctrine::getTable("Cliente")->find($idcliente);
-        $contactos = $cliente->getContacto();
 
+        if($request->getParameter("tipo")=="FE")
+        {   
+            $contactos = $cliente->getContactoFE();
+            //print_r($contactos);
         $data = array();
+            
+            foreach ($contactos as $c) {
+                if ($c["ca_fcheliminado"]=="") {
+                    $data[] = array("id" => $c["ca_idcontacto"],
+                              "name" => utf8_encode(strtoupper($c["ca_nombres"]." ".$c["ca_papellido"]." ".$c["ca_sapellido"] )));
+                }
+            }
+        }
+        else
+        {
+            $contactos = $cliente->getContacto();
+            $data = array();
         foreach ($contactos as $contacto) {
             if (!$contacto->getIdsContacto()->getCaFcheliminado()) {
                 $data[] = array("id" => $contacto->getCaIdcontacto(),
                           "name" => utf8_encode(strtoupper($contacto->getNombre())));
             }
         }
+        }
+
+        
 
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
@@ -3304,6 +3411,7 @@ class widgets5Actions extends sfActions {
         Doctrine_Manager::getInstance()->setCurrentConnection('replica');
 
         $criterio = $this->getRequestParameter("query");
+        $todas = $this->getRequestParameter("todas");
         $impoexpo = utf8_decode($request->getParameter("impoexpo"));
         $transporte = utf8_decode($request->getParameter("transporte"));
 
@@ -3312,10 +3420,15 @@ class widgets5Actions extends sfActions {
                     ->createQuery("m")
                     ->leftJoin("m.Origen o")
                     ->leftJoin("m.Destino d")
-                    ->addWhere("m.ca_referencia LIKE ? AND m.ca_usuanulado IS NULL AND m.ca_usuliquidado IS NULL AND m.ca_usucerrado IS NULL", $criterio . "%")
                     ->orderBy("m.ca_idmaster DESC")
                     ->limit(50)
                     ->setHydrationMode(Doctrine::HYDRATE_SCALAR);
+
+            if($todas){
+                $q->addWhere("m.ca_referencia LIKE ?", $criterio . "%");
+            }else{
+                $q->addWhere("m.ca_referencia LIKE ? AND m.ca_usuanulado IS NULL AND m.ca_usuliquidado IS NULL AND m.ca_usucerrado IS NULL",$criterio . "%");
+            }
 
             if ($transporte) {
                 $q->addWhere("m.ca_transporte = ?", $transporte);
@@ -3722,6 +3835,7 @@ class widgets5Actions extends sfActions {
                 "direccion" => utf8_encode($suc["s_ca_direccion"]),
                 "id" => $suc["s_ca_id"]."-". $suc["s_ca_idsucursal"],
                 "idalterno" => $suc["ids_ca_idalterno"],
+                "ids" => $suc["s_ca_id"],
                 "compania" => utf8_encode($suc["ids_ca_nombre"]) /* ,
                       "cuentapago"=>$cuenta_forma_pago */
             );
@@ -3955,6 +4069,33 @@ class widgets5Actions extends sfActions {
 
         $this->responseArray = array("success" => true, "root" => $data);
         $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeEmailsProv(sfWebRequest $request) 
+    {
+        $idproveedor = utf8_decode($request->getParameter("idproveedor"));
+        $prov = Doctrine::getTable("Ids")->find($idproveedor);
+        $emails=$prov->getEmailsContactos();
+        $data = array();
+        foreach($emails as $e)
+        {
+            $data[]["ca_email"]=$e;
+        }
+        $this->responseArray = array("success" => true, "root" => $data);
+        $this->setTemplate("responseTemplate");
+    }
+    
+    public function executeDatosColdepositos(sfWebRequest $request) 
+    {
+        Doctrine_Manager::getInstance()->setCurrentConnection('replica');
+        $data = array();
+        $data [] = array('id'=>"Logistica",'name'=>"Logistica");
+        $data [] = array('id'=>"Bodega Nacional",'name'=>"Bodega Nacional");
+        
+        $this->responseArray = array("success" => true, "root" => $data, "total" => count($data));
+        $this->setTemplate("responseTemplate");
+        //$data []=array("id"=>"logistica","name"=>"logistica");
+        
     }
 }
 ?>
