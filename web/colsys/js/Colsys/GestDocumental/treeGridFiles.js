@@ -20,7 +20,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
     title: 'Archivos',
     collapsible: true,
     useArrows: true,
-    rootVisible: true,
+    rootVisible: true,    
     store: Ext.create('Ext.data.TreeStore', {
         fields: [
             {name: 'idarchivo', type: 'string'},
@@ -72,19 +72,17 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                         console.log('failure');
                     }
                 });
-
             },
             afterRender: function () {
 
                 //console.log(this.up('panel'));
                 //console.log(this);
-                ref1 = (this.up('panel').idreferencia!=""?this.up('panel').idreferencia:this.idreporte);
+                ref1 = (this.up('panel').idreferencia != "" ? this.up('panel').idreferencia : this.idreporte);
                 idtrans = this.up('panel').idtransporte;
                 impo = this.up('panel').idimpoexpo;
                 serie = this.up('panel').idsserie;
-                exacto =  this.up('panel').exacto?this.up('panel').exacto:"false";
-                idmod= this.up('panel').idmodalidad;
-
+                exacto = this.up('panel').exacto ? this.up('panel').exacto : "false";
+                idmod = this.up('panel').idmodalidad;
                 this.store.load({
                     params: {
                         ref1: ref1,
@@ -95,7 +93,6 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                         exacto: exacto
                     }
                 });
-
             },
             itemdblclick: function (record, item, index, e, eOpts) {
 
@@ -129,14 +126,9 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                 ///renderer: function(value, meta, rec) {
                 if (record.get("idarchivo") == record.get("nombre"))
                 {
-                    //console.log("128");
-                    console.log(record.get("idarchivo") +" : "+ record.get("nombre"));
                     return "_";
                 } else
                 {
-                    //console.log("133");
-                    console.log(record.get("idarchivo") +" : "+ record.get("nombre"));
-                    //return value;
                     return  new Ext.grid.column.Check().renderer(value);
                 }
             }
@@ -190,7 +182,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
             handler: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
                 idtra = this.up('panel').idtransporte;
                 impoe = this.up('panel').idimpoexpo;
-                var idpadre  = this.up().up().id;
+                var idpadre = this.up().up().id;
                 var idmast = this.up('panel').idmaster;
                 if (record.lastChild == null) {
 
@@ -212,7 +204,7 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                                     xtype: 'Colsys.GestDocumental.FormArchivos',
                                     idimpoexpo: impoe,
                                     idtransporte: idtra,
-                                    idmaster: idmast,      
+                                    idmaster: idmast,
                                     idpadre: idpadre,
                                     id: 'form-panel-file1',
                                     name: 'form-panel-file1',
@@ -297,42 +289,208 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                     tooltip: 'Adicionar un registro',
                     iconCls: 'add',
                     scope: this,
-                    handler: function () {
+                    handler: function (t, eOpts) {                        
+                        var tipoPanel = t.up("treepanel").tipo;
                         if (this.idmaster) {
                             id = this.idmaster;
                         } else if (this.idcliente) {
                             id = this.idcliente;
-                        }else
+                        } else
                         {
-                            id="0";
+                            id = "0";
                         }
 
                         winformsubirarchivos = new Ext.Window({
                             title: 'Documentos',
-                            width: 600,
-                            height: 220,
+                            id: 'docwindow-'+id,
+                            width: 600,                            
                             closeAction: 'destroy',
                             items: {
                                 autoScroll: true,
                                 items: [
                                     {
                                         xtype: 'Colsys.GestDocumental.FormSubirArchivos',
-                                        id: 'formsubir',
-                                        name: 'form-subir-arch',
+                                        id: 'formsubir-'+id,                                        
                                         idtransporte: idtrans,
                                         idimpoexpo: impo,
                                         idreferencia: ref1,
                                         idmaster: id,
                                         idsserie: serie,
-                                        idmodalidad: idmod
+                                        idmodalidad: idmod,
+                                        listeners: {
+                                            afterrender: function (t, eOpts) {
+                                                /*Solo aplica para documentos de INO*/
+                                                if (tipoPanel == "ino") {                                                    
+                                                    t.add({
+                                                        xtype: 'checkboxfield',                                                        
+                                                        id: 'checkreferencia-'+id,
+                                                        boxLabel: 'Incluir este documento para referencias adicionales',
+                                                        listeners: {
+                                                            change: function (t, newValue, oldValue, eOpts) {
+                                                                if (newValue) {
+                                                                    console.log("id",id);
+                                                                    Ext.getCmp('gridbusquedareferencia-'+id).hide();
+                                                                    Ext.getCmp('gridbusquedareferencia-'+id).show();
+                                                                } else {
+                                                                    Ext.getCmp('gridbusquedareferencia-'+id).hide();
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    Ext.create('Ext.grid.Panel', {
+                                                        title: '',
+                                                        autoHeight: true,
+                                                        autoScroll: true,
+                                                        id: 'gridbusquedareferencia-'+id,                                                                                                                
+                                                        frame: true,
+                                                        controller: 'cell-editing',                                                        
+                                                        plugins: [{
+                                                            ptype: 'cellediting',
+                                                            clicksToEdit: 1,
+                                                            id: 'myplugin'
+                                                        }],
+                                                        selModel: {
+                                                            selType: 'cellmodel'
+                                                        },
+                                                        listeners: {
+                                                            beforerender: function (ct, position) {
+                                                                this.reconfigure(
+                                                                    store = Ext.create('Ext.data.Store', {
+                                                                        storeId: 'grid-busqueda-store',                                                                        
+                                                                        fields: ['referencia'],
+                                                                        data: [
+                                                                            {referencia: null}
+                                                                        ]
+                                                                    }),
+                                                                    [{
+                                                                        header: "Referencia",
+                                                                        hideable: false,
+                                                                        dataIndex: 'referencia',
+                                                                        flex: 1,
+                                                                        sortable: false,
+                                                                        editor: Ext.create('Colsys.Widgets.WgReferencias', {
+                                                                            id: 'comboReferencia',
+                                                                            name: 'comboReferencia',
+                                                                            valueField: 'referencia',
+                                                                            idimpoexpo: impo,
+                                                                            idtransporte: idtrans,
+                                                                            todas: true,
+                                                                            allowBlank: false,
+                                                                            forceSelection: true,
+                                                                            listeners: {
+                                                                                select: function (t, record, idx) {
+                                                                                    var selected = this.up('grid').getSelectionModel().getSelection()[0];
+                                                                                    var row = this.up('grid').store.indexOf(selected);
+                                                                                    var store = this.up('grid').getStore();
+                                                                                    store.data.items[row].set('idmaster', record.data.idmaster);
+                                                                                }
+                                                                            },
+                                                                        }),
+                                                                        renderer: comboBoxRenderer(Ext.getCmp('comboReferencia'))
+                                                                    },
+                                                                    {
+                                                                        xtype: 'actioncolumn',
+                                                                        width: 30,
+                                                                        sortable: false,
+                                                                        menuDisabled: true,
+                                                                        handler: function (view, recIndex, cellIndex, item, e, record) {
+                                                                            var store = this.up('grid').getStore();                                                                            
+                                                                            store.removeAt(store.find('idmaster', record.data.idmaster));
+                                                                        },
+                                                                        items: [{
+                                                                            iconCls: 'delete',
+                                                                            tooltip: 'Eliminar Referencia'
+                                                                        }]
+                                                                    }
+                                                                ]);
+                                                            },
+                                                            afterrender: function (ct, position) {
+
+                                                                tb = new Ext.toolbar.Toolbar();
+                                                                tb.add([                                                                    
+                                                                    {
+                                                                        text: 'Agregar Referencia',
+                                                                        iconCls: 'add',
+                                                                        id: 'btn-nvo-referencia' + id,
+                                                                        hidden: (id == "0") ? true : false,
+                                                                        handler: function () {
+                                                                            var me = this.up('grid');
+                                                                            var store = me.getStore();
+                                                                            record = me.getStore().getRange(0, 0);
+                                                                            var r = Ext.create(me.getStore().getModel(), {
+
+                                                                                idmaster: null,
+                                                                                referencia: null
+
+                                                                            });
+                                                                            store.insert(store.count(), r);
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        xtype: 'Colsys.Widgets.WidgetUploadButtonRef',
+                                                                        id: 'buttonref-'+id,
+                                                                        text: "Subir Archivo TXT",
+                                                                        iconCls: 'arrow_up',
+                                                                        listeners: {
+                                                                            afterrender: function (fileField) {
+                                                                                fileField.fileInputEl.on('change', function (event) {
+                                                                                    var files = event.target.files;
+                                                                                    f = files[0];
+                                                                                    var reader = new FileReader();
+                                                                                    reader.onload = (function (File) {
+                                                                                        return function (e) {
+                                                                                            fileInfo = e.target.result;
+                                                                                            Ext.Ajax.request({
+                                                                                                waitMsg: 'Analizando...',
+                                                                                                url: '/gestDocumental/ProcesarArchivoReferenciasRef',
+                                                                                                params:{
+                                                                                                    archivo: fileInfo,
+                                                                                                    idtransporte: idtrans,
+                                                                                                    idimpoexpo: impo
+                                                                                                },
+                                                                                                success: function (response, opts){
+                                                                                                    var res = Ext.decode(response.responseText);
+                                                                                                    if (res.resultado) {
+                                                                                                        var listaRef=res.resultado;
+                                                                                                        var store = Ext.getCmp('gridbusquedareferencia-'+id).getStore();
+                                                                                                        store.removeAll();
+                                                                                                        for(var i=0; i< listaRef.length; i++){
+                                                                                                            store.add({referencia: listaRef[i]});
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                            });
+                                                                                        };
+                                                                                    })(f);
+                                                                                    reader.readAsText(f, 'UTF-8');
+                                                                                });
+                                                                            }
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        text: 'Recargar',
+                                                                        iconCls: 'refresh',
+                                                                        id: 'btn-guardarrecarga' + id,
+                                                                        handler: function () {
+                                                                            this.up("grid").getStore().reload();
+                                                                        }
+                                                                    },
+
+                                                                ]);
+                                                                this.addDocked(tb);
+                                                            }
+                                                        },
+                                                        height: 200,
+                                                        width: 400
+                                                    }).hide());
+                                                }
+                                            }
+                                        }
                                     }
                                 ]
                             },
-                            listeners: {
-                                beforeshow: function (eOpts) {
-                                },
+                            listeners: {                                
                                 close: function (win, eOpts) {
-
                                     winformsubirarchivos = null;
                                 }
                             }
@@ -350,11 +508,10 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                     text: 'Notificar',
                     iconCls: 'email',
                     handler: function () {
-                        //this.up().up().getStore().reload();
-                        arrayeliminar = [];
                         
+                        arrayeliminar = [];
                         var store = this.up().up().getStore();
-                        console.log(store.data);
+                        
                         for (var i = 0; i < store.getCount(); i++) {
                             record = store.getAt(i);
                             console.log(record);
@@ -363,15 +520,12 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
                             }
                         }
                         
-                        //console.log(arrayeliminar);
-                        //console.log(arrayeliminar.toString());
-                        ref1 = (this.up('panel').idreferencia!=""?this.up('panel').idreferencia:this.idreporte);
-                        
-                        var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {                                            
-                            id: 'window-envio-docs-'+this.up('panel').idreferencia,
+                        ref1 = (this.up('panel').idreferencia != "" ? this.up('panel').idreferencia : this.idreporte);
+                        var windowpdf = Ext.create('Colsys.Widgets.WgVerPdf', {
+                            id: 'window-envio-docs-' + this.up('panel').idreferencia,
                             width: 900,
-                            title: 'Notificacion Documentos '+ ref1,
-                            sorc: "/status/verEmailDocs/iddocs/"+arrayeliminar.toString()+"/idmaster/"+this.up().up().idmaster
+                            title: 'Notificacion Documentos ' + ref1,
+                            sorc: "/status/verEmailDocs/iddocs/" + arrayeliminar.toString() + "/idmaster/" + this.up().up().idmaster
                         });
                         windowpdf.show();
                     }
@@ -388,3 +542,12 @@ Ext.define('Colsys.GestDocumental.treeGridFiles', {
     }
 })
 
+Ext.define('Colsys.view.grid.CellEditingController', {
+    extend: 'Ext.app.ViewController',
+    alias: 'controller.cell-editing',
+    onRemoveClick: function (view, recIndex, cellIndex, item, e, record) {
+        console.log("hey");
+        var store = this.up('grid').getStore();
+        store.removeAt(record);
+    }
+});
