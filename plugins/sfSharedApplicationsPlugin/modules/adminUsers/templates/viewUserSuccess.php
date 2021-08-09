@@ -71,7 +71,7 @@ $comites = $sf_data->getRaw("comites");
                     <?}//Copass
                     if (in_array(4, $comites)) {  
                         ?>
-                        <img src="<?= url_for("images/22x22") ?>/copass.png" alt="Copass" title="Copass">
+                        <img src="<?= url_for("images/22x22") ?>/copass.png" alt="Copasst" title="Copasst">
                         <?
                     }
                     ?>
@@ -108,7 +108,7 @@ $comites = $sf_data->getRaw("comites");
                 <td align="left">Email:</td><td align="left"><b><?=$user->getCa_Email()?></b></td>
             </tr>
             <tr>
-                <td align="left">M&oacute;vil:</td><td align="left"><b><?=$user->getCa_Movil()?></b></td>
+                <td align="left">M&oacute;vil Corporativo:</td><td align="left"><b><?=$user->getDatosJson("celcorp")?></b></td>
             </tr>
             <tr>
                 <td align="left">Jefe Inmediato:</td><td align="left"><b><a href="<?=url_for('adminUsers/viewUser?login='.$manager->getCaLogin()) ?>"><?=($manager->getCaNombre())?></a></b></td>
@@ -135,6 +135,9 @@ $comites = $sf_data->getRaw("comites");
             </tr>
             <tr>
                 <td align="left">Direcci&oacute;n:</td><td align="left"><b><?=$user->getCa_Direccion()?></b></td>
+            </tr>
+            <tr>
+                <td align="left">M&oacute;vil Particular:</td><td align="left"><b><?=$user->getCa_Movil()?></b></td>
             </tr>
             <tr>
                 <td align="left">Tel. Particular:</td><td align="left"><b><?=$user->getCa_Telparticular()?></b></td>

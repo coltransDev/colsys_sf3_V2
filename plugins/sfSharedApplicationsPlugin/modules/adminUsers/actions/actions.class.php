@@ -688,6 +688,12 @@ class adminUsersActions extends sfActions {
             $usuario->setCaMovil( null );           
         }
 
+        if ($request->getParameter("celcorp")) {
+            $usuario->setDatosJson("celcorp", $request->getParameter("celcorp"));
+        }else{
+            $usuario->setDatosJson("celcorp", "");
+        }
+
         if ($request->getParameter("manager")) {
             $usuario->setCaManager($request->getParameter("manager"));
         }

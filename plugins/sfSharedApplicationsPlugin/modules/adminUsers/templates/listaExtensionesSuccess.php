@@ -229,10 +229,8 @@
     <?
     }
     ?>
-    <br />
-    <?
-    include_component("adminUsers", "directorio");
-    ?>
-    
-
 </div>
+<br />
+<?
+include_component("adminUsers", "directorio");
+?>

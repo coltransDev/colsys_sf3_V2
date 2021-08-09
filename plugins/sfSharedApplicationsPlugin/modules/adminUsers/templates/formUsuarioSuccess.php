@@ -528,10 +528,23 @@ $jefes = $sf_data->getRaw("jefes");
                                         <div align="left">
                                                 <b>Tel. Oficina</b>
                                         </div>
-                                </td>
+                                  </td>
                                 <td>
                                     <div align="left">                                                        
                                         <input type="text" name="teloficina" disabled="disabled" value="<?=$usuario->getSucursal()->getCaTelefono()?>"/>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="row0">
+                                <td>&nbsp;</td>
+                                <td width="40%">
+                                        <div align="left">
+                                                <b>M&oacute;vil Corporativo</b>
+                                        </div>
+                                </td>
+                                <td>
+                                    <div align="left">                                                        
+                                        <input type="text" name="celcorp" value="<?=$usuario->getDatosJson("celcorp")?>"/>
                                     </div>
                                 </td>
                             </tr>
@@ -637,7 +650,7 @@ $jefes = $sf_data->getRaw("jefes");
                                         <input type="text" name="direccion" value="<?=$usuario->getCaDireccion()?>" size="40"/>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr>                            
                             <tr class="row0">
                                 <td>&nbsp;</td>
                                 <td width="40%">
@@ -655,7 +668,7 @@ $jefes = $sf_data->getRaw("jefes");
                                 <td>&nbsp;</td>
                                 <td width="40%">
                                     <div align="left">  
-                                        <b>M&oacute;vil</b>
+                                        <b>M&oacute;vil Particular</b>
                                     </div>
                                 </td>
                                 <td>
