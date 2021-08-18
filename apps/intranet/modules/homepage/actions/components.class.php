@@ -52,16 +52,16 @@ class homepageComponents extends sfComponents {
         $inicial = date('m-d');
         $final = date('m-d', time() + 86400 * 2);
 
-        $this->usuarios = Doctrine::getTable('Usuario')
+        $q = Doctrine::getTable('Usuario')
                         ->createQuery('u')
                         ->innerJoin('u.Sucursal s')
                         ->innerJoin('s.Empresa e')
-                        ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))
-                        //->addWhere('e.ca_idempresa IN (?,?,?)',array('1','2','8'))
+                        ->where('substring(ca_cumpleanos::text, 6,5) BETWEEN ? AND ?', array($inicial,$final))                        
                         ->addWhere('ca_activo = ?', true)
                         ->andWhereIn("s.ca_idempresa", $grupoEmp)
-                        ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC')
-                        ->execute();    
+                        ->addOrderBy('substring(ca_cumpleanos::text, 6,5)  ASC');
+        
+        $this->usuarios = $q->execute();
     }    
     
     public function executeTiempoColaborador() {
@@ -82,7 +82,7 @@ class homepageComponents extends sfComponents {
 
     public function executeMainMenu() {
         
-        $this->user = sfContext::getInstance()->getUser();
+        $this->user = $this->getUser();
         $this->nivel = $this->getUser()->getNivelAcceso(homepageComponents::RUTINA_ADMUSUARIOS_INTRANET);
         
     }
@@ -125,7 +125,12 @@ class homepageComponents extends sfComponents {
         
     }
         
+    public function executeListAccess() {
+        
+    }
     
-
+    public function executePortada() {
+        $this->user = $this->getUser();
+        $this->idempresa = $this->user->getIdempresa();        
+    }
 }
-
