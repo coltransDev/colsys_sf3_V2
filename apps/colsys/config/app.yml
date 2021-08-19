@@ -2,6 +2,7 @@
 all:
   digitalFile:
     root:  /srv/www/digitalFile/   
+    S3:  /s3DigitalFile/
 
   sourceCode:
     plugins:  /srv/www/colsys_sf3/plugins/
@@ -18,39 +19,31 @@ all:
     idempresa: 800024075
 
   smtp:
-    host: 172.16.1.18	
+    host: smtp-relay.gmail.com
+#    host: 172.16.1.18
+#    host2: 172.16.1.18
+#    host3: 172.16.1.18
     host2: smtp-relay.gmail.com
     host3: smtp-relay.gmail.com
-#    host3: consolcargo-com.mail.protection.outlook.com
-
     port: 25
-    security: null   
-
-#    debugAddress: alramirez@coltrans.com.co
-
-#     GOOGLE
-#    host: smtp.gmail.com
-#    port: 465
-#    security: ssl
-#    user: maquinche@coltrans.co
-#    passwd:  80166236
-
+    security: null
+    ip: 190.85.222.204
+#    debugAddress: colsys@coltrans.com.co
 
   ldap:
 #    host: 172.16.1.22
-    host: 10.192.1.26
+    host: 10.192.1.25	
     auth_enabled: true
 #    user: colsys
 #    passwd: $tlco5903Am
 
   memcache:
-#    host: 172.16.1.13
-    host: 10.194.4.10
+    host: 172.16.1.13
     port: 11211
     prefix: colsess
 
   session:
-    maxinactive: 1800
+    maxinactive: 18000
   ip:
     trusted: 127.0.0.1 10.192.1 10.192.2
 
@@ -58,6 +51,7 @@ all:
   falabella:
     input:  /home/falabella/OUT
     input_processed:  /home/falabella/OUT/processed
+
     output:  /home/falabella/IN    
 
     input_adu:  /home/falafact/OUT
@@ -84,15 +78,69 @@ all:
       url: http://www.gincomex.biz/pruebas/webservices/servicio.php
       pass: HJDSJHSDUU3313JKIAASSJU12
 
-    siigo:
-      wsdl_uri: http://10.192.1.90:8000/w/WebService1.asmx?wsdl
-
     open:
       wsdl_uri: https://www.colsys.com.co/ws/colsys/InformeOpenWS?wsdl
 
-  sinteParams:
-    server: http://54.174.227.40:8081
-    username: FANNY.GUTIERREZ
-    password: Coltrans01
-    #password: fanny@201610
-    percent: 90
+    sap:
+      wsdl_uri: http://190.60.235.54:8080/SincroJSON.asmx?WSDL
+#     wsdl_uri: http://54.164.111.135:8081/SincroJSON.asmx?WSDL 
+#      wsdl_uri: http://54.164.111.135:8081/
+
+    fe:
+      url: https://api5.etl5.open-eb.io/
+
+  infolaftSearch:
+    host: https://infolaftsearch.com/infolaft
+    username: COLTRANS.WEBSERVICE
+    password: Coltrans2019*
+
+
+consolcargo:
+  digitalFile:
+    root:  /srv/www/digitalFileConsol/
+
+  sourceCode:
+    plugins:  /srv/www/colsys_sf3/plugins/
+    lib:  /srv/www/colsys_sf3/lib/
+
+  branding:
+    template: coltrans
+    template4: consolcargo
+    url: www.coltrans.com.co
+    name: Coltrans S.A.S. - Colmas S.A.S.
+    name1: Coltrans S.A.S.
+    name2: Colmas S.A.S.
+    from: serclientebog@coltrans.com.co
+    idempresa: 800024075
+
+  smtp:
+    host: smtp-relay.gmail.com
+    host2: smtp-relay.gmail.com
+    host3: smtp-relay.gmail.com
+    port: 25
+    security: null
+    ip: 190.85.222.204
+
+  ldap:
+    host: 10.192.1.25
+    auth_enabled: true
+
+  memcache:
+    host: 172.16.1.13
+    port: 11211
+    prefix: colsesscon
+
+  session:
+    maxinactive: 18000
+  ip:
+    trusted: 127.0.0.1 10.192.1 10.192.2
+
+  gestDocumental:
+    noAuth: KBaseWeb, KBase
+
+
+
+  infolaftSearch:
+    host: https://infolaftsearch.com/infolaft
+    username: COLTRANS.WEBSERVICE
+    password: Coltrans2019*
