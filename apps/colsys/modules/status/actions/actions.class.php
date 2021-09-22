@@ -909,11 +909,11 @@ class statusActions extends sfActions {
                         $attachment[$idhouse][] = str_replace(sfConfig::get('app_digitalFile_root'), "", $file->getCaPath());
                     }
                 }
-
+                
                 if ($dataContactos) {
                     foreach ($dataContactos as $key => $data) {
                         $idhouse = $data["idhouse"];
-                        $contactos[$idhouse][] = $data["email"];
+                        $contactos[$idhouse][] = $data["email"];                        
                     }
                 }
             
@@ -933,203 +933,207 @@ class statusActions extends sfActions {
                 $con = Doctrine_Manager::getInstance()->connection();
                 $st = $con->execute($sql);
                 $houses = $st->fetchAll();
+                
+                if(count($houses) > 0 ){
+                    foreach($houses as $house){
+                        list($useg, $seg) = explode(" ", microtime(true));                    
 
-                foreach($houses as $house){
-                    list($useg, $seg) = explode(" ", microtime(true));                    
-                    
-                    $idhouse = $house["ca_idhouse"];//->getCaIdhouse();
-                    $houseSea = Doctrine::getTable("InoHouseSea")->find($house["ca_idhouse"]);
-                    
-                    $datosHouse = json_decode(utf8_encode($house["ca_datos"]), 1);
+                        $idhouse = $house["ca_idhouse"];//->getCaIdhouse();
+                        $houseSea = Doctrine::getTable("InoHouseSea")->find($house["ca_idhouse"]);
 
-                    $options = array();
-                    $mensaje = "";
+                        $datosHouse = json_decode(utf8_encode($house["ca_datos"]), 1);
 
-                    $hbls = $house["ca_doctransporte"];
-                    
-                    $reporte = Doctrine::getTable("Reporte")->find($house["ca_idreporte"]);
-                    
-                    //No reporta las planillas a reportes con Otm
-                    if ($tipo_msg == "planilla" && trim($house["ca_continuacion"] != NULL)) {
-                        continue;
-                    }
+                        $options = array();
+                        $mensaje = "";
 
-                    $status = new RepStatus();
-                    $status->setCaIdreporte($reporte->getCaIdreporte());
-                    $status->setCaFchstatus(date("Y-m-d H:i:s"));
-                    $status->setCaFchenvio(date("Y-m-d H:i:s"));
-                    $status->setCaUsuenvio($this->getUser()->getUserId());
-                    $status->setCaTipo("2"); //tipo 2 para maritimo
+                        $hbls = $house["ca_doctransporte"];
 
-                    if ($form[$idhouse]["observaciones_idg"]) {
-                        $status->setCaObservacionesIdg($form[$idhouse]["observaciones_idg"]);
-                    }
+                        $reporte = Doctrine::getTable("Reporte")->find($house["ca_idreporte"]);
 
-                    if ($form[$idhouse]["fchrecibido"]) {
-                        $horaRecibo = $form[$idhouse]["horarecibido"];
-                        $status->setCaFchrecibo($form[$idhouse]["fchrecibido"] . " " . $horaRecibo);
-                    }
-                    $ultimostatus = $reporte->getUltimoStatus();
-                    
-                    if ($ultimostatus) {                        
-                        $status->setCaPiezas($ultimostatus->getCaPiezas());
-                        $status->setCaPeso($ultimostatus->getCaPeso());
-                        $status->setCaVolumen($ultimostatus->getCaVolumen());
-                        $status->setCaIdnave($ultimostatus->getCaIdnave());
-                        $status->setCaFchsalida($ultimostatus->getCaFchsalida());
-                        $status->setCaFchllegada($ultimostatus->getCaFchllegada());
-                        $status->setCaFchcontinuacion($ultimostatus->getCaFchcontinuacion());
-                        $status->setCaDoctransporte($ultimostatus->getCaDoctransporte());
-                    }
-                    
-                    
-                        $status->setCaPiezas($house["ca_piezas"]);
-                        $status->setCaPeso($house["ca_peso"]);
-                        $status->setCaVolumen($house["ca_volumen"]);
-                        $status->setCaIdnave($house["ca_idnave"]);
-                        $status->setCaFchsalida($house["ca_fchsalida"]);
-                        $status->setCaFchllegada($house["ca_fchllegada"]);
-                        $status->setCaFchcontinuacion($house["ca_fchcontinuacion"]);
-                        $status->setCaDoctransporte($house["ca_doctransporte"]);
-                    
-                    /* Divide el texto en salto de página, o por dos puntos cuándo es Factura de Fletes, Certificación o Recargos Locales */
-                    if ($tipo_msg == "ffletes") {
-                        $mensajeArray = preg_split("/[:]+/", $request->getParameter("mensaje"));
-                    } else {
-                        $mensajeArray = preg_split("/[\n]+/", $request->getParameter("mensaje"));
-                    }
-
-                    $mensajeIntro = $tipo_msg == "llegada" ? $request->getParameter("mensaje") : $mensajeArray[0];
-                    $status->setCaIntroduccion($mensajeIntro);
-
-
-                    $datosHouse["mensaje"] = $form[$idhouse]["mensaje_cliente"];
-                    $houseSea->setCaDatos(json_encode($datosHouse));
-                    $houseSea->save($conn);
-
-                    for ($i=1; $i < count($mensajeArray); $i++) {
-                        if (trim($mensajeArray[$i]) !== "") {
-                            $mensaje.=$mensajeArray[$i] . "\n";
+                        //No reporta las planillas a reportes con Otm
+                        if ($tipo_msg == "planilla" && trim($house["ca_continuacion"] != NULL)) {
+                            continue;
                         }
-                    }
 
-                    $mensajeStatus = $tipo_msg == "llegada" ? $form[$idhouse]["mensaje_cliente"] : $mensaje . "\n" . $form[$idhouse]["mensaje_cliente"];
-                    $mensaje = $form[$idhouse]["mensaje_cliente"];
-                    switch ($tipo_msg) {
-                        case "llegada":
-                            if ($houseSea->getCaImprimirorigen() && $datosHouse["idagente"] !== '830003960' && $house["ca_idbodega"] !== 1269) {
-                                $mensajeStatus.= "<br />Agradecemos informar en el evento que su Compa?ía modifique el Agente de Aduana que realice la intermediación, de lo contrario seguiremos entregando los documentos originales a quienes Uds previamente han autorizado";
-                            }
-                            $status->setCaIdetapa("IMCPD");
-                            $status->setCaFchllegada($master->getInoMasterSea()->getCaFchconfirmacion());
-                            break;
-                        case "desconsolidacion":
-                            $status->setCaIdetapa("IMDES");
-                            $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($master->getCaIdmaster(), 'Not.Desconsolidación'))->getLast();
-                            if($confirmaciones){                                
-                                $status->setCaFchrecibo($confirmaciones->getCaFchenvio());
-                            }
-                            break;
-                        case "contenedores":
-                            $options["subject"] = "División de Contenedores Id.: " . $reporte->getCaConsecutivo() . " ";
-                            $status->setCaIdetapa("IMCNT");
-                            break;
-                        case "planilla":
-                            $mensajeStatus.= "<br />Planilla No: <b>" . $datosHouse["planilla"] . "</b>";
-                            $status->setCaIdetapa("IMPLA");
-                            $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($master->getCaIdmaster(), 'Not.Planilla'))->getLast();
-                            if($confirmaciones){                                
-                                $status->setCaFchrecibo($confirmaciones->getCaFchenvio());
-                            }
-                            $options["subject"] = "Planilla de Envío Id.: " . $reporte->getCaConsecutivo() . " ";
-                            break;
-                        case "ffletes":
-                            switch ($request->getParameter("combofactura")) {
-                                case "ffletes":
-                                    $options["subject"] = "Factura de Fletes Id.: " . $reporte->getCaConsecutivo() . " ";
-                                    $status->setProperty("idetapa2", "IMFFL");
-                                    break;
-                                case "cfletes":
-                                    $options["subject"] = "Certificación de Fletes Id.: " . $reporte->getCaConsecutivo() . " ";
-                                    break;
-                                case "rlocales":
-                                    $options["subject"] = "Recargos Locales Id.: " . $reporte->getCaConsecutivo() . " ";
-                                    $status->setProperty("idetapa2", "IMFFL");
-                                    break;
-                            }
-                            $status->setCaIdetapa("88888");
-                            break;
-                        case "fotm":
-                            $options["subject"] = "Factura de OTM Id.: " . $reporte->getCaConsecutivo() . " ";
-                            $status->setCaIdetapa("88888");
-                            break;
-                        case "fcontenedores":
-                            $options["subject"] = "Factura de Contenedores Id.: " . $reporte->getCaConsecutivo() . " ";
-                            $status->setCaIdetapa("88888");
-                            break;
-                        case "otm":                            
-                            $etapa = $form[$idhouse]["etapaOtm"];                            
-                            $repotm = $reporte->getRepUltVersion()->getRepOtm();
-                            if ($etapa == "IMCOL") {
-                                $status->setCaFchcontinuacion($form[$idhouse]["fchllegadaOtm"]);                            
-                                $idbodega = $form[$idhouse]["idbodega"];
-                                $status->setProperty("idbodega", $idbodega);
-                            }
-                            
-                            if ($etapa == "OTDES") {
-                                $fchcargue = $form[$idhouse]["fchcargueOtm"];
-                                $fchsalida = $form[$idhouse]["fchsalidaOtm"];                                
-                                $repotm->setCaFchcargue($fchcargue);
-                                $repotm->setCaFchsalida($fchsalida);
-                                $repotm->save($conn);                            
-                            }
-                            
-                            if ($etapa == "99999") {
-                                $fchplanilla = $form[$idhouse]["fchplanillaOtm"];
-                                $fchcierre = $form[$idhouse]["fchcierreOtm"];
-                                $status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));                                
-                                
-                                $repotm->setCaFchcierre($fchcierre);
-                                $repotm->save($conn);
-                            }
+                        $status = new RepStatus();
+                        $status->setCaIdreporte($reporte->getCaIdreporte());
+                        $status->setCaFchstatus(date("Y-m-d H:i:s"));
+                        $status->setCaFchenvio(date("Y-m-d H:i:s"));
+                        $status->setCaUsuenvio($this->getUser()->getUserId());
+                        $status->setCaTipo("2"); //tipo 2 para maritimo
 
-                            $status->setCaIdetapa($etapa);
-                            break;
-                        default:
-                            $status->setCaIdetapa("88888");
-                            break;
-                    }
-                    $options["nuevo"] = true;
-                    
-                    if (isset($attachPpal)) {
-                        $attachment[$idhouse][] = $attachPpal[0];
-                    }
+                        if ($form[$idhouse]["observaciones_idg"]) {
+                            $status->setCaObservacionesIdg($form[$idhouse]["observaciones_idg"]);
+                        }
 
-                    if ($datosMaster["mnllegada"]) {
-                        $status->setCaIdnave($datosMaster["mnllegada"]);
-                    } else {
-                        $status->setCaIdnave($master->getCaMotonave());
-                    }
+                        if ($form[$idhouse]["fchrecibido"]) {
+                            $horaRecibo = $form[$idhouse]["horarecibido"];
+                            $status->setCaFchrecibo($form[$idhouse]["fchrecibido"] . " " . $horaRecibo);
+                        }
+                        $ultimostatus = $reporte->getUltimoStatus();
 
-                    if ($request->getParameter("fcharribo")) {
-                        $status->setCaFchllegada($request->getParameter("fcharribo"));
-                        $master->setCaFchllegada($request->getParameter("fcharribo"));
-                        $master->save($conn);
-                    }
+                        if ($ultimostatus) {                        
+                            $status->setCaPiezas($ultimostatus->getCaPiezas());
+                            $status->setCaPeso($ultimostatus->getCaPeso());
+                            $status->setCaVolumen($ultimostatus->getCaVolumen());
+                            $status->setCaIdnave($ultimostatus->getCaIdnave());
+                            $status->setCaFchsalida($ultimostatus->getCaFchsalida());
+                            $status->setCaFchllegada($ultimostatus->getCaFchllegada());
+                            $status->setCaFchcontinuacion($ultimostatus->getCaFchcontinuacion());
+                            $status->setCaDoctransporte($ultimostatus->getCaDoctransporte());
+                        }
 
-                    $destinatarios = $contactos[$idhouse];
-                    $attachments = $attachment[$idhouse] ? $attachment[$idhouse] : [];
-                    
-                    $status->setStatus($mensajeStatus);
-                    
-                    $status->save($conn);
-                    
-                    
-                    $status->send($destinatarios, array(), $attachments, $options, $conn);
-                    
+
+                            $status->setCaPiezas($house["ca_piezas"]);
+                            $status->setCaPeso($house["ca_peso"]);
+                            $status->setCaVolumen($house["ca_volumen"]);
+                            $status->setCaIdnave($house["ca_idnave"]);
+                            $status->setCaFchsalida($house["ca_fchsalida"]);
+                            $status->setCaFchllegada($house["ca_fchllegada"]);
+                            $status->setCaFchcontinuacion($house["ca_fchcontinuacion"]);
+                            $status->setCaDoctransporte($house["ca_doctransporte"]);
+
+                        /* Divide el texto en salto de página, o por dos puntos cuándo es Factura de Fletes, Certificación o Recargos Locales */
+                        if ($tipo_msg == "ffletes") {
+                            $mensajeArray = preg_split("/[:]+/", $request->getParameter("mensaje"));
+                        } else {
+                            $mensajeArray = preg_split("/[\n]+/", $request->getParameter("mensaje"));
+                        }
+
+                        $mensajeIntro = $tipo_msg == "llegada" ? $request->getParameter("mensaje") : $mensajeArray[0];
+                        $status->setCaIntroduccion($mensajeIntro);
+
+
+                        $datosHouse["mensaje"] = $form[$idhouse]["mensaje_cliente"];
+                        $houseSea->setCaDatos(json_encode($datosHouse));
+                        $houseSea->save($conn);
+
+                        for ($i=1; $i < count($mensajeArray); $i++) {
+                            if (trim($mensajeArray[$i]) !== "") {
+                                $mensaje.=$mensajeArray[$i] . "\n";
+                            }
+                        }
+
+                        $mensajeStatus = $tipo_msg == "llegada" ? $form[$idhouse]["mensaje_cliente"] : $mensaje . "\n" . $form[$idhouse]["mensaje_cliente"];
+                        $mensaje = $form[$idhouse]["mensaje_cliente"];
+                        switch ($tipo_msg) {
+                            case "llegada":
+                                if ($houseSea->getCaImprimirorigen() && $datosHouse["idagente"] !== '830003960' && $house["ca_idbodega"] !== 1269) {
+                                    $mensajeStatus.= "<br />Agradecemos informar en el evento que su Compa?ía modifique el Agente de Aduana que realice la intermediación, de lo contrario seguiremos entregando los documentos originales a quienes Uds previamente han autorizado";
+                                }
+                                $status->setCaIdetapa("IMCPD");
+                                $status->setCaFchllegada($master->getInoMasterSea()->getCaFchconfirmacion());
+                                break;
+                            case "desconsolidacion":
+                                $status->setCaIdetapa("IMDES");
+                                $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($master->getCaIdmaster(), 'Not.Desconsolidación'))->getLast();
+                                if($confirmaciones){                                
+                                    $status->setCaFchrecibo($confirmaciones->getCaFchenvio());
+                                }
+                                break;
+                            case "contenedores":
+                                $options["subject"] = "División de Contenedores Id.: " . $reporte->getCaConsecutivo() . " ";
+                                $status->setCaIdetapa("IMCNT");
+                                break;
+                            case "planilla":
+                                $mensajeStatus.= "<br />Planilla No: <b>" . $datosHouse["planilla"] . "</b>";
+                                $status->setCaIdetapa("IMPLA");
+                                $confirmaciones = Doctrine::getTable("Confirmaciones")->findByDql("ca_idmaster = ? AND ca_tipo = ?", array($master->getCaIdmaster(), 'Not.Planilla'))->getLast();
+                                if($confirmaciones){                                
+                                    $status->setCaFchrecibo($confirmaciones->getCaFchenvio());
+                                }
+                                $options["subject"] = "Planilla de Envío Id.: " . $reporte->getCaConsecutivo() . " ";
+                                break;
+                            case "ffletes":
+                                switch ($request->getParameter("combofactura")) {
+                                    case "ffletes":
+                                        $options["subject"] = "Factura de Fletes Id.: " . $reporte->getCaConsecutivo() . " ";
+                                        $status->setProperty("idetapa2", "IMFFL");
+                                        break;
+                                    case "cfletes":
+                                        $options["subject"] = "Certificación de Fletes Id.: " . $reporte->getCaConsecutivo() . " ";
+                                        break;
+                                    case "rlocales":
+                                        $options["subject"] = "Recargos Locales Id.: " . $reporte->getCaConsecutivo() . " ";
+                                        $status->setProperty("idetapa2", "IMFFL");
+                                        break;
+                                }
+                                $status->setCaIdetapa("88888");
+                                break;
+                            case "fotm":
+                                $options["subject"] = "Factura de OTM Id.: " . $reporte->getCaConsecutivo() . " ";
+                                $status->setCaIdetapa("88888");
+                                break;
+                            case "fcontenedores":
+                                $options["subject"] = "Factura de Contenedores Id.: " . $reporte->getCaConsecutivo() . " ";
+                                $status->setCaIdetapa("88888");
+                                break;
+                            case "otm":                            
+                                $etapa = $form[$idhouse]["etapaOtm"];                            
+                                $repotm = $reporte->getRepUltVersion()->getRepOtm();
+                                if ($etapa == "IMCOL") {
+                                    $status->setCaFchcontinuacion($form[$idhouse]["fchllegadaOtm"]);                            
+                                    $idbodega = $form[$idhouse]["idbodega"];
+                                    $status->setProperty("idbodega", $idbodega);
+                                }
+
+                                if ($etapa == "OTDES") {
+                                    $fchcargue = $form[$idhouse]["fchcargueOtm"];
+                                    $fchsalida = $form[$idhouse]["fchsalidaOtm"];                                
+                                    $repotm->setCaFchcargue($fchcargue);
+                                    $repotm->setCaFchsalida($fchsalida);
+                                    $repotm->save($conn);                            
+                                }
+
+                                if ($etapa == "99999") {
+                                    $fchplanilla = $form[$idhouse]["fchplanillaOtm"];
+                                    $fchcierre = $form[$idhouse]["fchcierreOtm"];
+                                    $status->setProperty("fchplanilla", Utils::parseDate($fchplanilla));                                
+
+                                    $repotm->setCaFchcierre($fchcierre);
+                                    $repotm->save($conn);
+                                }
+
+                                $status->setCaIdetapa($etapa);
+                                break;
+                            default:
+                                $status->setCaIdetapa("88888");
+                                break;
+                        }
+                        $options["nuevo"] = true;
+
+                        if (isset($attachPpal)) {
+                            $attachment[$idhouse][] = $attachPpal[0];
+                        }
+
+                        if ($datosMaster["mnllegada"]) {
+                            $status->setCaIdnave($datosMaster["mnllegada"]);
+                        } else {
+                            $status->setCaIdnave($master->getCaMotonave());
+                        }
+
+                        if ($request->getParameter("fcharribo")) {
+                            $status->setCaFchllegada($request->getParameter("fcharribo"));
+                            $master->setCaFchllegada($request->getParameter("fcharribo"));
+                            $master->save($conn);
+                        }
+
+                        $destinatarios = $contactos[$idhouse];
+                        $attachments = $attachment[$idhouse] ? $attachment[$idhouse] : [];
+
+                        $status->setStatus($mensajeStatus);                    
+
+                        $status->save($conn);
+
+
+                        $status->send($destinatarios, array(), $attachments, $options, $conn);
+
+                    }
+                    $conn->commit();
+                    $this->responseArray = array("success" => true, "mensaje" => "Las comunicaciones se han enviado correctamente!", "modulo" => $tipo_msg/*, "tiempo"=> $tiempo*/);
+                }else{
+                    $this->responseArray = array("success" => false, "errorInfo" => utf8_encode("El reporte no tiene status previos. Favor revisar!"), "modulo" => $tipo_msg/*, "tiempo"=> $tiempo*/);
                 }
-                $conn->commit();
-                $this->responseArray = array("success" => true, "mensaje" => "Las comunicaciones se han enviado correctamente!", "modulo" => $tipo_msg/*, "tiempo"=> $tiempo*/);
             }
         } catch (Exception $e) {
             $conn->rollback();
