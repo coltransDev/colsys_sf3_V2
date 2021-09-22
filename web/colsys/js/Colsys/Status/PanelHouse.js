@@ -1,7 +1,7 @@
 Ext.define('Colsys.Status.PanelHouse', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.Colsys.Status.PanelHouse',
-    autoScroll: true,
+    //autoScroll: true,
     bodyCls: 'app-dashboard1',
     layout: {
         type: 'table',
@@ -17,24 +17,25 @@ Ext.define('Colsys.Status.PanelHouse', {
             }
         }
     },
-    scrollable: true,
+    //scrollable: true,
     defaults: {
-        bodyPadding: '10 10',
+        bodyPadding: '2 2',
         border: true,
         frame: true
     },    
     listeners: {
         render: function (me, eOpts) {
             var data = Ext.getCmp('header-panel-' + this.idhouse).data;
+            var me = this;
             
             this.add(
                 {
                     xtype: 'form',
                     manageHeight : true,
-                    title: 'Datos Hijo <span style="font-size: 8px;">'+data.cliente+'</span>',
-                    colspan: 2,
+                    //title: 'Datos Hijo <span style="font-size: 8px;">'+data.cliente+'</span>',
+//                    colspan: 3,
                     id: 'panel-hijo-' + this.idhouse,
-                    margin: '0 10 10 0',
+                    margin: '0 5 5 5',
                     layout: {
                         type: 'hbox',
                         pack: 'start',
@@ -42,31 +43,46 @@ Ext.define('Colsys.Status.PanelHouse', {
                     },
                     defaults: {
                         frame: true,
-                        bodyPadding: 10
+                        bodyPadding: 5
                     },
                     items: [{
-                            xtype: 'fieldset',
+                        xtype: 'container', 
+                        idhouse: this.idhouse,
+                        layout: {
+                            type: 'vbox',
+                            pack: 'start',
+                            align: 'stretch'
+                        },
+                        items:[{
+                            xtype: 'panel',
+                            id: 'panel-mensaje-' + this.idhouse,
                             border: true,
-                            flex: 2,
-                            margin: '0 10 0 0',
-                            title: 'Mensaje exclusivo para este cliente',
+                            flex: 1,
+                            margin: '0 5 0 0',
+                            idhouse: this.idhouse,
+                            title: 'Mensaje exclusivo para <span style="font-size: 8px;">'+data.cliente+'</span>',
+                            layout: {
+                                type: 'hbox',
+                                pack: 'start',
+                                align: 'stretch'
+                            },
                             items: [{
-                                xtype: 'label',
-                                id: 'mensaje' + this.idhouse,
-                                name: 'mensaje'
-                            },{
                                 xtype: 'textareafield',
                                 id: 'mensaje_cliente' + this.idhouse,
                                 name: 'mensaje_cliente',
                                 grow: true,
-                                anchor: '100%'
-                            }]
+                                flex:1,
+                                height: 100,
+                                //bodyPadding: 5,
+                                margin: '5 5 5 5',
+//                                anchor: '100%'                                
+                            }]                            
                         },
                         {
                             xtype: 'fieldset',
                             border: true,
                             flex: 1,
-                            margin: '0 0 0 0',
+                            margin: '5 5 0 0',
                             title: 'Indicadores de Gesti\u00F3n',
                             items: [{
                                 xtype: 'datefield',
@@ -110,7 +126,29 @@ Ext.define('Colsys.Status.PanelHouse', {
                                 impoexpo: 'Importación',
                                 transporte: 'Marítimo'
                         }]
-                    }]
+                    }]                        
+                    },
+                    Ext.create('Colsys.Status.GridConcliente', {
+                        id: 'grid-concliente-' + this.idhouse,
+                        name: 'grid-concliente-' + this.idhouse,
+                        title: 'Contactos <span style="font-size: 8px;">'+data.cliente+'</span>',
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        idhouse: data.idhouse,
+                        idcliente: data.idcliente,
+                        idreporte: data.idreporte,
+                        referencia: data.referencia
+                    }),
+                    Ext.create('Colsys.Status.GridArchivos', {
+                        id: 'grid-archivos-' + this.idhouse,
+                        name: 'grid-archivos-' + this.idhouse,
+                        title: 'Documentos <span style="font-size: 8px;">'+data.cliente+'</span>',
+                        flex: 1,
+                        margin: '0 5 0 0',
+                        idmaster: data.idmaster,
+                        idhouse: this.idhouse,
+                        doctransporte: data.doctransporte
+                    })]
                 },                    
                 Ext.create('Colsys.Status.GridFotos', {
                     id: 'grid-fotos-' + this.idhouse,
@@ -121,29 +159,10 @@ Ext.define('Colsys.Status.PanelHouse', {
                     idhouse: this.idhouse,
                     doctransporte: data.doctransporte,
                     hidden: true
-                }),
-                Ext.create('Colsys.Status.GridConcliente', {
-                    id: 'grid-concliente-' + this.idhouse,
-                    name: 'grid-concliente-' + this.idhouse,
-                    title: 'Contactos <span style="font-size: 8px;">'+data.cliente+'</span>',
-                    flex: 1,
-                    margin: '0 10 10 0',
-                    idhouse: data.idhouse,
-                    idcliente: data.idcliente,
-                    idreporte: data.idreporte,
-                    referencia: data.referencia
-                }),
-                Ext.create('Colsys.Status.GridArchivos', {
-                    id: 'grid-archivos-' + this.idhouse,
-                    name: 'grid-archivos-' + this.idhouse,
-                    title: 'Documentos <span style="font-size: 8px;">'+data.cliente+'</span>',
-                    flex: 1,
-                    margin: '0 10 10 0',
-                    idmaster: data.idmaster,
-                    idhouse: this.idhouse,
-                    doctransporte: data.doctransporte
-                })
+                }),                
             );
+            
+            //console.log("afteradd",Ext.getCmp('panel-mensaje-' + me.idhouse).getHeight());
             
             if (data.continuacion !== "N/A" && data.continuacion !== null && data.continuacion !== "") {
                 var destinofinal = data.destinofinal;
@@ -151,13 +170,28 @@ Ext.define('Colsys.Status.PanelHouse', {
                 
                 if(textos){
                     if (textos[destinofinal]) {
-                        Ext.getCmp('mensaje_cliente' + this.idhouse).setValue(textos[destinofinal]);
+                        //Ext.getCmp('mensaje_cliente' + this.idhouse).setValue(textos[destinofinal]);
                     } else {
-                        Ext.getCmp('mensaje_cliente' + this.idhouse).setValue(textos["COL-0000"]);
+                        //Ext.getCmp('mensaje_cliente' + this.idhouse).setValue(textos["COL-0000"]);
                     }
                 }
             }
             
-        }
+        },        
+//        afterlayout:function(me, eOpts){
+//            console.log(me);
+//            console.log("afterrenderpanel",Ext.getCmp('panel-mensaje-' + me.idhouse).getHeight());
+//                                    Ext.getCmp('panel-mensaje-' + me.idhouse).add({
+//                                        xtype: 'textareafield',
+//                                        id: 'mensaje_cliente' + me.idhouse,
+//                                        name: 'mensaje_cliente',
+//                                        height: Ext.getCmp('panel-mensaje-' + me.idhouse).getHeight(),
+//                                        grow: true,
+//                                        margin: '5 5 5 5',
+//                                        anchor: '100%'                                
+//                                    }
+//                                    )
+//        }
+        
     }
 });
