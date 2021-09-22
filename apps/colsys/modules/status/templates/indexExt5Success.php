@@ -171,8 +171,8 @@ $modulo = $sf_data->getRaw("modulo");
 
     .text-wrapper .news-data {
         background-color: #ffffff;
-        margin: 0 0 8px 10px;
-        padding: 15px;
+        margin: 0 0 3px 5px;
+        padding: 5px;
         border-radius: 3px;
 
         -webkit-box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
