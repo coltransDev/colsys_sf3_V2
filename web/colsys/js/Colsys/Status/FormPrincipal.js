@@ -14,6 +14,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                 id: 'fieldset-conf-' + this.modulo + this.idmaster,
                 hidden: true,
                 autoHeight: true,
+                margin: '0 0 2 0',
                 border: true,
                 layout: {
                     type: 'table',
@@ -82,11 +83,12 @@ Ext.define('Colsys.Status.FormPrincipal', {
                     {
                         xtype: 'fieldset',
                         autoHeight: true,
+                        margin: '0 0 0 0',
                         border: true,                        
                         layout: {
                             type: 'table',
                             columns: 2,
-                            tdAttrs: {style: 'padding: 5px;'},
+                            tdAttrs: {style: 'padding: 2px'},
                             tableAttrs: {
                                 style: {
                                     width: '90%'
@@ -124,6 +126,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                             {
                                 xtype: 'textareafield',
                                 fieldLabel: 'Mensaje de Confirmaci\u00F3n',
+//                                margin: '0 0 0 0',
                                 grow: true,
                                 style: {
                                     width: '80%'
@@ -332,7 +335,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
         var me = this;
         
         var error = 0;
-        var modosIdg = ["llegada","status","desconsolidacion","planilla","ffletes"];        
+        var modosIdg = ["llegada","status","desconsolidacion","planilla"];        
 
         
         if (form.isValid()) {
@@ -486,12 +489,12 @@ Ext.define('Colsys.Status.FormPrincipal', {
                             });                            
                         }
                         //console.log(fc);
-                        if (modulo === "ffletes" || modulo === "fcontenedores" || modulo === "fotm") {
+                        /*if (modulo === "ffletes" || modulo === "fcontenedores" || modulo === "fotm") {
                             if (Ext.Array.indexOf(fc, true, 0) < 0) {
                                 console.log("idcliente"+idcliente);
                                 filecliente.push(idcliente);
                             }
-                        }
+                        }*/
 
                         // Validación de Planilla
                         if (modulo === "planilla") {
@@ -697,6 +700,7 @@ Ext.define('Colsys.Status.FormPrincipal', {
                 }
             },
             failure: function (form, action) {
+                console.log("erroraction",action);
                 Ext.MessageBox.alert("Error", action.result.errorInfo);
             }
         });
