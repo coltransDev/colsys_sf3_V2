@@ -4,7 +4,7 @@ Ext.define('Colsys.Status.PanelHeaderHouse', {
     border: false,                                        
     style: {
         backgroundColor: '#5097CA',
-        borderRadius: '4px'
+        borderRadius: '2px'
     },    
     tpl: new Ext.XTemplate(
         '<div class="text-wrapper">'+
