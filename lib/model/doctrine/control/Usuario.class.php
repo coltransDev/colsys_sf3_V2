@@ -57,10 +57,11 @@ class Usuario extends BaseUsuario {
         $resultado = "<strong>" . Utils::replace(strtoupper($this->getCaNombre())) . "</strong><br />";
         $resultado .= $this->getCaCargo() . "-" . strtoupper($empresa->getCaNombre()) . "<br />";
         $fax = $sucursal->getCaFax();
+        $datos = json_decode($this->getCaDatos());
 
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "<br />";
-            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " Ext. " . $this->getCaExtension() . "<br />";
+            $resultado .= "Celular :" . $datos->celcorp . " - Tel.: " . $sucursal->getCaTelefono() . " Ext. " . $this->getCaExtension() . "<br />";
             $resultado .= $fax?"Fax.: " . $sucursal->getCaFax() . "<br />":"";
             $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "<br />";
         }
@@ -76,10 +77,11 @@ class Usuario extends BaseUsuario {
         $resultado = Utils::replace(strtoupper($this->getCaNombre())) . "\n";
         $resultado .= $this->getCaCargo() . "\n" . strtoupper($empresa->getCaNombre()) . ".\n";
         $fax = $sucursal->getCaFax();
+        $datos = json_decode($this->getCaDatos());
 
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "\n";
-            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " Ext. " . $this->getCaExtension() . "\n";
+            $resultado .= "Celular :" . $datos->celcorp . " - Tel.: " . $sucursal->getCaTelefono() . " Ext. " . $this->getCaExtension() . "\n";
             $resultado .= $fax?"Fax.: " . $sucursal->getCaFax() . "\n":"";
             $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "\n";
         }
@@ -96,10 +98,11 @@ class Usuario extends BaseUsuario {
         $resultado = Utils::replace(strtoupper($this->getCaNombre())) . "\n";
         $resultado .= $this->getCaCargo() . "\n" . strtoupper($empresa->getCaNombre()) . ".\n";
         $fax = $sucursal->getCaFax();
+        $datos = json_decode($this->getCaDatos());
 
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "\n";
-            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . "\n";
+            $resultado .= "Celular :" . $datos->celcorp . " - Tel.: " . $sucursal->getCaTelefono() . "\n";
             $resultado .= $fax?"Fax.: " . $sucursal->getCaFax() . "\n":"";
             if($sucursal->getCaCodpostal()!="")
                 $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "\n";
@@ -148,10 +151,11 @@ class Usuario extends BaseUsuario {
         $empresa = $sucursal->getEmpresa();
         $resultado = "<strong>" . Utils::replace(strtoupper($this->getCaNombre())) . "</strong><br />";
         $resultado .= $this->getCaCargo() . "\n" . strtoupper($empresa->getCaNombre()) . "<br />";
-
+        $datos = json_decode($this->getCaDatos());
+        
         if ($sucursal) {
             $resultado .= $sucursal->getCaDireccion() . "<br />";
-            $resultado .= "Tel.: " . $sucursal->getCaTelefono() . " " . (($ext!="")?$ext:$this->getCaExtension()) . "<br />";
+            $resultado .= "Celular :" . $datos->celcorp . " - Tel.: " . $sucursal->getCaTelefono() . " " . (($ext!="")?$ext:$this->getCaExtension()) . "<br />";
             $resultado .= "Fax.: " . $sucursal->getCaFax() . "<br />";
             $resultado .= "Cod. Postal: " . $sucursal->getCaCodpostal() . "<br />";
         }
@@ -531,7 +535,9 @@ class Usuario extends BaseUsuario {
                     $email->addTo('jefesnal@coltrans.com.co');
                 else
                     $email->addTo('jefesnal@consolcargo.com');
-                
+                /*Ticket #113421 [Inclusión de correos para información desvinculación]*/
+                $email->addCC('atencion@fonemcol.com');
+                $email->addCC('gerente@fonemcol.com');
                 break;
             case "reconocimiento":
                 $subject = 'Reconocimiento Especial: '.$usuario->getCaNombre()." ".strtoupper($usuario->getSucursal()->getEmpresa()->getCaNombre())." ".$usuario->getSucursal()->getCaNombre();
