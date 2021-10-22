@@ -1,0 +1,206 @@
+<?php
+/* 
+ *  This file is part of the Colsys Project.
+ * 
+ *  (c) Coltrans S.A. - Colmas Ltda.
+ */
+class UpdateMatViewIndicadoresTask extends sfDoctrineBaseTask
+{
+  protected function configure()
+  {
+    $this->namespace        = 'colsys';
+    $this->name             = 'update-vi-indicadores';
+    $this->briefDescription = 'Importa proveedores nueva tabla';
+    $this->detailedDescription = <<<EOF
+The [alertas-documentos|INFO] task does things.
+Call it with:
+
+  [php symfony alertas-documentos|INFO]
+EOF;
+    // add arguments here, like the following:
+    //$this->addArgument('application', sfCommandArgument::REQUIRED, 'The application name');
+    // add options here, like the following:
+    //$this->addOption('env', null, sfCommandOption::PARAMETER_REQUIRED, 'The environment', 'dev');
+  }
+
+  protected function execute($arguments = array(), $options = array())
+  {
+    $this->configuration = ProjectConfiguration::getApplicationConfiguration('colsys', 'cli', true );
+
+	// Borra las dos líneas siguientes si no utilizas una base de datos
+	$databaseManager = new sfDatabaseManager($this->configuration);
+	$databaseManager->loadConfiguration();
+		
+	$sql = "CREATE MATERIALIZED VIEW public.vi_indicadores AS 
+ SELECT dest.ca_ano1,
+    dest.ca_mes1,
+    id.ca_idalterno,
+    id.ca_nombre,
+    rp.ca_idreporte,
+    rp.ca_consecutivo,
+    rp.ca_orden_clie,
+    tro.ca_idtrafico,
+    tro.ca_nombre AS ca_traorigen,
+    cio.ca_ciudad AS ca_ciuorigen,
+    cid.ca_ciudad AS ca_ciudestino,
+    rp.ca_transporte,
+    rp.ca_modalidad,
+    rp.ca_propiedades,
+    ccn.ca_idcliente,
+    dest.ca_peso,
+    dest.ca_piezas,
+    dest.ca_volumen,
+    dest.ca_doctransporte,
+        CASE
+            WHEN (dest.ca_fchllegada_cd - dest.ca_fchsalida_cd) = 0 THEN 1
+            ELSE dest.ca_fchllegada_cd - dest.ca_fchsalida_cd
+        END AS ca_diferencia,
+        CASE
+            WHEN rp.ca_modalidad::text = 'COLOADING'::text THEN 'LCL'::character varying
+            ELSE rp.ca_modalidad
+        END AS nva_modalidad,
+    ( SELECT c.ca_concepto
+           FROM tb_conceptos c
+             JOIN tb_repequipos e ON c.ca_idconcepto = e.ca_idconcepto
+             JOIN tb_reportes r ON e.ca_idreporte = r.ca_idreporte
+          WHERE c.ca_idconcepto = e.ca_idconcepto AND r.ca_consecutivo::text = rp.ca_consecutivo::text
+         LIMIT 1) AS concepto,
+    ( SELECT id_1.ca_nombre
+           FROM tb_reportes rp_1
+             JOIN tb_inoclientes_sea ic ON rp_1.ca_idreporte = ic.ca_idreporte
+             JOIN tb_inomaestra_sea im ON im.ca_referencia::text = ic.ca_referencia::text
+             JOIN ids.tb_ids id_1 ON id_1.ca_id = im.ca_idlinea
+          WHERE rp_1.ca_consecutivo::text = dest.ca_consecutivo::text) AS naviera,
+    ( SELECT max(id_1.ca_nombre::text) AS max
+           FROM tb_reportes rp_1
+             JOIN tb_inoclientes_air ic ON rp_1.ca_consecutivo::text = ic.ca_idreporte::text
+             JOIN tb_inomaestra_air im ON im.ca_referencia::text = ic.ca_referencia::text
+             JOIN ids.tb_ids id_1 ON id_1.ca_id = im.ca_idlinea
+          WHERE rp_1.ca_consecutivo::text = dest.ca_consecutivo::text) AS aerolinea,
+    ( SELECT sta.ca_fchsalida
+           FROM tb_repstatus sta
+             RIGHT JOIN ( SELECT p.ca_consecutivo,
+                    max(sta_1.ca_idstatus) AS ca_idstatus
+                   FROM tb_repstatus sta_1
+                     JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte
+                  WHERE sta_1.ca_idetapa = ANY (ARRAY['IMCCR'::bpchar, 'IACCR'::bpchar])
+                  GROUP BY p.ca_consecutivo) sf ON sta.ca_idstatus = sf.ca_idstatus
+          WHERE sf.ca_consecutivo::text = dest.ca_consecutivo::text) AS ca_fchsalida_ccr,
+    ( SELECT im.ca_fchvaciado
+           FROM tb_reportes rp_1
+             JOIN tb_inoclientes_sea ic ON rp_1.ca_idreporte = ic.ca_idreporte
+             JOIN tb_inomaestra_sea im ON im.ca_referencia::text = ic.ca_referencia::text
+          WHERE rp_1.ca_consecutivo::text = dest.ca_consecutivo::text) AS ca_fchvaciado,
+    eta.ca_fchllegada_eta,
+    eta.ca_fchsalida_eta,
+    dest.ca_fchsalida_cd,
+    dest.ca_fchllegada_cd,
+        CASE rp.ca_transporte
+            WHEN 'Marítimo'::text THEN ( SELECT ii.ca_factura
+               FROM tb_inoingresos_sea ii
+                 JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = dest.ca_idreporte
+              WHERE ic.ca_idinocliente = ii.ca_idinocliente
+             LIMIT 1)
+            WHEN 'Aéreo'::text THEN ( SELECT ii.ca_factura
+               FROM tb_inoingresos_air ii
+                 JOIN tb_inoclientes_air ic ON ic.ca_idreporte::text = dest.ca_consecutivo::text
+              WHERE ic.ca_referencia::text = ii.ca_referencia::text AND ic.ca_idcliente = ii.ca_idcliente AND ic.ca_hawb::text = ii.ca_hawb::text
+             LIMIT 1)
+            ELSE NULL::character varying
+        END AS ca_factura,
+        CASE rp.ca_transporte
+            WHEN 'Marítimo'::text THEN ( SELECT ii.ca_fchfactura
+               FROM tb_inoingresos_sea ii
+                 JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = dest.ca_idreporte
+              WHERE ic.ca_idinocliente = ii.ca_idinocliente
+             LIMIT 1)
+            WHEN 'Aéreo'::text THEN ( SELECT ii.ca_fchfactura
+               FROM tb_inoingresos_air ii
+                 JOIN tb_inoclientes_air ic ON ic.ca_idreporte::text = dest.ca_consecutivo::text
+              WHERE ic.ca_referencia::text = ii.ca_referencia::text AND ic.ca_idcliente = ii.ca_idcliente AND ic.ca_hawb::text = ii.ca_hawb::text
+             LIMIT 1)
+            ELSE NULL::date
+        END AS ca_fchfactura,
+    (( SELECT sta.ca_fchsalida
+           FROM tb_repstatus sta
+             RIGHT JOIN ( SELECT p.ca_consecutivo,
+                    min(sta_1.ca_idstatus) AS ca_idstatus
+                   FROM tb_repstatus sta_1
+                     JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte
+                  WHERE sta_1.ca_idetapa = ANY (ARRAY['IMCCR'::bpchar, 'IACCR'::bpchar])
+                  GROUP BY p.ca_consecutivo) sf ON sta.ca_idstatus = sf.ca_idstatus
+          WHERE sf.ca_consecutivo::text = dest.ca_consecutivo::text)) - eta.ca_fchsalida_eta AS idg_zarpe,
+    dest.ca_fchllegada_cd - eta.ca_fchllegada_eta AS idg_llegada,
+        CASE rp.ca_transporte
+            WHEN 'Marítimo'::text THEN ( SELECT ii.ca_fchfactura
+               FROM tb_inoingresos_sea ii
+                 JOIN tb_inoclientes_sea ic ON ic.ca_idreporte = dest.ca_idreporte
+              WHERE ic.ca_idinocliente = ii.ca_idinocliente
+             LIMIT 1)
+            WHEN 'Aéreo'::text THEN ( SELECT ii.ca_fchfactura
+               FROM tb_inoingresos_air ii
+                 JOIN tb_inoclientes_air ic ON ic.ca_idreporte::text = dest.ca_consecutivo::text
+              WHERE ic.ca_referencia::text = ii.ca_referencia::text AND ic.ca_idcliente = ii.ca_idcliente AND ic.ca_hawb::text = ii.ca_hawb::text
+             LIMIT 1)
+            ELSE NULL::date
+        END - dest.ca_fchllegada_cd AS idg_factura,
+    (( SELECT im.ca_fchvaciado
+           FROM tb_reportes rp_1
+             JOIN tb_inoclientes_sea ic ON rp_1.ca_idreporte = ic.ca_idreporte
+             JOIN tb_inomaestra_sea im ON im.ca_referencia::text = ic.ca_referencia::text
+          WHERE rp_1.ca_consecutivo::text = dest.ca_consecutivo::text)) - dest.ca_fchllegada_cd AS idg_vaciado
+   FROM tb_reportes rp
+     RIGHT JOIN ( SELECT tb_reportes.ca_consecutivo AS ca_consecutivo_f,
+            tb_reportes.ca_fchreporte,
+            max(tb_reportes.ca_version) AS ca_version,
+            min(tb_reportes.ca_fchcreado) AS ca_fchcreado
+           FROM tb_reportes
+          WHERE tb_reportes.ca_usuanulado IS NULL AND tb_reportes.ca_tiporep <> 4
+          GROUP BY tb_reportes.ca_consecutivo, tb_reportes.ca_fchreporte
+          ORDER BY tb_reportes.ca_consecutivo) rx ON rp.ca_consecutivo::text = rx.ca_consecutivo_f::text AND rp.ca_version = rx.ca_version
+     RIGHT JOIN ( SELECT date_part('year'::text, rs.ca_fchsalida) AS ca_ano1,
+            date_part('month'::text, rs.ca_fchsalida) AS ca_mes1,
+            rs.ca_idreporte,
+            sf.ca_consecutivo,
+            rs.ca_fchllegada AS ca_fchllegada_cd,
+            rs.ca_piezas,
+            rs.ca_peso,
+            rs.ca_volumen,
+            rs.ca_doctransporte,
+            rs.ca_fchsalida AS ca_fchsalida_cd
+           FROM tb_repstatus rs
+             RIGHT JOIN ( SELECT rp_1.ca_consecutivo,
+                    max(rs_1.ca_idstatus) AS ca_idstatus
+                   FROM tb_repstatus rs_1
+                     JOIN tb_reportes rp_1 ON rp_1.ca_idreporte = rs_1.ca_idreporte
+                  WHERE rs_1.ca_idetapa = ANY (ARRAY['IMCPD'::bpchar, 'IACAD'::bpchar])
+                  GROUP BY rp_1.ca_consecutivo) sf ON rs.ca_idstatus = sf.ca_idstatus) dest ON rp.ca_consecutivo::text = dest.ca_consecutivo::text
+     RIGHT JOIN ( SELECT sf.ca_consecutivo,
+            sta.ca_fchllegada AS ca_fchllegada_eta,
+            sta.ca_fchsalida AS ca_fchsalida_eta
+           FROM tb_repstatus sta
+             RIGHT JOIN ( SELECT p.ca_consecutivo,
+                    min(sta_1.ca_idstatus) AS ca_idstatus
+                   FROM tb_repstatus sta_1
+                     JOIN tb_reportes p ON p.ca_idreporte = sta_1.ca_idreporte
+                  WHERE sta_1.ca_idetapa = ANY (ARRAY['IMETA'::bpchar, 'IMETT'::bpchar, 'IACCR'::bpchar])
+                  GROUP BY p.ca_consecutivo) sf ON sta.ca_idstatus = sf.ca_idstatus) eta ON rp.ca_consecutivo::text = eta.ca_consecutivo::text
+     JOIN tb_ciudades cio ON rp.ca_origen::text = cio.ca_idciudad::text
+     JOIN tb_traficos tro ON cio.ca_idtrafico::text = tro.ca_idtrafico::text
+     JOIN tb_ciudades cid ON rp.ca_destino::text = cid.ca_idciudad::text
+     JOIN tb_concliente ccn ON rp.ca_idconcliente = ccn.ca_idcontacto
+     JOIN tb_clientes cl ON cl.ca_idcliente = ccn.ca_idcliente
+     JOIN ids.tb_ids id ON id.ca_idalterno::integer = cl.ca_idcliente
+  WHERE (rp.ca_impoexpo::text = ANY (ARRAY['Importación'::character varying::text, 'OTM-DTA'::character varying::text])) AND (id.ca_id = ANY (ARRAY[860005050, 817001528, 890300012, 800164590])) AND dest.ca_ano1::numeric > 2015::numeric
+  ORDER BY dest.ca_fchsalida_cd
+WITH DATA;
+
+ALTER TABLE public.vi_indicadores
+  OWNER TO postgres";
+        $st = $con->execute($sql);
+            //echo $sql;
+        $this->results = $st->fetchAll();
+  
+}
+}
+?>

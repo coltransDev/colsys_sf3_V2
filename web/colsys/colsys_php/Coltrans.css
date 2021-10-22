@@ -1,0 +1,224 @@
+/* $version_internal = "0.1"; */
+
+
+
+.headerleft{	
+	float:left;	
+	width:auto;
+}
+
+.headerright{	
+	height: 26px;
+	float:right;
+	width:auto;
+
+}
+
+.header{
+	width:96%;	
+	background:#F0F0F0;
+	background-position:bottom;
+	height: 26px;
+	background:url(menu/header.gif);	
+
+}
+
+.footer {
+	border-top:1px solid #e4e4e4;
+	padding:12px 0;
+	margin:12px 0;
+	float:left;
+	width:100%;
+	color:#666;
+	font-size:.88em;
+	text-align:center;
+	background-image:url(menu/footershadow.jpg);
+	background-position:top;
+	background-repeat:repeat-x;
+}
+
+
+
+input.button, input.submit, input.reset{
+   border:thin #333333;
+   background-color:#F0F0F0; 
+   background-repeat:no-repeat; 
+   background-position:left center
+}
+body.left { 
+   background:#8899ff; 
+   color:black 
+}
+input.left, textarea.left {
+   border:thin #666666 solid;
+   background:#8899ff;
+   color:black
+}
+input.field{
+   border:thin;
+   overflow:visible;
+   width:0px;
+   background-color:#F0F0F0; 
+   background-repeat:no-repeat; 
+   background-position:left center;
+}
+body {
+   margin-top:0px;
+   margin-bottom:4px;
+   margin-left:4px;
+   margin-right:4px;
+   background:#FFFFFF;
+   color:#111177;
+}
+body, th, td, input, select, textarea {
+   font-family:verdana, arial, helvetica, serif;
+   font-size:9px;
+}
+P {
+   font-family:verdana, arial, helvetica, serif;
+   font-size:8px;
+}
+th, td {
+   line-height:1.4;
+   
+   padding:2px;
+   vertical-align:middle;
+}
+th {
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+td.captura {
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+td.destacar {
+   text-align:left;
+   background:#FFFFC0;
+   color:#1D3F99;
+   vertical-align:top;
+}
+td.divisor {
+   text-align:center;
+   background:#000000;
+   color:#FFFFFF;
+}
+td.imprimir {
+   text-align:left;
+   background:#FFFFFF;
+   color:#000000;
+}
+td.invertir {
+   text-align:left;
+   background:#D2D2D2;
+   color:#000000;
+   vertical-align:top;
+}
+td.listar {
+   text-align:left;
+   vertical-align:top;
+   background:#F0F0F0;
+   color:#000000;
+}
+td.mostrar {
+   text-align: left;
+   background: #F0F0F0;
+   color: #000000;
+}
+td.partir {
+   font-weight:bold;
+   text-align:left;
+   vertical-align:top;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+td.periodo {
+   text-align:left;
+   background:#CCCCCC;
+   color:#000000;
+   vertical-align:top;
+}
+td.resaltar {
+   text-align:left;
+   background:#9999CC;
+   color:#000000;
+   vertical-align:top;
+}
+td.titulo {
+   text-align:center;
+   background:#1D3F99;
+   color:#FFFFFF;
+}
+td.valores {
+   text-align: right;
+   vertical-align: top;
+   background: #F0F0F0;
+   color: #000000;
+}
+td.negativo {
+   text-align: right;
+   vertical-align: top;
+   background: #FF0000;
+   color: #000000;
+}
+td.normal {
+   text-align: right;
+   vertical-align: top;
+   background: #04B404;
+   color: #000000;
+}
+th.imprimir {
+   text-align:center;
+   background:#FFFFFF;
+   color:#000000;
+}
+a:link {
+   text-decoration:none;
+   color:#0000FF;
+}
+a:active {
+   text-decoration:none;
+   color:#0000FF;
+}
+a:visited {
+   text-decoration: none;
+   color: #990033;
+}
+#hintbox{ /*CSS for pop up hint box */
+   position:absolute;
+   top:0;
+   background-color:#FAFAD2;
+   width:150px; /*Default width of hint.*/ 
+   padding:1px;
+   border:1px solid black;
+   font:normal 9px Verdana;
+   line-height:10px;
+   z-index:99;
+   border-right:3px solid black;
+   border-bottom:3px solid black;
+   visibility:hidden;
+}
+
+.hintanchor{ /*CSS for link that shows hint onmouseover*/
+   font-weight:bold;
+   color:navy;
+   margin:3px 8px;
+}
+
+#mask {
+    background-color:#FFFFFF;
+    height:100%;
+    left:0;
+    display: none;
+    position:absolute;
+    top:0;
+    width:100%;
+    z-index:100;
+}
+
+.b{
+    font-weight: bold;
+}

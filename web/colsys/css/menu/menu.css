@@ -1,0 +1,226 @@
+#navigation {
+	width:auto;
+	list-style-type: none;
+	
+	height: 25px;
+	position: relative;
+	border-top: 0;
+	margin: 0px;
+	float:left;
+	z-index: 12;
+	
+}
+
+
+#navigation li {
+	height: 25px;
+	line-height: 25px;
+	font-size: 10px;
+	font-weight:bold;	
+	float: left;	
+	position: relative;	
+	z-index: 12;
+}
+
+#navigation li a {
+	display: block;
+	float: left;
+	color: #333333;
+	text-decoration: none;
+	padding: 0 10px;
+	z-index: 12;
+}
+
+#navigation li a:hover {
+	background-color: #CCCCCC;
+	
+}
+
+
+#navigation li.selected a {
+	background-color: #CCCCCC;
+	
+}
+#navigation li a.arrow {
+	padding: 0;
+	background-image: url("../../images/global_menu_arrow.gif");
+	background-position:center;
+	width:17px;
+	height:24px;
+	background-repeat:no-repeat;
+	
+}
+
+#navigation li a.arrow:hover {
+	padding: 0;
+	/*background-image: url("../../images/global_menu_arrow_hover.gif");	*/
+	background-position:center;
+	
+}
+
+#navigation li.selected a.arrow {
+	padding: 0;
+	/*background-image: url("../../images/global_menu_arrow_hover.gif");*/
+	background-position:center;
+
+}
+
+/*
+- Submenu 
+*/
+#navigation li ul {
+	list-style-type: none;
+	width: 130px;
+	position: absolute;
+	
+    background-color:#e5e5e5;
+	border:#b5b5b5 solid 1px;
+    
+	height: auto;
+	top: 26px;
+	left: -1px;
+	
+	border-top: 0;
+	display: none;
+	padding: 2px;
+	z-index: 12;
+	
+	list-style-image:none;
+	list-style-position:outside;
+	list-style-type:none;
+	margin: 0px;
+
+    -webkit-border-radius:3px;
+    -khtml-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+
+#navigation li ul li ul{
+	width: auto;
+    
+
+    
+	
+}
+
+#navigation li.selected ul {
+	display: block;
+}
+
+#navigation li ul li {
+	
+	float: left;
+	font-size: 10px;
+	width: 129px;
+	font-weight: normal;
+    border-top: 1px solid #F7F7F7 ;
+    text-align: left;
+	
+	-webkit-border-radius:3px;
+    -khtml-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+	
+	
+}
+
+
+#navigation li ul li ul li{
+	
+	width: 189px;
+	
+	
+}
+
+#navigation li ul li a, #navigation li.selected ul li a {
+	
+	
+	color: #666;
+	background: #FFFFFF;
+	float: none;
+	border-left: 1px solid #fff;
+    padding-left: 20px;
+	
+	
+}
+#navigation li ul li a:hover, #navigation li.selected ul li a:hover {
+	background-color: #cccccc;
+	color: #FFFFFF;
+	border-left: 1px solid #afafaf;
+	border-right: 1px solid #afafaf;
+	cursor:pointer;
+	border-top: 0px  ;
+	
+}
+
+#navigation .menu_divider{
+	background-color: #EEEEEE;
+	height: 1px;
+	width: 103px;
+	margin-left: 10px;
+	overflow: hidden;
+}
+
+
+/*
+Submenus 
+*/
+
+
+
+/*
+* 2do Nivel
+*/
+#navigation li ul ul {
+	margin: -3em 0 0 13em;
+	
+	text-align:left;
+	
+	display:block;
+    
+}
+
+
+
+
+
+#usermenu {
+	width:auto;
+	list-style-type: none;
+	background-color: #F0F0F0;
+	height: 25px;
+	position: relative;
+	border-top: 0;
+	margin: 0px;
+	float:right;
+	overflow:visible;
+}
+
+
+#usermenu li {
+	height: 25px;
+	line-height: 25px;
+	font-size: 10px;
+	color: #333333;
+	float: left;
+	margin-right: 10px;
+	position: relative;
+	
+	
+}
+
+
+#usermenu li a {
+	display: block;
+	float: left;
+	color: #333333;
+	text-decoration: none;
+	padding: 0 10px;
+}
+
+#usermenu li a:hover {
+	background-color: #157FCC;
+	color: #FFFFFF;	
+}
+

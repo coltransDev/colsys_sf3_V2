@@ -1,0 +1,23 @@
+/* CSS Document */
+
+body{
+	margin: 0px;
+}
+
+#background_top{
+	background: url(../../graficos/top/background_top.jpg) repeat-x;
+	
+	height:34px;
+	border-bottom: solid #CCCCCC 1px;		
+}
+
+#logo_coltrans{
+	float:left;
+	padding-left: 30px;
+}
+
+#logo_colmas{
+	float:right;
+	padding-right: 30px;
+	
+}
