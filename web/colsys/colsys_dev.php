@@ -39,6 +39,6 @@ if ($_SERVER['SERVER_NAME'] == 'colsys.consolcargo.com' || $_SERVER['SERVER_NAME
 sfContext::createInstance($configuration)->dispatch();
 
 /*
- * este es una prueba del 4to commit a V2
+ * este
  */
 
